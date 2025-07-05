@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta name="base-url" content="{{ url('/') }}">
     <title>Company Dashboard</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>

@@ -1,14 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-Route::get('/login', function () {
-    return view('auth.login');
-});
+Route::post('/api/login', [AuthController::class, 'postLogin'])->name('login');
 
 // SPA route
 Route::get('/{any}', function () {
