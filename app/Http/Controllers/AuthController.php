@@ -32,4 +32,26 @@ class AuthController extends Controller
         // If authentication fails, return an error response
         return response()->json(['message' => 'Incorrect username or password, please try again.'], 401);
     }
+
+    public function currentUser(Request $request)
+    {
+        // Get the currently authenticated user
+        $user = Auth::user();
+
+        // If no user is authenticated, return an error response
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Return the authenticated user's data
+        return response()->json([
+            'id' => $user->id,
+            'fullname' => $user->fullname,
+            'username' => $user->username,
+            'email' => $user->email,
+            'is_admin' => $user->is_admin,
+            'download_access' => $user->download_access,
+            'profile_image' => $user->profile_image,
+        ]);
+    }
 }
