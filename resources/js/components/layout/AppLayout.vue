@@ -9,6 +9,7 @@
                 </path>
             </svg>
         </div>
+        <CategoryForm />
         <div v-if="!loading" class="h-screen flex overflow-hidden bg-white dark:bg-slate-800 dark:text-white">
             <!-- Sidebar backdrop -->
             <Transition enter-active-class="transition-opacity ease-out duration-300" enter-from-class="opacity-0"
@@ -25,7 +26,8 @@
                 isSidebarCollapsed ? 'w-20' : 'w-70'
             ]">
                 <!-- Sidebar Header -->
-                <div class="relative h-30 flex items-center justify-between px-3 border-b border-gray-200 dark:border-white/10">
+                <div
+                    class="relative h-30 flex items-center justify-between px-3 border-b border-gray-200 dark:border-white/10">
                     <button @click="toggleSidebar"
                         class="absolute top-1/2 right-[-20px] hidden md:flex z-50 transform -translate-y-1/2 w-10 h-10 items-center justify-center rounded-full bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-500 dark:text- shadow-md hover:bg-blue-100 dark:hover:bg-slate-400 transition-all duration-200">
                         <svg :class="[isSidebarCollapsed ? 'rotate-180' : '']" class="w-4 h-4 transition-transform"
@@ -36,7 +38,8 @@
                     <div class="flex items-center space-x-3" :class="[isSidebarCollapsed ? '' : 'p-3']">
                         <div class="relative">
                             <div class="absolute inset-0 bg-blue-500/20 blur-xl rounded-lg"></div>
-                            <img class="relative object-contain" :class="[isSidebarCollapsed ? 'w-[100px]' : 'w-12']" :src="imgSrc" alt="COSL logo">
+                            <img class="relative object-contain" :class="[isSidebarCollapsed ? 'w-[100px]' : 'w-12']"
+                                :src="imgSrc" alt="COSL logo">
                         </div>
                         <Transition enter-active-class="transition-all duration-300 ease-out"
                             enter-from-class="opacity-0 -translate-x-4" enter-to-class="opacity-100 translate-x-0"
@@ -53,24 +56,99 @@
                 <div class="flex flex-col h-[calc(100vh-5rem)] overflow-y-auto mt-3">
                     <!-- Navigation -->
                     <nav class="space-y-2">
-                        <RouterLink v-for="(item, index) in sidebarItems" :key="index" :to="item.path"
-                            @click="isMobileSidebarOpen = false" class="
-    flex items-center px-4 py-2.5 rounded-xl font-medium group
+                        <div v-for="(item, index) in sidebarItems" :key="index">
+                            <button @click="toggleDropdown(index)"
+                                @contextmenu.prevent="item.name === 'Toolstring Coiled Tubing' && openContextMenu($event, true, false, false)"
+                                class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
     hover:bg-blue-500 hover:text-white
     dark:hover:bg-white/10 dark:hover:text-blue-500
-  " :class="isActive(item.path)
-      ? 'bg-blue-500 text-white dark:bg-white/10 dark:text-blue-500'
-      : 'text-gray-700 dark:text-white'">
-                            <i class="mx-3 fa-solid transition-colors duration-200" :class="[
-                                item.icon,
-                                isActive(item.path)
-                                    ? 'text-white dark:text-blue-500'
-                                    : 'group-hover:text-white dark:group-hover:text-blue-500'
-                            ]"></i>
-                            <span v-show="!isSidebarCollapsed">
-                                {{ item.name }}
-                            </span>
-                        </RouterLink>
+    transition-colors duration-200" :class="isActive(item.path)
+        ? 'bg-blue-500 text-white dark:bg-white/10 dark:text-blue-500'
+        : 'text-gray-700 dark:text-white'">
+                                <div class="flex items-center">
+                                    <i class="mx-3 fa-solid transition-colors duration-200" :class="[
+                                        item.icon,
+                                        isActive(item.path)
+                                            ? 'text-white dark:text-blue-500'
+                                            : 'group-hover:text-white dark:group-hover:text-blue-500'
+                                    ]"></i>
+                                    <span v-show="!isSidebarCollapsed">{{ item.name }}</span>
+                                </div>
+                                <i v-if="item.children && !isSidebarCollapsed"
+                                    class="fas fa-chevron-right transition-transform duration-200"
+                                    :class="{ 'rotate-90': dropdownOpen[index] }"></i>
+                            </button>
+                            <transition name="fade">
+                                <div v-if="item.children && dropdownOpen[index] && !isSidebarCollapsed"
+                                    class="ml-8 mt-1 space-y-1">
+                                    <RouterLink v-for="(child, cIdx) in item.children" :key="cIdx" :to="child.path"
+                                        @click="isMobileSidebarOpen = false"
+                                        @contextmenu.prevent="openContextMenu($event, false, true, true, child)" class="flex items-center px-3 py-2 rounded-lg text-sm
+              hover:bg-blue-500 hover:text-white
+              dark:hover:bg-white/10 dark:hover:text-blue-500
+              transition-colors duration-200" :class="isActive(child.path)
+                  ? 'bg-blue-500 text-white dark:bg-white/10 dark:text-blue-500'
+                  : 'text-gray-600 dark:text-gray-300'">
+                                        <i class="mr-2 fa-solid" :class="child.icon"></i>
+                                        <span>{{ child.name }}</span>
+                                    </RouterLink>
+                                </div>
+                            </transition>
+                        </div>
+                        <!-- Custom Context Menu -->
+                        <div v-if="contextMenu.visible" :style="{ top: `${contextMenu.y}px`, left: `${contextMenu.x}px` }"
+                            class="fixed z-50 min-w-[200px] animate-fadeIn">
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                <!-- Header -->
+                                <div
+                                    class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700">
+                                    <h4 class="text-gray-700 dark:text-gray-200">Quick Actions</h4>
+                                </div>
+                                <!-- Menu Items -->
+                                <div class="p-2">
+                                    <!-- Add Category Button -->
+                                    <button v-if="showAddCategory" @click="handleAddCategory"
+                                        class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors duration-200 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700">
+                                        <span
+                                            class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                                            <i class="fas fa-plus text-blue-600 dark:text-blue-400"></i>
+                                        </span>
+                                        <div>
+                                            <span class="font-medium text-gray-700 dark:text-gray-200">Add
+                                                Category</span>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Create a new category
+                                            </p>
+                                        </div>
+                                    </button>
+                                    <!-- Rename Button -->
+                                    <button v-if="showRenameCategory" @click="handleRenameCategory()"
+                                        class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors duration-200 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700">
+                                        <span
+                                            class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30">
+                                            <i class="fas fa-edit text-green-600 dark:text-green-400"></i>
+                                        </span>
+                                        <div>
+                                            <span class="font-medium text-gray-700 dark:text-gray-200">Edit</span>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Rename category
+                                            </p>
+                                        </div>
+                                    </button>
+                                    <!-- Delete Button -->
+                                    <button v-if="showDeleteCategory" @click="handleDeleteCategory()"
+                                        class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors duration-200 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30">
+                                        <span
+                                            class="flex items-center justify-center w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30">
+                                            <i class="fas fa-trash text-red-600 dark:text-red-400"></i>
+                                        </span>
+                                        <div>
+                                            <span class="font-medium text-gray-700 dark:text-gray-200">Delete</span>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Remove permanently</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </nav>
                 </div>
             </aside>
@@ -262,22 +340,18 @@
     </div>
 </template>
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import {
-    HomeIcon,
-    UserIcon,
-    Cog6ToothIcon,
-    WrenchScrewdriverIcon,
-    // LayersIcon
-} from '@heroicons/vue/24/outline'
 import SearchButton from '../modals/SearchButton.vue'
 import ToggleDarkMode from '../buttons/DarkModeToggle.vue'
 import { useCurrentUserStore } from '@/stores/CurrentUser'
+import { useAppStore } from '@/stores/useAppStore';
+import CategoryForm from '../modals/CategoryForm.vue'
+const appStore = useAppStore();
 const baseUrl = document.querySelector('meta[name="base-url"]').content;
 const imgSrc = `${baseUrl}/assets/images/company/company-logo.png`;
 const showNotification = ref(false)
-const notificationValue = ref("")
+const currentUserStore = useCurrentUserStore()
 watch(showNotification, (val) => {
     if (val) {
         setTimeout(() => {
@@ -330,18 +404,79 @@ function toggleMobileSidebar() {
 function closeMobileSidebar() {
     isMobileSidebarOpen.value = false
 }
-const sidebarItems = [
+const dropdownOpen = ref({});
+function toggleDropdown(index) {
+    dropdownOpen.value[index] = !dropdownOpen.value[index];
+    appStore.getToolstringCategories()
+}
+const contextMenu = ref({
+    visible: false,
+    x: 0,
+    y: 0,
+})
+const showAddCategory = ref(false)
+const showRenameCategory = ref(false)
+const showDeleteCategory = ref(false)
+function openContextMenu(event, addCategory = false, renameCategory = false, deleteCategory = false, selectedCategory = null) {
+    contextMenu.value = {
+        visible: true,
+        x: event.clientX,
+        y: event.clientY,
+    }
+    document.addEventListener('click', closeContextMenu)
+    showAddCategory.value = addCategory
+    showRenameCategory.value = renameCategory
+    showDeleteCategory.value = deleteCategory
+
+    if (selectedCategory) {
+        appStore.selectedCategoryData = selectedCategory
+    } else {
+        appStore.selectedCategoryData = null
+    }
+}
+function closeContextMenu() {
+    contextMenu.value.visible = false
+    document.removeEventListener('click', closeContextMenu)
+    appStore.selectedCategoryData = null
+}
+function handleAddCategory() {
+    // Ganti ini dengan pemanggilan modal / emit / router push, dll
+    appStore.isCategoryModalOpen = true
+    appStore.categoryFormAction = 'create'
+    closeContextMenu()
+}
+function handleRenameCategory() {
+    // Ganti ini dengan pemanggilan modal / emit / router push, dll
+    appStore.isCategoryModalOpen = true
+    appStore.categoryFormAction = 'update'
+    closeContextMenu()
+}
+function handleDeleteCategory() {
+    // Ganti ini dengan pemanggilan modal / emit / router push, dll
+    appStore.isCategoryModalOpen = true
+    appStore.categoryFormAction = 'delete'
+    closeContextMenu()
+}
+const sidebarItems = computed(() => [
     { name: 'Dashboard', path: '/dashboard', icon: 'fa-home' },
-    { name: 'Toolstring Coiled Tubing', path: '/toolstring-coiled-tubing', icon: 'fa-screwdriver-wrench' },
+    {
+        name: 'Toolstring Coiled Tubing', path: '/toolstring-coiled-tubing', icon: 'fa-screwdriver-wrench',
+        children: appStore.toolstringCategories.map(category => ({
+            id: category.id,
+            name: category.name,
+            path: `/toolstring-coiled-tubing/${category.slug}`,
+            icon: 'fa-folder'
+        })),
+    },
     { name: 'Wellstack', path: '/wellstack', icon: 'fa-oil-well' },
     { name: 'Users', path: '/users', icon: 'fa-user' },
     { name: 'Settings', path: '/settings', icon: 'fa-gear' },
-]
-const currentUserStore = useCurrentUserStore()
+])
 onMounted(async () => {
     if (!currentUserStore.user) {
         await currentUserStore.fetchUser()
     }
+    await appStore.getToolstringCategories()
     window.addEventListener('click', closeNotificationDropdown)
     window.addEventListener('click', closeProfileDropdown)
     loading.value = false
@@ -370,3 +505,31 @@ async function logout() {
     }
 }
 </script>
+<style>
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(-5px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.2s ease-out;
+}
+</style>
