@@ -347,11 +347,15 @@ import ToggleDarkMode from '../buttons/DarkModeToggle.vue'
 import { useCurrentUserStore } from '@/stores/CurrentUser'
 import { useAppStore } from '@/stores/useAppStore';
 import CategoryForm from '../modals/CategoryForm.vue'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
+
 const appStore = useAppStore();
 const baseUrl = document.querySelector('meta[name="base-url"]').content;
 const imgSrc = `${baseUrl}/assets/images/company/company-logo.png`;
 const showNotification = ref(false)
 const currentUserStore = useCurrentUserStore()
+
 watch(showNotification, (val) => {
     if (val) {
         setTimeout(() => {
@@ -488,18 +492,17 @@ onUnmounted(() => {
 const isLoggingOut = ref(false)
 async function logout() {
     try {
-        // if (isLoggingOut.value) return // Hindari klik ganda
-        // isLoggingOut.value = true
-        // await $fetch('/users/logout', {
-        //     baseURL: apiUrl,
-        //     method: 'delete',
-        //     credentials: 'include'
-        // })
-        // showNotification.value = true
-        // notificationValue.value = 'Logout successful!'
-        // router.push('/auth/login')
+        if (isLoggingOut.value) return // Hindari klik ganda
+        isLoggingOut.value = true
+        await axios.post(`${baseUrl}/api/logout`)
+        currentUserStore.user = null // Reset user store
+        appStore.toolstringCategories = [] // Reset categories store
+        appStore.selectedCategoryData = null // Reset selected category
+        toast.success('Logged out successfully!')
+        window.location.href = baseUrl + '/login';
     } catch (err) {
-        alert(err?.message || 'Unknown error')
+        console.error('Logout error:', err)
+        toast.error('Failed to log out. Please try again.')
     } finally {
         isLoggingOut.value = false
     }

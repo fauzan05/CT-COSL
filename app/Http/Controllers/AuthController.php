@@ -54,4 +54,19 @@ class AuthController extends Controller
             'profile_image' => $user->profile_image,
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        // Log the user out
+        Auth::logout();
+
+        // Invalidate the session
+        $request->session()->invalidate();
+
+        // Regenerate the CSRF token
+        $request->session()->regenerateToken();
+
+        // Return a successful response
+        return response()->json(['message' => 'Logout successful'], 200);
+    }
 }

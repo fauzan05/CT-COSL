@@ -19,8 +19,7 @@ const routes = [
     {
         path: '/login',
         component: LoginPage
-    },
-    //   { path: '/users', component: UserList },
+    }
 ];
 
 export default createRouter({

@@ -20,6 +20,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::put('/api/toolstring-categories/{id}', [ToolstringController::class, 'updateCategory'])->name('updateCategory');
     Route::delete('/api/toolstring-categories/{id}', [ToolstringController::class, 'deleteCategory'])->name('deleteCategory');
     Route::get('/api/current-user', [AuthController::class, 'currentUser'])->name('currentUser');
+    Route::post('/api/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 
