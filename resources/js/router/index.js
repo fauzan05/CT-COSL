@@ -4,6 +4,7 @@ import {
 } from 'vue-router';
 import DashboardHome from '../components/dashboard/DashboardHome.vue';
 import LoginPage from '../components/auth/LoginPage.vue';
+import ToolstringCoiledTubing from '../components/dashboard/ToolstringCoiledTubing.vue';
 // import UserList from '../components/users/UserList.vue';
 
 const routes = [
@@ -12,9 +13,13 @@ const routes = [
         component: DashboardHome
     },
     {
+        path: '/toolstring-coiled-tubing',
+        component: ToolstringCoiledTubing
+    },
+    {
         path: '/login',
         component: LoginPage
-    }
+    },
     //   { path: '/users', component: UserList },
 ];
 

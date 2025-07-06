@@ -43,7 +43,7 @@
                             leave-active-class="transition-all duration-200 ease-in"
                             leave-from-class="opacity-100 translate-x-0" leave-to-class="opacity-0 -translate-x-4">
                             <div v-show="!isSidebarCollapsed" class="flex flex-col">
-                                <span class="text-lg font-semibold text-gray-800 dark:text-white">COSL Operations</span>
+                                <span class="text-lg font-semibold text-gray-800 dark:text-white">COSL Coiled Tubing</span>
                                 <span class="text-sm text-gray-500 dark:text-gray-400">Management System</span>
                             </div>
                         </Transition>
@@ -53,7 +53,7 @@
                 <div class="flex flex-col h-[calc(100vh-5rem)] overflow-y-auto mt-3">
                     <!-- Navigation -->
                     <nav class="space-y-2">
-                        <NuxtLink v-for="(item, index) in sidebarItems" :key="index" :to="item.path"
+                        <RouterLink v-for="(item, index) in sidebarItems" :key="index" :to="item.path"
                             @click="isMobileSidebarOpen = false" class="
     flex items-center px-4 py-2.5 rounded-xl font-medium group
     hover:bg-blue-500 hover:text-white
@@ -70,7 +70,7 @@
                             <span v-show="!isSidebarCollapsed">
                                 {{ item.name }}
                             </span>
-                        </NuxtLink>
+                        </RouterLink>
                     </nav>
                 </div>
             </aside>
@@ -290,7 +290,7 @@ const route = useRoute()
 const isActive = (path) => {
     return route.path.startsWith(path)
 }
-const isSidebarCollapsed = ref(true)
+const isSidebarCollapsed = ref(false)
 const isMobileSidebarOpen = ref(false)
 const isNotificationDropdownOpen = ref(false)
 const isProfileDropdownOpen = ref(false)
@@ -331,11 +331,11 @@ function closeMobileSidebar() {
     isMobileSidebarOpen.value = false
 }
 const sidebarItems = [
-    { name: 'Dashboard', path: '/admin/dashboard', icon: 'fa-home' },
-    { name: 'Toolstring Coiled Tubing', path: '/admin/toolstring-coiled-tubing', icon: 'fa-screwdriver-wrench' },
-    { name: 'Wellstack', path: '/admin/wellstack', icon: 'fa-oil-well' },
-    { name: 'Users', path: '/admin/users', icon: 'fa-user' },
-    { name: 'Settings', path: '/admin/settings', icon: 'fa-gear' },
+    { name: 'Dashboard', path: '/dashboard', icon: 'fa-home' },
+    { name: 'Toolstring Coiled Tubing', path: '/toolstring-coiled-tubing', icon: 'fa-screwdriver-wrench' },
+    { name: 'Wellstack', path: '/wellstack', icon: 'fa-oil-well' },
+    { name: 'Users', path: '/users', icon: 'fa-user' },
+    { name: 'Settings', path: '/settings', icon: 'fa-gear' },
 ]
 const currentUserStore = useCurrentUserStore()
 onMounted(async () => {
