@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->timestamp('created_at')->useCurrent();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->softDeletes();
         });
     }

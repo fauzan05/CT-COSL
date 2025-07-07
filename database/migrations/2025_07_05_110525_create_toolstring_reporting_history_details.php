@@ -19,10 +19,6 @@ return new class extends Migration
                 ->on('toolstring_reporting_histories')
                 ->onDelete('cascade');
 
-            $table->foreignId('toolstring_type_id')
-                ->constrained('toolstring_types')
-                ->onDelete('cascade');
-
             $table->foreignId('toolstring_item_id')
                 ->constrained('toolstring_items')
                 ->onDelete('cascade');

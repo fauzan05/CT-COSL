@@ -15,10 +15,20 @@ Route::post('/api/login', [AuthController::class, 'postLogin'])->name('login');
 
 // API routes that need auth
 Route::middleware([AuthMiddleware::class])->group(function () {
+    // Toolstring management
     Route::post('/api/toolstring-categories', [ToolstringController::class, 'storeCategory'])->name('storeCategory');
     Route::get('/api/toolstring-categories', [ToolstringController::class, 'getCategories'])->name('getCategories');
     Route::put('/api/toolstring-categories/{id}', [ToolstringController::class, 'updateCategory'])->name('updateCategory');
     Route::delete('/api/toolstring-categories/{id}', [ToolstringController::class, 'deleteCategory'])->name('deleteCategory');
+    Route::get('/api/toolstring-categories/{id}', [ToolstringController::class, 'getCategory'])->name('getCategory');
+
+    // Toolstring items management
+    Route::post('/api/toolstring-items', [ToolstringController::class, 'storeItem'])->name('storeItem');
+    Route::get('/api/toolstring-items', [ToolstringController::class, 'getItems'])->name('getItems');
+    Route::put('/api/toolstring-items/{id}', [ToolstringController::class, 'updateItem'])->name('updateItem');
+    Route::delete('/api/toolstring-items/{id}', [ToolstringController::class, 'deleteItem'])->name('deleteItem');
+
+    // User management
     Route::get('/api/current-user', [AuthController::class, 'currentUser'])->name('currentUser');
     Route::post('/api/logout', [AuthController::class, 'logout'])->name('logout');
 });

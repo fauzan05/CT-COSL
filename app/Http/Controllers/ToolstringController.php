@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ToolstringCategoryModel;
+use App\Models\ToolstringItemModel;
 use Illuminate\Http\Request;
 
 class ToolstringController extends Controller
@@ -55,7 +56,7 @@ class ToolstringController extends Controller
         // Return the updated category
         return response()->json($category);
     }
-    
+
     public function deleteCategory($id)
     {
         // Find the category by ID
@@ -66,5 +67,44 @@ class ToolstringController extends Controller
 
         // Return a success response
         return response()->json(['message' => 'Category deleted successfully'], 204);
+    }
+
+    public function getItems()
+    {
+        // Retrieve all toolstring items
+        $items = ToolstringItemModel::with('category')->get();
+
+        // Return the items
+        return response()->json($items);
+    }
+
+    public function storeItem(Request $request)
+    {
+        // Validate input
+        $validatedData = $request->validate([
+            'toolstring_category_id' => 'required|exists:toolstring_categories,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|file|image|max:3072',
+            'manufacturer' => 'nullable|string',
+            'outer_diameter' => 'nullable|numeric',
+            'inner_diameter' => 'nullable|numeric',
+            'length' => 'nullable|numeric',
+            'comment' => 'nullable|string',
+        ]);
+
+        // Handle file upload
+        if ($request->hasFile('image')) {
+            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('public/assets/images/toolstring_items/', $filename);
+
+            // Simpan hanya nama file
+            $validatedData['image'] = $filename;
+        }
+
+        // Create
+        $item = ToolstringItemModel::create($validatedData);
+
+        return response()->json($item, 201);
     }
 }

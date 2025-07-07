@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('toolstring_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('toolstring_category_id')
+                ->constrained('toolstring_categories')
+                ->onDelete('cascade');
+            $table->string('name');
             $table->string('description');
             $table->string('image');
             $table->string('manufacturer');
@@ -21,7 +25,9 @@ return new class extends Migration
             $table->decimal('length', 8, 2)->nullable();
             $table->string('comment');
             $table->timestamp('created_at')->useCurrent();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->softDeletes();
         });
     }

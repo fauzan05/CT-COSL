@@ -468,7 +468,7 @@ const sidebarItems = computed(() => [
         children: appStore.toolstringCategories.map(category => ({
             id: category.id,
             name: category.name,
-            path: `/toolstring-coiled-tubing/${category.slug}`,
+            path: `/toolstring-coiled-tubing/${category.slug}/${category.id}`,
             icon: 'fa-folder'
         })),
     },
