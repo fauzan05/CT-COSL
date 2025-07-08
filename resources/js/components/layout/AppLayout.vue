@@ -57,9 +57,28 @@
                     <!-- Navigation -->
                     <nav class="space-y-2 flex-1 overflow-y-auto pb-20">
                         <div v-for="(item, index) in sidebarItems" :key="index">
-                            <button @click="toggleDropdown(index)"
+                            <RouterLink v-if="item.name !== 'Toolstring Coiled Tubing'"
+                            :to="item.path"
+                            class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
+    hover:bg-blue-500 hover:text-white
+    dark:hover:bg-white/10 dark:hover:text-blue-500
+    transition-colors duration-200" :class="isActive(item.path)
+        ? 'bg-blue-500 text-white dark:bg-white/10 dark:text-blue-500'
+        : 'text-gray-700 dark:text-white'"
+                            >
+                            <div class="flex items-center">
+                                    <i class="mx-3 fa-solid transition-colors duration-200" :class="[
+                                        item.icon,
+                                        isActive(item.path)
+                                            ? 'text-white dark:text-blue-500'
+                                            : 'group-hover:text-white dark:group-hover:text-blue-500'
+                                    ]"></i>
+                                    <span v-show="!isSidebarCollapsed">{{ item.name }}</span>
+                                </div>
+                            </RouterLink>
+                            <button v-else @click="toggleDropdown(index)"
                                 @contextmenu.prevent="item.name === 'Toolstring Coiled Tubing' && openContextMenu($event, true, false, false)"
-                                class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
+                                :to="item.path" class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
     hover:bg-blue-500 hover:text-white
     dark:hover:bg-white/10 dark:hover:text-blue-500
     transition-colors duration-200" :class="isActive(item.path)
@@ -407,6 +426,9 @@ const sidebarItems = computed(() => [
         })),
     },
     { name: 'Wellstack', path: '/wellstack', icon: 'fa-oil-well' },
+    { name: 'Nitrogen', path: '/nitrogen', icon: 'fa-flask' },
+    { name: 'Coiled Tubing', path: '/coiled-tubing', icon: 'fa-circle' },
+    { name: 'Reporting', path: '/reporting', icon: 'fa-file-lines' },
     { name: 'Users', path: '/users', icon: 'fa-user' },
     { name: 'Settings', path: '/settings', icon: 'fa-gear' },
 ]);

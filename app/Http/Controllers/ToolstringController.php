@@ -38,7 +38,7 @@ class ToolstringController extends Controller
     public function getCategories()
     {
         // Retrieve all categories
-        $categories = ToolstringCategoryModel::all();
+        $categories = ToolstringCategoryModel::orderBy('name', 'asc')->get();;
 
         // Return the categories
         return response()->json($categories);
