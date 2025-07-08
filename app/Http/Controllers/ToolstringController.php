@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ToolstringCategoryModel;
+use App\Models\ToolstringItemDimensionModel;
 use App\Models\ToolstringItemModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -128,89 +130,168 @@ class ToolstringController extends Controller
                 : null;
             $item->status = is_null($item->deleted_at) ? 'active' : 'inactive';
             $item->updated_by_name = $item->updatedByUser ? $item->updatedByUser->fullname : null;
+            $item->dimension_sets = ToolstringItemDimensionModel::where('toolstring_item_id', $item->id)
+                ->get()
+                ->map(function ($dimension) {
+                    return [
+                        'id' => $dimension->id,
+                        'outer_diameter' => [
+                            'value' => $dimension->outer_diameter,
+                            'unit' => $dimension->outer_diameter_unit,
+                        ],
+                        'inner_diameter' => [
+                            'value' => $dimension->inner_diameter,
+                            'unit' => $dimension->inner_diameter_unit,
+                        ],
+                        'length' => [
+                            'value' => $dimension->length,
+                            'unit' => $dimension->length_unit,
+                        ],
+                        'is_current' => true, // Assuming all dimensions are current
+                    ];
+                });
             return $item;
         });
 
         return response()->json($items);
     }
 
-
     public function storeItem(Request $request)
     {
-        // Validate input
-        $validatedData = $request->validate([
-            'toolstring_category_id' => 'required|exists:toolstring_categories,id',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|file|image|max:3072',
-            'outer_diameter' => 'nullable|numeric',
-            'outer_diameter_unit' => 'nullable|string|in:inch,mm,cm',
-            'inner_diameter' => 'nullable|numeric',
-            'inner_diameter_unit' => 'nullable|string|in:inch,mm,cm',
-            'length' => 'nullable|numeric',
-            'length_unit' => 'nullable|string|in:inch,mm,cm',
-        ]);
+        DB::transaction(function () use ($request) {
+            // Validate input
+            $validatedData = $request->validate([
+                'toolstring_category_id' => 'required|exists:toolstring_categories,id',
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'image' => 'nullable|file|image|max:3072',
+                'dimension_sets' => 'nullable|json', // Assuming dimensions are sent as JSON
+            ]);
 
-        // Handle file upload
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $extension = $image->getClientOriginalExtension();
+            // Handle file upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $extension = $image->getClientOriginalExtension();
 
-            $filename = Str::random(40) . '.' . $extension;
+                $filename = Str::random(40) . '.' . $extension;
 
-            $image->storeAs('public/assets/images/toolstring_items/', $filename);
+                $image->storeAs('public/assets/images/toolstring_items/', $filename);
 
-            // Simpan hanya nama file
-            $validatedData['image'] = $filename;
-        }
+                // Simpan hanya nama file
+                $validatedData['image'] = $filename;
+            }
 
-        // Set created_by and updated_by fields
-        $validatedData['created_by'] = $request->user()->id; // Assuming the user is authenticated
-        $validatedData['updated_by'] = $request->user()->id; // Assuming the user is authenticated
+            // Set created_by and updated_by fields
+            $validatedData['created_by'] = $request->user()->id; // Assuming the user is authenticated
+            $validatedData['updated_by'] = $request->user()->id; // Assuming the user is authenticated
 
-        // Create
-        $item = ToolstringItemModel::create($validatedData);
+            // Create
+            $item = ToolstringItemModel::create($validatedData);
 
-        return response()->json($item, 201);
+            // Handle dimensions if provided
+            if ($request->filled('dimension_sets')) {
+                $dimensionSets = json_decode($request->dimension_sets);
+                $dimensionsData = [];
+
+                foreach ($dimensionSets as $dimension) {
+                    $dimensionsData[] = [
+                        'toolstring_item_id'    => $item->id,
+                        'outer_diameter'        => $dimension->outer_diameter->value ?? null,
+                        'outer_diameter_unit'   => $dimension->outer_diameter->unit ?? null,
+                        'inner_diameter'        => $dimension->inner_diameter->value ?? null,
+                        'inner_diameter_unit'   => $dimension->inner_diameter->unit ?? null,
+                        'length'                => $dimension->length->value ?? null,
+                        'length_unit'           => $dimension->length->unit ?? null,
+                        'created_at'            => now(),
+                        'created_by'            => $request->user()->id, // Assuming the user is authenticated
+                        'updated_at'            => now(),
+                        'updated_by'            => $request->user()->id, // Assuming the user is authenticated
+                    ];
+                }
+
+                ToolstringItemDimensionModel::insert($dimensionsData);
+            }
+
+            return response()->json($item, 201);
+        });
     }
 
     public function updateItem(Request $request, $id)
     {
-        // Validate input
-        $validatedData = $request->validate([
-            'toolstring_category_id' => 'required|exists:toolstring_categories,id',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|file|image|max:3072',
-            'outer_diameter' => 'nullable|numeric',
-            'outer_diameter_unit' => 'nullable|string|in:inch,mm,cm',
-            'inner_diameter' => 'nullable|numeric',
-            'inner_diameter_unit' => 'nullable|string|in:inch,mm,cm',
-            'length' => 'nullable|numeric',
-            'length_unit' => 'nullable|string|in:inch,mm,cm',
-        ]);
+        DB::transaction(function () use ($request, $id) {
+            // Validate input
+            $validatedData = $request->validate([
+                'toolstring_category_id' => 'required|exists:toolstring_categories,id',
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'image' => 'nullable|file|image|max:3072',
+                'dimension_sets' => 'nullable|json', // Assuming dimensions are sent as JSON
+                'dimension_sets_deleted_ids' => 'nullable|json', // IDs of dimensions to delete
+            ]);
 
-        // Find the item
-        $item = ToolstringItemModel::findOrFail($id);
+            // Find the item
+            $item = ToolstringItemModel::findOrFail($id);
 
-        // Handle file upload
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $extension = $image->getClientOriginalExtension();
+            // Handle file upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $extension = $image->getClientOriginalExtension();
 
-            $filename = Str::random(40) . '.' . $extension;
+                $filename = Str::random(40) . '.' . $extension;
 
-            $image->storeAs('public/assets/images/toolstring_items/', $filename);
+                $image->storeAs('public/assets/images/toolstring_items/', $filename);
 
-            // Simpan hanya nama file
-            $validatedData['image'] = $filename;
-        }
+                // Simpan hanya nama file
+                $validatedData['image'] = $filename;
+            }
 
-        // Update fields
-        $item->fill($validatedData);
-        $item->updated_by = $request->user()->id; // Assuming the user is authenticated
-        $item->save();
+            if ($request->filled('dimension_sets')) {
+                $dimensionSets = json_decode($request->dimension_sets);
+                foreach ($dimensionSets as $dimension) {
+                    if (!$dimension->is_current) {
+                        ToolstringItemDimensionModel::create([
+                            'toolstring_item_id'    => $item->id,
+                            'outer_diameter'        => $dimension->outer_diameter->value ?? null,
+                            'outer_diameter_unit'   => $dimension->outer_diameter->unit ?? null,
+                            'inner_diameter'        => $dimension->inner_diameter->value ?? null,
+                            'inner_diameter_unit'   => $dimension->inner_diameter->unit ?? null,
+                            'length'                => $dimension->length->value ?? null,
+                            'length_unit'           => $dimension->length->unit ?? null,
+                            'created_at'            => now(),
+                            'created_by'            => $request->user()->id, // Assuming the user is authenticated
+                            'updated_at'            => now(),
+                            'updated_by'            => $request->user()->id, // Assuming the user is authenticated
+                        ]);
+                    } else {
+                        // update dimension
+                        $toolstringItemDimension = ToolstringItemDimensionModel::find($dimension->id);
+                        if ($toolstringItemDimension) {
+                            $toolstringItemDimension->outer_diameter = $dimension->outer_diameter->value ?? null;
+                            $toolstringItemDimension->outer_diameter_unit = $dimension->outer_diameter->unit ?? null;
+                            $toolstringItemDimension->inner_diameter = $dimension->inner_diameter->value ?? null;
+                            $toolstringItemDimension->inner_diameter_unit = $dimension->inner_diameter->unit ?? null;
+                            $toolstringItemDimension->length = $dimension->length->value ?? null;
+                            $toolstringItemDimension->length_unit = $dimension->length->unit ?? null;
+                            $toolstringItemDimension->updated_at = now();
+                            $toolstringItemDimension->updated_by = $request->user()->id; // Assuming the user is authenticated
+                            $toolstringItemDimension->save();
+                        }
+                    }
+                }
+            }
 
-        return response()->json($item);
+            // Handle deletion of dimensions
+            if ($request->filled('dimension_sets_deleted_ids')) {
+                $deletedIds = json_decode($request->dimension_sets_deleted_ids);
+                ToolstringItemDimensionModel::whereIn('id', $deletedIds)->delete();
+            }
+
+            // Update fields
+            $item->fill($validatedData);
+            $item->updated_by = $request->user()->id; // Assuming the user is authenticated
+            $item->save();
+
+            return response()->json($item);
+        });
     }
 }

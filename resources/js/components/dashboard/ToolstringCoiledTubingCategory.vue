@@ -93,169 +93,208 @@
                                                 class="w-full px-3 py-2 dark:text-white border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                 required></textarea>
                                         </div>
-                                        <!-- Dimensions with Units -->
+                                        <!-- Dynamic Dimensions Sets with Add/Remove functionality -->
                                         <div class="mb-6">
-                                            <h3 class="text-sm font-medium text-gray-700 mb-4 dark:text-white">Dimensions
-                                            </h3>
+                                            <div class="flex items-center justify-between mb-4">
+                                                <h3 class="text-sm font-medium text-gray-700 dark:text-white">Dimensions
+                                                </h3>
+                                                <button @click="addDimensionSet" type="button"
+                                                    class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                                    <PlusIcon class="h-4 w-4 mr-1" />
+                                                    Add Dimension Set
+                                                </button>
+                                            </div>
 
-                                            <!-- Outer Diameter -->
-                                            <div class="mb-4 flex items-center space-x-4">
-                                                <div class="flex-1">
-                                                    <label for="outer_diameter"
-                                                        class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                        Outer Diameter
-                                                    </label>
-                                                    <div class="flex space-x-2">
-                                                        <input type="number" id="outer_diameter"
-                                                            v-model="itemForm.outer_diameter.value"
-                                                            class="w-full px-3 py-2 dark:text-white border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                            required>
-                                                        <Listbox v-model="itemForm.outer_diameter.unit" as="div"
-                                                            class="relative">
-                                                            <ListboxButton
-                                                                class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-800 py-2 pl-3 pr-10 text-left border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                                                <span class="block truncate dark:text-white">{{
-                                                                    itemForm.outer_diameter.unit }}</span>
-                                                                <span
-                                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                                    <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
-                                                                        aria-hidden="true" />
-                                                                </span>
-                                                            </ListboxButton>
-                                                            <transition leave-active-class="transition duration-100 ease-in"
-                                                                leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                                                <ListboxOptions
-                                                                    class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
-                                                                    <ListboxOption v-for="unit in units" :key="unit"
-                                                                        :value="unit" v-slot="{ active, selected }">
-                                                                        <li :class="[
-                                                                            active ? 'bg-blue-600 text-white' : 'text-gray-900 dark:text-white',
-                                                                            'relative cursor-pointer select-none py-2 pl-3 pr-9'
-                                                                        ]">
-                                                                            <span
-                                                                                :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
-                                                                                {{ unit }}
-                                                                            </span>
-                                                                            <span v-if="selected" :class="[
-                                                                                active ? 'text-white' : 'text-blue-600',
-                                                                                'absolute inset-y-0 right-0 flex items-center pr-4'
+                                            <!-- Dynamic Dimension Sets List -->
+                                            <div class="space-y-6">
+                                                <div v-for="(dimensionSet, setIndex) in itemForm.dimensionSets"
+                                                    :key="dimensionSet.id"
+                                                    class="relative p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                                                    <!-- Header with Set Number and Remove Button -->
+                                                    <div class="flex items-center justify-between mb-4">
+                                                        <h4 class="text-sm font-semibold text-gray-700 dark:text-white">
+                                                            Dimension Set {{ setIndex + 1 }}
+                                                        </h4>
+                                                        <button v-if="itemForm.dimensionSets.length > 1"
+                                                            @click="removeDimensionSet(setIndex)" type="button"
+                                                            class="text-gray-400 hover:text-red-500 transition-colors duration-200"
+                                                            :title="'Remove dimension set'">
+                                                            <XMarkIcon class="h-5 w-5" />
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- Outer Diameter -->
+                                                    <div class="mb-4">
+                                                        <label :for="`outer_diameter_${setIndex}`"
+                                                            class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                            Outer Diameter
+                                                        </label>
+                                                        <div class="flex space-x-2">
+                                                            <input :id="`outer_diameter_${setIndex}`" type="text"
+                                                                :value="dimensionSet.outer_diameter.value"
+                                                                class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                                @input="handleDecimalInput($event, setIndex, 'outer_diameter')"
+                                                                placeholder="Enter outer diameter" required>
+                                                            <Listbox v-model="dimensionSet.outer_diameter.unit" as="div"
+                                                                class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                                                    <span class="block truncate dark:text-white">{{
+                                                                        dimensionSet.outer_diameter.unit }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
+                                                                        <ListboxOption v-for="unit in units" :key="unit"
+                                                                            :value="unit" v-slot="{ active, selected }">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-600 text-white' : 'text-gray-900 dark:text-white',
+                                                                                'relative cursor-pointer select-none py-2 pl-3 pr-9'
                                                                             ]">
-                                                                                <CheckIcon class="h-5 w-5"
-                                                                                    aria-hidden="true" />
-                                                                            </span>
-                                                                        </li>
-                                                                    </ListboxOption>
-                                                                </ListboxOptions>
-                                                            </transition>
-                                                        </Listbox>
+                                                                                <span
+                                                                                    :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit }}
+                                                                                </span>
+                                                                                <span v-if="selected" :class="[
+                                                                                    active ? 'text-white' : 'text-blue-600',
+                                                                                    'absolute inset-y-0 right-0 flex items-center pr-4'
+                                                                                ]">
+                                                                                    <CheckIcon class="h-5 w-5"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </Listbox>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Inner Diameter -->
+                                                    <div class="mb-4">
+                                                        <label :for="`inner_diameter_${setIndex}`"
+                                                            class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                            Inner Diameter
+                                                        </label>
+                                                        <div class="flex space-x-2">
+                                                            <input :id="`inner_diameter_${setIndex}`" type="text"
+                                                                :value="dimensionSet.inner_diameter.value"
+                                                                class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                                @input="handleDecimalInput($event, setIndex, 'inner_diameter')"
+                                                                placeholder="Enter inner diameter" required>
+                                                            <Listbox v-model="dimensionSet.inner_diameter.unit" as="div"
+                                                                class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                                                    <span class="block truncate dark:text-white">{{
+                                                                        dimensionSet.inner_diameter.unit }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
+                                                                        <ListboxOption v-for="unit in units" :key="unit"
+                                                                            :value="unit" v-slot="{ active, selected }">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-600 text-white' : 'text-gray-900 dark:text-white',
+                                                                                'relative cursor-pointer select-none py-2 pl-3 pr-9'
+                                                                            ]">
+                                                                                <span
+                                                                                    :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit }}
+                                                                                </span>
+                                                                                <span v-if="selected" :class="[
+                                                                                    active ? 'text-white' : 'text-blue-600',
+                                                                                    'absolute inset-y-0 right-0 flex items-center pr-4'
+                                                                                ]">
+                                                                                    <CheckIcon class="h-5 w-5"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </Listbox>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Length -->
+                                                    <div class="mb-4">
+                                                        <label :for="`length_${setIndex}`"
+                                                            class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                            Length
+                                                        </label>
+                                                        <div class="flex space-x-2">
+                                                            <input :id="`length_${setIndex}`" type="text"
+                                                                :value="dimensionSet.length.value"
+                                                                class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                                @input="handleDecimalInput($event, setIndex, 'length')"
+                                                                placeholder="Enter length">
+                                                            <Listbox v-model="dimensionSet.length.unit" as="div"
+                                                                class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                                                    <span class="block truncate dark:text-white">{{
+                                                                        dimensionSet.length.unit }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
+                                                                        <ListboxOption v-for="unit in units" :key="unit"
+                                                                            :value="unit" v-slot="{ active, selected }">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-600 text-white' : 'text-gray-900 dark:text-white',
+                                                                                'relative cursor-pointer select-none py-2 pl-3 pr-9'
+                                                                            ]">
+                                                                                <span
+                                                                                    :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit }}
+                                                                                </span>
+                                                                                <span v-if="selected" :class="[
+                                                                                    active ? 'text-white' : 'text-blue-600',
+                                                                                    'absolute inset-y-0 right-0 flex items-center pr-4'
+                                                                                ]">
+                                                                                    <CheckIcon class="h-5 w-5"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </Listbox>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <!-- Inner Diameter -->
-                                            <div class="mb-4 flex items-center space-x-4">
-                                                <div class="flex-1">
-                                                    <label for="inner_diameter"
-                                                        class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                        Inner Diameter
-                                                    </label>
-                                                    <div class="flex space-x-2">
-                                                        <input type="number" id="inner_diameter"
-                                                            v-model="itemForm.inner_diameter.value"
-                                                            class="w-full px-3 py-2 dark:text-white border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                            required>
-                                                        <Listbox v-model="itemForm.inner_diameter.unit" as="div"
-                                                            class="relative">
-                                                            <ListboxButton
-                                                                class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-800 py-2 pl-3 pr-10 text-left border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                                                <span class="block truncate dark:text-white">{{
-                                                                    itemForm.inner_diameter.unit }}</span>
-                                                                <span
-                                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                                    <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
-                                                                        aria-hidden="true" />
-                                                                </span>
-                                                            </ListboxButton>
-                                                            <transition leave-active-class="transition duration-100 ease-in"
-                                                                leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                                                <ListboxOptions
-                                                                    class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-base shadow-lgfocus:outline-none sm:text-sm">
-                                                                    <ListboxOption v-for="unit in units" :key="unit"
-                                                                        :value="unit" v-slot="{ active, selected }">
-                                                                        <li :class="[
-                                                                            active ? 'bg-blue-600 text-white' : 'text-gray-900 dark:text-white',
-                                                                            'relative cursor-pointer select-none py-2 pl-3 pr-9'
-                                                                        ]">
-                                                                            <span
-                                                                                :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
-                                                                                {{ unit }}
-                                                                            </span>
-                                                                            <span v-if="selected" :class="[
-                                                                                active ? 'text-white' : 'text-blue-600',
-                                                                                'absolute inset-y-0 right-0 flex items-center pr-4'
-                                                                            ]">
-                                                                                <CheckIcon class="h-5 w-5"
-                                                                                    aria-hidden="true" />
-                                                                            </span>
-                                                                        </li>
-                                                                    </ListboxOption>
-                                                                </ListboxOptions>
-                                                            </transition>
-                                                        </Listbox>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Length -->
-                                            <div class="mb-4 flex items-center space-x-4">
-                                                <div class="flex-1">
-                                                    <label for="length"
-                                                        class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                        Length
-                                                    </label>
-                                                    <div class="flex space-x-2">
-                                                        <input type="number" id="length" v-model="itemForm.length.value"
-                                                            class="w-full px-3 py-2 dark:text-white border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                            required>
-                                                        <Listbox v-model="itemForm.length.unit" as="div" class="relative">
-                                                            <ListboxButton
-                                                                class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-800 py-2 pl-3 pr-10 text-left border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                                                <span class="block truncate dark:text-white">{{
-                                                                    itemForm.length.unit }}</span>
-                                                                <span
-                                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                                    <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
-                                                                        aria-hidden="true" />
-                                                                </span>
-                                                            </ListboxButton>
-                                                            <transition leave-active-class="transition duration-100 ease-in"
-                                                                leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                                                <ListboxOptions
-                                                                    class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
-                                                                    <ListboxOption v-for="unit in units" :key="unit"
-                                                                        :value="unit" v-slot="{ active, selected }">
-                                                                        <li :class="[
-                                                                            active ? 'bg-blue-600 text-white' : 'text-gray-900 dark:text-white',
-                                                                            'relative cursor-pointer select-none py-2 pl-3 pr-9'
-                                                                        ]">
-                                                                            <span
-                                                                                :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
-                                                                                {{ unit }}
-                                                                            </span>
-                                                                            <span v-if="selected" :class="[
-                                                                                active ? 'text-white' : 'text-blue-600',
-                                                                                'absolute inset-y-0 right-0 flex items-center pr-4'
-                                                                            ]">
-                                                                                <CheckIcon class="h-5 w-5"
-                                                                                    aria-hidden="true" />
-                                                                            </span>
-                                                                        </li>
-                                                                    </ListboxOption>
-                                                                </ListboxOptions>
-                                                            </transition>
-                                                        </Listbox>
-                                                    </div>
-                                                </div>
+                                            <!-- Show message when no dimension sets -->
+                                            <div v-if="itemForm.dimensionSets.length === 0"
+                                                class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                                <p>No dimension sets added yet. Click "Add Dimension Set" to get started.
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -486,7 +525,7 @@ import {
     ListboxOption,
 } from '@headlessui/vue';
 
-import { ChevronUpDownIcon, CheckIcon } from '@heroicons/vue/20/solid';
+import { ChevronUpDownIcon, CheckIcon, PlusIcon, XMarkIcon } from '@heroicons/vue/20/solid';
 import Pagination from '@/components/Pagination.vue';
 import { useAppStore } from '@/stores/useAppStore';
 
@@ -520,6 +559,7 @@ const dataPerPages = ref(0);
 const itemImage = ref(null);
 const uploadedItemImageFile = ref(null);
 const dragover = ref(false);
+const nextSetId = ref(2); // For adding new dimension sets
 
 // ========== FILTER OPTIONS ==========
 const sortByItems = [
@@ -554,9 +594,15 @@ const itemForm = ref({
     name: '',
     description: '',
     image: null,
-    outer_diameter: { value: '', unit: 'inch' },
-    inner_diameter: { value: '', unit: 'inch' },
-    length: { value: '', unit: 'inch' },
+    dimensionSets: [
+        {
+            id: 0,
+            outer_diameter: { value: '', unit: 'mm' },
+            inner_diameter: { value: '', unit: 'mm' },
+            length: { value: '', unit: 'mm' },
+        }
+    ],
+    dimension_sets_deleted_ids: [],
 });
 
 // ========== COMPUTED ==========
@@ -573,12 +619,16 @@ function openModal(selectedItem = null) {
         itemForm.value.id = selectedItem.id;
         itemForm.value.name = selectedItem.name;
         itemForm.value.description = selectedItem.description;
-        itemForm.value.outer_diameter.value = selectedItem.outer_diameter || 0;
-        itemForm.value.outer_diameter.unit = selectedItem.outer_diameter_unit || 'inch';
-        itemForm.value.inner_diameter.value = selectedItem.inner_diameter || 0;
-        itemForm.value.inner_diameter.unit = selectedItem.inner_diameter_unit || 'inch';
-        itemForm.value.length.value = selectedItem.length || 0;
-        itemForm.value.length.unit = selectedItem.length_unit || 'inch';
+        itemForm.value.dimensionSets = selectedItem.dimension_sets || [
+            {
+                id: 0,
+                outer_diameter: { value: '', unit: 'mm' },
+                inner_diameter: { value: '', unit: 'mm' },
+                length: { value: '', unit: 'mm' },
+                is_current: false,
+            }
+        ];
+        console.log(itemForm.value.dimensionSets);
         itemForm.value.image = selectedItem.image || null;
         itemImage.value = selectedItem.image_url || null;
         titleModal.value = 'Edit Item';
@@ -603,9 +653,16 @@ function resetForm() {
         name: '',
         description: '',
         image: null,
-        outer_diameter: { value: '', unit: 'inch' },
-        inner_diameter: { value: '', unit: 'inch' },
-        length: { value: '', unit: 'inch' },
+        dimensionSets: [
+            {
+                id: 0,
+                outer_diameter: { value: '', unit: 'mm' },
+                inner_diameter: { value: '', unit: 'mm' },
+                length: { value: '', unit: 'mm' },
+                is_current: false
+            }
+        ],
+        dimension_sets_deleted_ids: [],
     };
     itemImage.value = null;
 }
@@ -718,12 +775,7 @@ const saveItem = async () => {
         formData.append('toolstring_category_id', categoryId.value);
         formData.append('name', itemForm.value.name);
         formData.append('description', itemForm.value.description);
-        formData.append('outer_diameter', itemForm.value.outer_diameter.value);
-        formData.append('outer_diameter_unit', itemForm.value.outer_diameter.unit);
-        formData.append('inner_diameter', itemForm.value.inner_diameter.value);
-        formData.append('inner_diameter_unit', itemForm.value.inner_diameter.unit);
-        formData.append('length', itemForm.value.length.value);
-        formData.append('length_unit', itemForm.value.length.unit);
+        formData.append('dimension_sets', JSON.stringify(getDimensionSetsData()));
 
         if (uploadedItemImageFile.value) {
             const response = await fetch(itemImage.value);
@@ -733,6 +785,17 @@ const saveItem = async () => {
             });
             formData.append('image', file);
         }
+
+        if (itemForm.value.dimension_sets_deleted_ids.length > 0) {
+            formData.append('dimension_sets_deleted_ids', JSON.stringify(itemForm.value.dimension_sets_deleted_ids));
+        }
+
+        // formData.forEach((value, key) => {
+        //     console.log(`${key}: ${value}`);
+        // });
+
+        // let dimension = getDimensionSetsData()
+        // console.log('Dimension Summary:', dimension);
 
         if (isCreateNewItem.value) {
             await axios.post(`${baseUrl}/api/toolstring-items`, formData, {
@@ -772,6 +835,95 @@ const formatDate = (utcDateString) => {
     };
     return date.toLocaleString('en-US', options).replace(',', '').replace(',', ' at');
 };
+
+function handleDecimalInput(event, setIndex, fieldName) {
+    const value = event.target.value;
+    // Allow only numbers and decimal point
+    let sanitizedValue = value.replace(/[^0-9.]/g, '');
+
+    // Prevent multiple decimal points
+    const parts = sanitizedValue.split('.');
+    if (parts.length > 2) {
+        sanitizedValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+    itemForm.value.dimensionSets[setIndex][fieldName].value = sanitizedValue;
+    event.target.value = sanitizedValue;
+}
+
+// ========== FUNCTIONS: DIMENSIONS ==========
+function addDimensionSet() {
+    itemForm.value.dimensionSets.push({
+        outer_diameter: {
+            value: '',
+            unit: 'mm'
+        },
+        inner_diameter: {
+            value: '',
+            unit: 'mm'
+        },
+        length: {
+            value: '',
+            unit: 'mm'
+        },
+        is_current: false
+    });
+}
+
+function removeDimensionSet(setIndex) {
+    if (itemForm.value.dimensionSets.length > 1) {
+        const deletedId = itemForm.value.dimensionSets[setIndex].id;
+        if (deletedId && deletedId > 0) {
+            // Catat untuk dihapus di server
+            itemForm.value.dimension_sets_deleted_ids.push(deletedId);
+        }
+
+        itemForm.value.dimensionSets.splice(setIndex, 1);
+    }
+}
+
+function getDimensionSetsData() {
+    return itemForm.value.dimensionSets.map((set, index) => ({
+        id: set.id || 0,
+        outer_diameter: {
+            value: parseFloat(set.outer_diameter.value) || 0,
+            unit: set.outer_diameter.unit
+        },
+        inner_diameter: {
+            value: parseFloat(set.inner_diameter.value) || 0,
+            unit: set.inner_diameter.unit
+        },
+        length: {
+            value: parseFloat(set.length.value) || 0,
+            unit: set.length.unit
+        },
+        is_current: set.is_current || false,
+    }));
+}
+
+function validateDimensionSets() {
+    return itemForm.value.dimensionSets.every(set => {
+        const outerDiameterValid = set.outer_diameter.value &&
+            set.outer_diameter.value.trim() !== '' &&
+            !isNaN(parseFloat(set.outer_diameter.value));
+
+        const innerDiameterValid = set.inner_diameter.value &&
+            set.inner_diameter.value.trim() !== '' &&
+            !isNaN(parseFloat(set.inner_diameter.value));
+
+        // Length bisa optional, jadi tidak wajib diisi
+        const lengthValid = !set.length.value ||
+            (set.length.value.trim() !== '' && !isNaN(parseFloat(set.length.value)));
+
+        return outerDiameterValid && innerDiameterValid && lengthValid;
+    });
+}
+
+function getDimensionsSummary() {
+    return itemForm.value.dimensionSets.map((set, index) => {
+        return `Set ${--index}: OD=${set.outer_diameter.value}${set.outer_diameter.unit}, ID=${set.inner_diameter.value}${set.inner_diameter.unit}, L=${set.length.value}${set.length.unit}`;
+    });
+}
 
 // ========== WATCHERS ==========
 watch([selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, search, isDesc], () => { });

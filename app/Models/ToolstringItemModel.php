@@ -16,20 +16,11 @@ class ToolstringItemModel extends Model
         'name',
         'description',
         'image',
-        'outer_diameter',
-        'inner_diameter',
-        'length',
-        'outer_diameter_unit',
-        'inner_diameter_unit',
-        'length_unit',
         'created_by',
         'updated_by',
     ];
 
     protected $casts = [
-        'outer_diameter' => 'decimal:2',
-        'inner_diameter' => 'decimal:2',
-        'length' => 'decimal:2',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -43,5 +34,10 @@ class ToolstringItemModel extends Model
     public function updatedByUser()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function createdByUser()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }
