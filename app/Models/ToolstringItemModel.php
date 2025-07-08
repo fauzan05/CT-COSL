@@ -16,11 +16,14 @@ class ToolstringItemModel extends Model
         'name',
         'description',
         'image',
-        'manufacturer',
         'outer_diameter',
         'inner_diameter',
         'length',
-        'comment',
+        'outer_diameter_unit',
+        'inner_diameter_unit',
+        'length_unit',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
@@ -34,5 +37,11 @@ class ToolstringItemModel extends Model
     public function toolstringCategory()
     {
         return $this->belongsTo(ToolstringCategoryModel::class, 'toolstring_category_id');
+    }
+
+    // ToolstringItemModel.php
+    public function updatedByUser()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

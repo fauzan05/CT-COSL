@@ -19,7 +19,7 @@
                     class="fixed inset-0 z-30 bg-gray-900/50 backdrop-blur-sm md:hidden"></div>
             </Transition>
             <!-- Sidebar -->
-            <aside :class="[
+            <aside class="h-screen flex flex-col" :class="[
                 'fixed inset-y-0 left-0 z-40 transition-all duration-300 ease-in-out transform',
                 'dark:bg-slate-800 dark:text-white shadow-2xl bg-white',
                 isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
@@ -53,9 +53,9 @@
                     </div>
                 </div>
                 <!-- Sidebar Content -->
-                <div class="flex flex-col h-[calc(100vh-5rem)] overflow-y-auto mt-3">
+                <div class="flex flex-col flex-1  overflow-y-auto mt-3 h-screen">
                     <!-- Navigation -->
-                    <nav class="space-y-2">
+                    <nav class="space-y-2 flex-1 overflow-y-auto pb-20">
                         <div v-for="(item, index) in sidebarItems" :key="index">
                             <button @click="toggleDropdown(index)"
                                 @contextmenu.prevent="item.name === 'Toolstring Coiled Tubing' && openContextMenu($event, true, false, false)"
@@ -340,171 +340,220 @@
     </div>
 </template>
 <script setup>
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import SearchButton from '../modals/SearchButton.vue'
-import ToggleDarkMode from '../buttons/DarkModeToggle.vue'
-import { useCurrentUserStore } from '@/stores/CurrentUser'
-import { useAppStore } from '@/stores/useAppStore';
-import CategoryForm from '../modals/CategoryForm.vue'
-import { useToast } from 'vue-toastification'
-const toast = useToast()
+/* ==================== IMPORTS ==================== */
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
+import SearchButton from '../modals/SearchButton.vue';
+import ToggleDarkMode from '../buttons/DarkModeToggle.vue';
+import CategoryForm from '../modals/CategoryForm.vue';
+
+import { useCurrentUserStore } from '@/stores/CurrentUser';
+import { useAppStore } from '@/stores/useAppStore';
+
+
+/* ==================== STORES & LIBS ==================== */
 const appStore = useAppStore();
+const currentUserStore = useCurrentUserStore();
+const toast = useToast();
+const route = useRoute();
+
+
+/* ==================== CONSTANTS & STATIC ==================== */
 const baseUrl = document.querySelector('meta[name="base-url"]').content;
 const imgSrc = `${baseUrl}/assets/images/company/company-logo.png`;
-const showNotification = ref(false)
-const currentUserStore = useCurrentUserStore()
 
-watch(showNotification, (val) => {
-    if (val) {
-        setTimeout(() => {
-            showNotification.value = false
-        }, 3000)
-    }
-})
-const loading = ref(true)
-const route = useRoute()
-const isActive = (path) => {
-    return route.path.startsWith(path)
-}
-const isSidebarCollapsed = ref(false)
-const isMobileSidebarOpen = ref(false)
-const isNotificationDropdownOpen = ref(false)
-const isProfileDropdownOpen = ref(false)
-function openNotificationDropdown() {
-    isNotificationDropdownOpen.value = true
-}
-function openProfileDropdown() {
-    isProfileDropdownOpen.value = true
-}
-function closeNotificationDropdown(e) {
-    if (!e.target.closest('.dropdown-notification-wrapper')) {
-        isNotificationDropdownOpen.value = false
-    }
-}
-function closeProfileDropdown(e) {
-    if (!e.target.closest('.dropdown-profile-wrapper')) {
-        isProfileDropdownOpen.value = false
-    }
-}
-function toggleNotificationDropdown() {
-    isNotificationDropdownOpen.value = !isNotificationDropdownOpen.value
-    isProfileDropdownOpen.value = false
-}
-function toggleProfileDropdown() {
-    isProfileDropdownOpen.value = !isProfileDropdownOpen.value
-    isNotificationDropdownOpen.value = false
-}
-function toggleSidebar() {
-    isSidebarCollapsed.value = !isSidebarCollapsed.value
-}
-function toggleMobileSidebar() {
-    isMobileSidebarOpen.value = true
-    isSidebarCollapsed.value = false
-    isProfileDropdownOpen.value = false
-    isNotificationDropdownOpen.value = false
-}
-function closeMobileSidebar() {
-    isMobileSidebarOpen.value = false
-}
+
+/* ==================== STATE ==================== */
+const loading = ref(true);
+const isLoggingOut = ref(false);
+
+const isSidebarCollapsed = ref(false);
+const isMobileSidebarOpen = ref(false);
+
+const isNotificationDropdownOpen = ref(false);
+const isProfileDropdownOpen = ref(false);
+const showNotification = ref(false);
+
 const dropdownOpen = ref({});
-function toggleDropdown(index) {
-    dropdownOpen.value[index] = !dropdownOpen.value[index];
-    appStore.getToolstringCategories()
-}
+
 const contextMenu = ref({
     visible: false,
     x: 0,
     y: 0,
-})
-const showAddCategory = ref(false)
-const showRenameCategory = ref(false)
-const showDeleteCategory = ref(false)
-function openContextMenu(event, addCategory = false, renameCategory = false, deleteCategory = false, selectedCategory = null) {
-    contextMenu.value = {
-        visible: true,
-        x: event.clientX,
-        y: event.clientY,
-    }
-    document.addEventListener('click', closeContextMenu)
-    showAddCategory.value = addCategory
-    showRenameCategory.value = renameCategory
-    showDeleteCategory.value = deleteCategory
+});
 
-    if (selectedCategory) {
-        appStore.selectedCategoryData = selectedCategory
-    } else {
-        appStore.selectedCategoryData = null
-    }
-}
-function closeContextMenu() {
-    contextMenu.value.visible = false
-    document.removeEventListener('click', closeContextMenu)
-    appStore.selectedCategoryData = null
-}
-function handleAddCategory() {
-    // Ganti ini dengan pemanggilan modal / emit / router push, dll
-    appStore.isCategoryModalOpen = true
-    appStore.categoryFormAction = 'create'
-    closeContextMenu()
-}
-function handleRenameCategory() {
-    // Ganti ini dengan pemanggilan modal / emit / router push, dll
-    appStore.isCategoryModalOpen = true
-    appStore.categoryFormAction = 'update'
-    closeContextMenu()
-}
-function handleDeleteCategory() {
-    // Ganti ini dengan pemanggilan modal / emit / router push, dll
-    appStore.isCategoryModalOpen = true
-    appStore.categoryFormAction = 'delete'
-    closeContextMenu()
-}
+const showAddCategory = ref(false);
+const showRenameCategory = ref(false);
+const showDeleteCategory = ref(false);
+
+
+/* ==================== COMPUTED ==================== */
+const isActive = (path) => route.path.startsWith(path);
+
 const sidebarItems = computed(() => [
     { name: 'Dashboard', path: '/dashboard', icon: 'fa-home' },
     {
-        name: 'Toolstring Coiled Tubing', path: '/toolstring-coiled-tubing', icon: 'fa-screwdriver-wrench',
+        name: 'Toolstring Coiled Tubing',
+        path: '/toolstring-coiled-tubing',
+        icon: 'fa-screwdriver-wrench',
         children: appStore.toolstringCategories.map(category => ({
             id: category.id,
             name: category.name,
             path: `/toolstring-coiled-tubing/${category.slug}/${category.id}`,
-            icon: 'fa-folder'
+            icon: 'fa-folder',
         })),
     },
     { name: 'Wellstack', path: '/wellstack', icon: 'fa-oil-well' },
     { name: 'Users', path: '/users', icon: 'fa-user' },
     { name: 'Settings', path: '/settings', icon: 'fa-gear' },
-])
+]);
+
+
+/* ==================== WATCHERS ==================== */
+watch(showNotification, (val) => {
+    if (val) {
+        setTimeout(() => {
+            showNotification.value = false;
+        }, 3000);
+    }
+});
+
+
+/* ==================== LIFECYCLE HOOKS ==================== */
 onMounted(async () => {
     if (!currentUserStore.user) {
-        await currentUserStore.fetchUser()
+        await currentUserStore.fetchUser();
     }
-    await appStore.getToolstringCategories()
-    window.addEventListener('click', closeNotificationDropdown)
-    window.addEventListener('click', closeProfileDropdown)
-    loading.value = false
-})
+    await appStore.getToolstringCategories();
+
+    window.addEventListener('click', closeNotificationDropdown);
+    window.addEventListener('click', closeProfileDropdown);
+
+    loading.value = false;
+});
+
 onUnmounted(() => {
-    window.removeEventListener('click', closeNotificationDropdown)
-    window.removeEventListener('click', closeProfileDropdown)
-})
-const isLoggingOut = ref(false)
+    window.removeEventListener('click', closeNotificationDropdown);
+    window.removeEventListener('click', closeProfileDropdown);
+});
+
+
+/* ==================== DROPDOWN HANDLERS ==================== */
+function openNotificationDropdown() {
+    isNotificationDropdownOpen.value = true;
+}
+
+function openProfileDropdown() {
+    isProfileDropdownOpen.value = true;
+}
+
+function closeNotificationDropdown(e) {
+    if (!e.target.closest('.dropdown-notification-wrapper')) {
+        isNotificationDropdownOpen.value = false;
+    }
+}
+
+function closeProfileDropdown(e) {
+    if (!e.target.closest('.dropdown-profile-wrapper')) {
+        isProfileDropdownOpen.value = false;
+    }
+}
+
+function toggleNotificationDropdown() {
+    isNotificationDropdownOpen.value = !isNotificationDropdownOpen.value;
+    isProfileDropdownOpen.value = false;
+}
+
+function toggleProfileDropdown() {
+    isProfileDropdownOpen.value = !isProfileDropdownOpen.value;
+    isNotificationDropdownOpen.value = false;
+}
+
+
+/* ==================== SIDEBAR HANDLERS ==================== */
+function toggleSidebar() {
+    isSidebarCollapsed.value = !isSidebarCollapsed.value;
+}
+
+function toggleMobileSidebar() {
+    isMobileSidebarOpen.value = true;
+    isSidebarCollapsed.value = false;
+    isProfileDropdownOpen.value = false;
+    isNotificationDropdownOpen.value = false;
+}
+
+function closeMobileSidebar() {
+    isMobileSidebarOpen.value = false;
+}
+
+
+/* ==================== CATEGORY MENU HANDLERS ==================== */
+function toggleDropdown(index) {
+    dropdownOpen.value[index] = !dropdownOpen.value[index];
+    appStore.getToolstringCategories();
+}
+
+function openContextMenu(event, addCategory = false, renameCategory = false, deleteCategory = false, selectedCategory = null) {
+    contextMenu.value = {
+        visible: true,
+        x: event.clientX,
+        y: event.clientY,
+    };
+
+    document.addEventListener('click', closeContextMenu);
+
+    showAddCategory.value = addCategory;
+    showRenameCategory.value = renameCategory;
+    showDeleteCategory.value = deleteCategory;
+
+    appStore.selectedCategoryData = selectedCategory ?? null;
+}
+
+function closeContextMenu() {
+    contextMenu.value.visible = false;
+    document.removeEventListener('click', closeContextMenu);
+    appStore.selectedCategoryData = null;
+}
+
+function handleAddCategory() {
+    appStore.isCategoryModalOpen = true;
+    appStore.categoryFormAction = 'create';
+    closeContextMenu();
+}
+
+function handleRenameCategory() {
+    appStore.isCategoryModalOpen = true;
+    appStore.categoryFormAction = 'update';
+    closeContextMenu();
+}
+
+function handleDeleteCategory() {
+    appStore.isCategoryModalOpen = true;
+    appStore.categoryFormAction = 'delete';
+    closeContextMenu();
+}
+
+
+/* ==================== LOGOUT ==================== */
 async function logout() {
     try {
-        if (isLoggingOut.value) return // Hindari klik ganda
-        isLoggingOut.value = true
-        await axios.post(`${baseUrl}/api/logout`)
-        currentUserStore.user = null // Reset user store
-        appStore.toolstringCategories = [] // Reset categories store
-        appStore.selectedCategoryData = null // Reset selected category
-        toast.success('Logged out successfully!')
-        window.location.href = baseUrl + '/login';
+        if (isLoggingOut.value) return;
+        isLoggingOut.value = true;
+
+        await axios.post(`${baseUrl}/api/logout`);
+        currentUserStore.user = null;
+        appStore.toolstringCategories = [];
+        appStore.selectedCategoryData = null;
+
+        toast.success('Logged out successfully!');
+        window.location.href = `${baseUrl}/login`;
     } catch (err) {
-        console.error('Logout error:', err)
-        toast.error('Failed to log out. Please try again.')
+        console.error('Logout error:', err);
+        toast.error('Failed to log out. Please try again.');
     } finally {
-        isLoggingOut.value = false
+        isLoggingOut.value = false;
     }
 }
 </script>

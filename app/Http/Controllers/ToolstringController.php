@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ToolstringCategoryModel;
 use App\Models\ToolstringItemModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ToolstringController extends Controller
 {
@@ -23,6 +25,8 @@ class ToolstringController extends Controller
         $category = ToolstringCategoryModel::create([
             'name' => $request->name,
             'slug' => $slug,
+            'created_by' => $request->user()->id, // Assuming the user is authenticated
+            'updated_by' => $request->user()->id, // Assuming the user is authenticated
         ]);
 
         // Return the created category
@@ -38,6 +42,15 @@ class ToolstringController extends Controller
         return response()->json($categories);
     }
 
+    public function getCategory($id)
+    {
+        // Find the category by ID
+        $category = ToolstringCategoryModel::findOrFail($id);
+
+        // Return the category
+        return response()->json($category);
+    }
+
     public function updateCategory(Request $request, $id)
     {
         // Validate the request data
@@ -51,6 +64,7 @@ class ToolstringController extends Controller
         // Update the category
         $category->name = $request->name;
         $category->slug = str($request->name)->slug()->lower();
+        $category->updated_by = $request->user()->id; // Assuming the user is authenticated
         $category->save();
 
         // Return the updated category
@@ -69,14 +83,57 @@ class ToolstringController extends Controller
         return response()->json(['message' => 'Category deleted successfully'], 204);
     }
 
-    public function getItems()
+    public function getItems(Request $request)
     {
-        // Retrieve all toolstring items
-        $items = ToolstringItemModel::with('category')->get();
+        // Default pagination
+        $perPage = $request->input('per_page', 10);
 
-        // Return the items
+        // Query builder
+        $query = ToolstringItemModel::with(['toolstringCategory', 'updatedByUser']);
+
+        // Filter by category_id
+        if ($request->filled('category_id')) {
+            $query->where('toolstring_category_id', $request->input('category_id'));
+        }
+
+        // Optional search
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Optional status filter (active = not soft-deleted, inactive = soft-deleted)
+        if ($request->filled('status')) {
+            if ($request->input('status') === 'active') {
+                $query->whereNull('deleted_at');
+            } elseif ($request->input('status') === 'inactive') {
+                $query->onlyTrashed();
+            }
+        }
+
+        // Optional sorting
+        $sortBy = $request->input('sort_by', 'created_at');
+        $direction = $request->input('direction', 'desc');
+
+        $query->orderBy($sortBy, $direction);
+
+        // Paginate
+        $items = $query->paginate($perPage);
+        $items->getCollection()->transform(function ($item) {
+            $item->image_url = $item->image
+                ? Storage::url('assets/images/toolstring_items/' . $item->image)
+                : null;
+            $item->status = is_null($item->deleted_at) ? 'active' : 'inactive';
+            $item->updated_by_name = $item->updatedByUser ? $item->updatedByUser->fullname : null;
+            return $item;
+        });
+
         return response()->json($items);
     }
+
 
     public function storeItem(Request $request)
     {
@@ -86,25 +143,74 @@ class ToolstringController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|file|image|max:3072',
-            'manufacturer' => 'nullable|string',
             'outer_diameter' => 'nullable|numeric',
+            'outer_diameter_unit' => 'nullable|string|in:inch,mm,cm',
             'inner_diameter' => 'nullable|numeric',
+            'inner_diameter_unit' => 'nullable|string|in:inch,mm,cm',
             'length' => 'nullable|numeric',
-            'comment' => 'nullable|string',
+            'length_unit' => 'nullable|string|in:inch,mm,cm',
         ]);
 
         // Handle file upload
         if ($request->hasFile('image')) {
-            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
-            $request->file('image')->storeAs('public/assets/images/toolstring_items/', $filename);
+            $image = $request->file('image');
+            $extension = $image->getClientOriginalExtension();
+
+            $filename = Str::random(40) . '.' . $extension;
+
+            $image->storeAs('public/assets/images/toolstring_items/', $filename);
 
             // Simpan hanya nama file
             $validatedData['image'] = $filename;
         }
 
+        // Set created_by and updated_by fields
+        $validatedData['created_by'] = $request->user()->id; // Assuming the user is authenticated
+        $validatedData['updated_by'] = $request->user()->id; // Assuming the user is authenticated
+
         // Create
         $item = ToolstringItemModel::create($validatedData);
 
         return response()->json($item, 201);
+    }
+
+    public function updateItem(Request $request, $id)
+    {
+        // Validate input
+        $validatedData = $request->validate([
+            'toolstring_category_id' => 'required|exists:toolstring_categories,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|file|image|max:3072',
+            'outer_diameter' => 'nullable|numeric',
+            'outer_diameter_unit' => 'nullable|string|in:inch,mm,cm',
+            'inner_diameter' => 'nullable|numeric',
+            'inner_diameter_unit' => 'nullable|string|in:inch,mm,cm',
+            'length' => 'nullable|numeric',
+            'length_unit' => 'nullable|string|in:inch,mm,cm',
+        ]);
+
+        // Find the item
+        $item = ToolstringItemModel::findOrFail($id);
+
+        // Handle file upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $extension = $image->getClientOriginalExtension();
+
+            $filename = Str::random(40) . '.' . $extension;
+
+            $image->storeAs('public/assets/images/toolstring_items/', $filename);
+
+            // Simpan hanya nama file
+            $validatedData['image'] = $filename;
+        }
+
+        // Update fields
+        $item->fill($validatedData);
+        $item->updated_by = $request->user()->id; // Assuming the user is authenticated
+        $item->save();
+
+        return response()->json($item);
     }
 }

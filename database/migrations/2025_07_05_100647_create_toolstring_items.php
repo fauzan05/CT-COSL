@@ -19,11 +19,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('image');
-            $table->string('manufacturer');
             $table->decimal('outer_diameter', 8, 2)->nullable();
+            $table->string('outer_diameter_unit')->default('inch');
             $table->decimal('inner_diameter', 8, 2)->nullable();
+            $table->string('inner_diameter_unit')->default('inch');
             $table->decimal('length', 8, 2)->nullable();
-            $table->string('comment');
+            $table->string('length_unit')->default('inch');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

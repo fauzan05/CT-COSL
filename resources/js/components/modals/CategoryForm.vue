@@ -33,7 +33,7 @@
                                                 class="block me-3 text-sm font-medium text-gray-700 mb-2 dark:text-white">
                                                 Name
                                             </label>
-                                            <input type="text" id="name" v-model="categoryForm.name"
+                                            <input ref="nameInput" type="text" id="name" v-model="categoryForm.name"
                                                 class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                 required>
                                         </div>
@@ -82,91 +82,116 @@
     </TransitionRoot>
 </template>
 <script setup>
+/* ==================== IMPORTS ==================== */
 import { ref, computed, watch, nextTick } from 'vue';
 import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } from '@headlessui/vue';
 import { useAppStore } from '@/stores/useAppStore';
-import { useToast } from 'vue-toastification'
-const toast = useToast()
-const appStore = useAppStore();
+import { useToast } from 'vue-toastification';
 
+/* ==================== STORES & LIBS ==================== */
+const appStore = useAppStore();
+const toast = useToast();
+
+/* ==================== STATE ==================== */
 const loading = ref(false);
+const nameInput = ref(null);
 const baseUrl = document.querySelector('meta[name="base-url"]').content;
+
 const categoryForm = ref({
-    id: 0,
-    name: ""
+  id: 0,
+  name: "",
 });
 
-watch(() => appStore.selectedCategoryData, async (newVal) => {
-    if (newVal) {
-        categoryForm.value.id = newVal.id;
-        categoryForm.value.name = newVal.name;
-    }
-}, { immediate: true });
-
+/* ==================== COMPUTED ==================== */
 const modalTitle = computed(() => {
-    if (appStore.categoryFormAction === 'create') {
-        return 'Create New Category';
-    } else if (appStore.categoryFormAction === 'update') {
-        return 'Update Category';
-    } else {
-        return 'Delete Confirmation';
-    }
+  if (appStore.categoryFormAction === 'create') {
+    return 'Create New Category';
+  } else if (appStore.categoryFormAction === 'update') {
+    return 'Update Category';
+  } else {
+    return 'Delete Confirmation';
+  }
 });
 
 const titleButton = computed(() => {
-    if (appStore.categoryFormAction === 'create') {
-        return 'Add Category';
-    } else if (appStore.categoryFormAction === 'update') {
-        return 'Update Category';
-    } else {
-        return 'Delete Category';
-    }
+  if (appStore.categoryFormAction === 'create') {
+    return 'Add Category';
+  } else if (appStore.categoryFormAction === 'update') {
+    return 'Update Category';
+  } else {
+    return 'Delete Category';
+  }
 });
 
-const saveNewCategory = async () => {
-    try {
-        let message = '';
-        loading.value = true
-        if (appStore.categoryFormAction === 'update') {
-            message = `Category ${categoryForm.value.name} updated successfully!`
-            await axios.put(`${baseUrl}/api/toolstring-categories/${categoryForm.value.id}`, {
-                name: categoryForm.value.name,
-            });
-            await appStore.getToolstringCategories()
-            closeModal()
-            toast.success(message)
-            return
-        } else if (appStore.categoryFormAction === 'delete') {
-            message = `Category ${categoryForm.value.name} deleted successfully!`
-            await axios.delete(`${baseUrl}/api/toolstring-categories/${categoryForm.value.id}`);
-            await appStore.getToolstringCategories()
-            closeModal()
-            toast.success(message)
-            return
-        }
-        // Default action is create
-        await axios.post(`${baseUrl}/api/toolstring-categories`, {
-            name: categoryForm.value.name,
-        });
-        await appStore.getToolstringCategories()
-
-        message = `Category ${categoryForm.value.name} created successfully!`
-        closeModal()
-        toast.success(message)
-    } catch (error) {
-        console.error('Error creating category:', error)
-        toast.error('Failed to create category. Please try again.')
-    } finally {
-        loading.value = false
+/* ==================== WATCHERS ==================== */
+watch(
+  () => appStore.isCategoryModalOpen,
+  (isOpen) => {
+    if (isOpen && appStore.categoryFormAction !== 'delete') {
+      nextTick(() => {
+        nameInput.value?.focus();
+      });
     }
-}
+  }
+);
 
+watch(
+  () => appStore.selectedCategoryData,
+  (newVal) => {
+    if (newVal) {
+      categoryForm.value.id = newVal.id;
+      categoryForm.value.name = newVal.name;
+    }
+  },
+  { immediate: true }
+);
+
+/* ==================== METHODS ==================== */
 const closeModal = () => {
-    appStore.isCategoryModalOpen = false;
-    categoryForm.value.id = 0
-    categoryForm.value.name = ""
-}
+  appStore.isCategoryModalOpen = false;
+  categoryForm.value.id = 0;
+  categoryForm.value.name = "";
+};
 
+const saveNewCategory = async () => {
+  try {
+    loading.value = true;
+    let message = '';
+
+    if (appStore.categoryFormAction === 'update') {
+      message = `Category ${categoryForm.value.name} updated successfully!`;
+      await axios.put(`${baseUrl}/api/toolstring-categories/${categoryForm.value.id}`, {
+        name: categoryForm.value.name,
+      });
+      await appStore.getToolstringCategories();
+      closeModal();
+      toast.success(message);
+      return;
+    }
+
+    if (appStore.categoryFormAction === 'delete') {
+      message = `Category ${categoryForm.value.name} deleted successfully!`;
+      await axios.delete(`${baseUrl}/api/toolstring-categories/${categoryForm.value.id}`);
+      await appStore.getToolstringCategories();
+      closeModal();
+      toast.success(message);
+      return;
+    }
+
+    // Default: create
+    await axios.post(`${baseUrl}/api/toolstring-categories`, {
+      name: categoryForm.value.name,
+    });
+    await appStore.getToolstringCategories();
+    message = `Category ${categoryForm.value.name} created successfully!`;
+    closeModal();
+    toast.success(message);
+
+  } catch (error) {
+    console.error('Error saving category:', error);
+    toast.error('Failed to save category. Please try again.');
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
-<style lang="">
-</style>

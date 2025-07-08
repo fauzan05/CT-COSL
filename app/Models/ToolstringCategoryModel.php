@@ -14,6 +14,8 @@ class ToolstringCategoryModel extends Model
     protected $fillable = [
         'name',
         'slug',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [

@@ -33,6 +33,17 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
+// Storage files should not be routed to SPA
+Route::get('/image/{filename}', function ($filename) {
+    $path = base_path('storage/app/private/assets/images/' . $filename);
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path);
+});
+
 
 // Catch-all for frontend SPA (protected)
 Route::get('/{any}', function () {

@@ -6,7 +6,7 @@
         <div class="mb-8">
             <h1 class="text-2xl font-bold text-gray-800 dark:text-amber-50">Welcome back, {{
                 currentUserStore?.user?.fullname }}!</h1>
-            <p class="text-gray-600 dark:text-gray-400">Here's what's happening with Seblak Bombom today.</p>
+            <p class="text-gray-600 dark:text-gray-400">Here's what's happening with you today.</p>
         </div>
 
         <!-- Statistik Cards -->
