@@ -294,4 +294,21 @@ class ToolstringController extends Controller
             return response()->json($item);
         });
     }
+
+    public function deleteItem(Request $request)
+    {
+        // Get the IDs from the request
+        $ids = $request->input('ids', []);
+
+        // If no IDs are provided, return an error response
+        if (empty($ids)) {
+            return response()->json(['message' => 'No IDs provided'], 400);
+        }
+
+        // Soft delete the items
+        ToolstringItemModel::whereIn('id', $ids)->delete();
+
+        // Return a success response
+        return response()->json(['message' => 'Items deleted successfully'], 204);
+    }
 }

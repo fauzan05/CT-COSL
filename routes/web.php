@@ -26,7 +26,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/toolstring-items', [ToolstringController::class, 'storeItem'])->name('storeItem');
     Route::get('/api/toolstring-items', [ToolstringController::class, 'getItems'])->name('getItems');
     Route::put('/api/toolstring-items/{id}', [ToolstringController::class, 'updateItem'])->name('updateItem');
-    Route::delete('/api/toolstring-items/{id}', [ToolstringController::class, 'deleteItem'])->name('deleteItem');
+    Route::delete('/api/toolstring-items', [ToolstringController::class, 'deleteItem'])->name('deleteItem');
 
     // User management
     Route::get('/api/current-user', [AuthController::class, 'currentUser'])->name('currentUser');

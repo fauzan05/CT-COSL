@@ -2,7 +2,7 @@
     <head>
         <Title>Toolstring Coiled Tubing - {{ currentCategory?.name }}</Title>
     </head>
-    <!-- modal create new item -->
+    <!-- modal create/update item -->
     <TransitionRoot appear :show="isItemModalOpen" as="template">
         <Dialog as="div" @close="closeModal" class="relative z-50">
             <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100"
@@ -16,12 +16,15 @@
                         leave-to="opacity-0 scale-95">
                         <DialogPanel
                             class="relative w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
-                            <!-- Tombol silang di sudut kanan atas -->
+                            <!-- Close Button -->
                             <button @click="closeModal"
-                                class="absolute top-4 right-6 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white transition-colors text-2xl leading-none"
-                                aria-label="Close modal">
-                                &times;
-                            </button>
+                                    class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                    aria-label="Close modal">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
                             <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900 mb-4 dark:text-white">
                                 {{ titleModal }}
                             </DialogTitle>
@@ -332,6 +335,163 @@
             </div>
         </Dialog>
     </TransitionRoot>
+    <!-- modal Delete Confirmation Modal -->
+    <TransitionRoot appear :show="isDeleteItemModalOpen" as="template">
+        <Dialog as="div" @close="closeModal" class="relative z-50">
+            <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100"
+                leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
+                <div class="fixed inset-0 bg-black/70 backdrop-blur-md" />
+            </TransitionChild>
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                    <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95"
+                        enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100"
+                        leave-to="opacity-0 scale-95">
+                        <DialogPanel
+                            class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl transition-all border border-gray-200 dark:border-gray-700">
+
+                            <!-- Header Section -->
+                            <div class="px-8 pt-8 pb-6">
+                                <!-- Close Button -->
+                                <button @click="closeModal"
+                                    class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                    aria-label="Close modal">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+
+                                <!-- Warning Icon -->
+                                <div
+                                    class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
+                                    <svg class="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                    </svg>
+                                </div>
+
+                                <!-- Title -->
+                                <DialogTitle as="h3" class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                    Delete {{ itemsToDelete.length > 1 ? 'Items' : 'Item' }}
+                                </DialogTitle>
+
+                                <!-- Subtitle -->
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                                    This action cannot be undone. The following {{ itemsToDelete.length > 1 ? 'items' :
+                                        'item' }} will be permanently deleted.
+                                </p>
+                            </div>
+
+                            <!-- Items List Section -->
+                            <div class="px-8 pb-2">
+                                <div
+                                    class="max-h-60 overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                                    <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                                        <div v-for="(item, index) in itemsToDelete" :key="index"
+                                            class="flex items-center space-x-3 p-4 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-200">
+
+                                            <!-- Item Icon/Image -->
+                                            <div class="flex-shrink-0">
+                                                <div v-if="item.image"
+                                                    class="w-12 h-12 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+                                                    <img :src="item.image_url" :alt="item.name"
+                                                        class="w-full h-full object-contain">
+                                                </div>
+                                                <div v-else
+                                                    class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            <!-- Item Details -->
+                                            <div class="flex-1 min-w-0">
+                                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                                    {{ item.name }}
+                                                </h4>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                    {{ item.category || 'No category' }}
+                                                </p>
+                                                <div v-if="item.dimensions && item.dimensions.length > 0" class="mt-1">
+                                                    <span
+                                                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                                        {{ item.dimensions.length }} dimension{{ item.dimensions.length > 1
+                                                            ? 's' : '' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Status Indicator -->
+                                            <div class="flex-shrink-0">
+                                                <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Summary Info -->
+                                <div
+                                    class="mt-4 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <div class="text-sm text-red-800 dark:text-red-200">
+                                            <span class="font-semibold">{{ itemsToDelete.length }}</span> item{{
+                                                itemsToDelete.length > 1 ? 's' : '' }} will be permanently deleted
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons Section -->
+                            <div
+                                class="px-8 py-6 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
+                                <div class="flex flex-col sm:flex-row-reverse gap-3">
+                                    <!-- Delete Button -->
+                                    <button @click="confirmDelete" :disabled="loading"
+                                        class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-xl text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]">
+                                        <span v-if="!loading" class="flex items-center">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            Delete {{ itemsToDelete.length > 1 ? 'Items' : 'Item' }}
+                                        </span>
+                                        <span v-else class="flex items-center">
+                                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                </path>
+                                            </svg>
+                                            Deleting...
+                                        </span>
+                                    </button>
+
+                                    <!-- Cancel Button -->
+                                    <button @click="closeModal" :disabled="loading"
+                                        class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-xl text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
     <div class="p-6 bg-gray-50 min-h-screen dark:bg-slate-900/50 dark:text-gray-100 rounded-xl">
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
@@ -468,7 +628,7 @@
                                 </span>
                             </button>
 
-                            <button @click="deleteCategory(item)"
+                            <button @click="openDeleteModal(item)"
                                 class="px-3 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 dark:bg-red-900/20 dark:hover:bg-red-900/30">
                                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -540,6 +700,7 @@ const currentCategory = ref(null);
 const loading = ref(false);
 const isLoadingData = ref(true);
 const isItemModalOpen = ref(false);
+const isDeleteItemModalOpen = ref(false);
 const isDeleteModalOpen = ref(false);
 const showMobileFilters = ref(false);
 const showButtonDeleteSelectedItems = ref(false);
@@ -549,6 +710,7 @@ const titleModalButton = ref('');
 const isCreateNewItem = ref(true);
 
 const items = ref([]);
+const itemsToDelete = ref([]);
 const selectedCategories = ref([]);
 const search = ref('');
 const isDesc = ref(true);
@@ -597,9 +759,9 @@ const itemForm = ref({
     dimensionSets: [
         {
             id: 0,
-            outer_diameter: { value: '', unit: 'mm' },
-            inner_diameter: { value: '', unit: 'mm' },
-            length: { value: '', unit: 'mm' },
+            outer_diameter: { value: '', unit: 'inch' },
+            inner_diameter: { value: '', unit: 'inch' },
+            length: { value: '', unit: 'inch' },
         }
     ],
     dimension_sets_deleted_ids: [],
@@ -622,9 +784,9 @@ function openModal(selectedItem = null) {
         itemForm.value.dimensionSets = selectedItem.dimension_sets || [
             {
                 id: 0,
-                outer_diameter: { value: '', unit: 'mm' },
-                inner_diameter: { value: '', unit: 'mm' },
-                length: { value: '', unit: 'mm' },
+                outer_diameter: { value: '', unit: 'inch' },
+                inner_diameter: { value: '', unit: 'inch' },
+                length: { value: '', unit: 'inch' },
                 is_current: false,
             }
         ];
@@ -642,8 +804,15 @@ function openModal(selectedItem = null) {
     isItemModalOpen.value = true;
 }
 
+function openDeleteModal(item) {
+    isDeleteItemModalOpen.value = true;
+    itemsToDelete.value = [item];
+}
+
 function closeModal() {
     isItemModalOpen.value = false;
+    isDeleteItemModalOpen.value = false;
+    resetForm();
 }
 
 function resetForm() {
@@ -656,15 +825,16 @@ function resetForm() {
         dimensionSets: [
             {
                 id: 0,
-                outer_diameter: { value: '', unit: 'mm' },
-                inner_diameter: { value: '', unit: 'mm' },
-                length: { value: '', unit: 'mm' },
+                outer_diameter: { value: '', unit: 'inch' },
+                inner_diameter: { value: '', unit: 'inch' },
+                length: { value: '', unit: 'inch' },
                 is_current: false
             }
         ],
         dimension_sets_deleted_ids: [],
     };
     itemImage.value = null;
+    itemsToDelete.value = [];
 }
 
 // ========== FUNCTIONS: FILE HANDLING ==========
@@ -821,6 +991,27 @@ const saveItem = async () => {
     }
 };
 
+// ========== FUNCTIONS: DELETE ==========
+const confirmDelete = async () => {
+    try {
+        loading.value = true;
+        const idsToDelete = itemsToDelete.value.map(item => item.id);
+        await axios.delete(`${baseUrl}/api/toolstring-items`, {
+            data: { ids: idsToDelete }
+        });
+
+        toast.success('Items deleted successfully!');
+        itemsToDelete.value = [];
+        closeModal();
+        fetchAllItems();
+    } catch (error) {
+        console.error('Error deleting items:', error);
+        toast.error('Failed to delete items. Please try again.');
+    } finally {
+        loading.value = false;
+    }
+};
+
 // ========== FUNCTIONS: UTIL ==========
 const formatDate = (utcDateString) => {
     const date = new Date(utcDateString);
@@ -856,15 +1047,15 @@ function addDimensionSet() {
     itemForm.value.dimensionSets.push({
         outer_diameter: {
             value: '',
-            unit: 'mm'
+            unit: 'inch'
         },
         inner_diameter: {
             value: '',
-            unit: 'mm'
+            unit: 'inch'
         },
         length: {
             value: '',
-            unit: 'mm'
+            unit: 'inch'
         },
         is_current: false
     });
@@ -951,8 +1142,7 @@ onUnmounted(() => { });
 </script>
 
 
-<style>
-@keyframes shimmer {
+<style>@keyframes shimmer {
     0% {
         background-position: -200% 0;
     }
@@ -964,5 +1154,4 @@ onUnmounted(() => { });
 
 .animate-shimmer {
     animation: shimmer 2s infinite linear;
-}
-</style>
+}</style>
