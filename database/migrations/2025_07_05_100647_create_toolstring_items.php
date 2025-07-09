@@ -17,7 +17,7 @@ return new class extends Migration
                 ->constrained('toolstring_categories')
                 ->onDelete('cascade');
             $table->string('name');
-            $table->string('description');
+            $table->text('description');
             $table->string('image');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();

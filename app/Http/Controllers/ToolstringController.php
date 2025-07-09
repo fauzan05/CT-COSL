@@ -94,8 +94,8 @@ class ToolstringController extends Controller
         $query = ToolstringItemModel::with(['toolstringCategory', 'updatedByUser']);
 
         // Filter by category_id
-        if ($request->filled('category_id')) {
-            $query->where('toolstring_category_id', $request->input('category_id'));
+        if ($request->filled('toolstring_category_id')) {
+            $query->where('toolstring_category_id', $request->input('toolstring_category_id'));
         }
 
         // Optional search
@@ -109,12 +109,14 @@ class ToolstringController extends Controller
 
         // Optional status filter (active = not soft-deleted, inactive = soft-deleted)
         if ($request->filled('status')) {
-            if ($request->input('status') === 'active') {
+            if ((bool)$request->input('status') === 'active') {
                 $query->whereNull('deleted_at');
             } elseif ($request->input('status') === 'inactive') {
                 $query->onlyTrashed();
+            } elseif ($request->input('status') === 'all') {
+                $query->withTrashed();
             }
-        }
+        } 
 
         // Optional sorting
         $sortBy = $request->input('sort_by', 'created_at');
@@ -153,7 +155,13 @@ class ToolstringController extends Controller
             return $item;
         });
 
-        return response()->json($items);
+        $totalActive = ToolstringItemModel::where('toolstring_category_id', $request->input('toolstring_category_id'))->whereNull('deleted_at')->count();
+        $totalInactive = ToolstringItemModel::where('toolstring_category_id', $request->input('toolstring_category_id'))->onlyTrashed()->count();
+        $itemsArray = $items->toArray();
+        $itemsArray['total_active_items'] = $totalActive;
+        $itemsArray['total_inactive_items'] = $totalInactive;
+
+        return response()->json($itemsArray);
     }
 
     public function storeItem(Request $request)

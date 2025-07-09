@@ -12,7 +12,7 @@ const routes = [
         component: DashboardHome
     },
     {
-        path: '/toolstring-coiled-tubing/:slug/:categoryId',
+        path: '/toolstring-coiled-tubing/:slug/:toolstringCategoryId',
         component: ToolstringCoiledTubingCategory,
     },
     {
