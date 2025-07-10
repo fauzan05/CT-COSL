@@ -1595,13 +1595,10 @@ watch(
 
 // ========== LIFECYCLE ==========
 onMounted(() => {
-    getCurrentCategory();
-    fetchAllItems();
 });
 
 onUnmounted(() => { });
 </script>
-
 
 <style>
 @keyframes shimmer {

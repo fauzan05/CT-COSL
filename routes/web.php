@@ -11,7 +11,7 @@ Route::get('/login', function () {
 })->name('auth');
 
 Route::post('/api/login', [AuthController::class, 'postLogin'])->name('login');
-
+Route::get('/api/current-user', [AuthController::class, 'currentUser'])->name('currentUser');
 
 // API routes that need auth
 Route::middleware([AuthMiddleware::class])->group(function () {
@@ -21,16 +21,32 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::put('/api/toolstring-categories/{id}', [ToolstringController::class, 'updateCategory'])->name('updateCategory');
     Route::delete('/api/toolstring-categories/{id}', [ToolstringController::class, 'deleteCategory'])->name('deleteCategory');
     Route::get('/api/toolstring-categories/{id}', [ToolstringController::class, 'getCategory'])->name('getCategory');
+    Route::get('/api/toolstring-categories-search', [ToolstringController::class, 'searchCategories'])->name('searchCategories');
 
     // Toolstring items management
     Route::post('/api/toolstring-items', [ToolstringController::class, 'storeItem'])->name('storeItem');
     Route::get('/api/toolstring-items', [ToolstringController::class, 'getItems'])->name('getItems');
     Route::put('/api/toolstring-items/{id}', [ToolstringController::class, 'updateItem'])->name('updateItem');
     Route::delete('/api/toolstring-items', [ToolstringController::class, 'deleteItem'])->name('deleteItem');
+    Route::get('/api/toolstring-items-search', [ToolstringController::class, 'searchItemByIdCategory'])->name('searchItemByIdCategory');
+    Route::get('/api/toolstring-item-dimensions/{itemId}', [ToolstringController::class, 'getItemDimensions'])->name('getItemDimensions');
 
     // User management
-    Route::get('/api/current-user', [AuthController::class, 'currentUser'])->name('currentUser');
     Route::post('/api/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Toolstring reporting history
+    Route::post('/api/toolstring-reporting-histories', [ToolstringController::class, 'storeReportingHistory'])->name('storeReportingHistory');
+    Route::get('/api/toolstring-reporting-histories', [ToolstringController::class, 'getReportingHistories'])->name('getReportingHistories');
+    Route::get('/api/toolstring-reporting-histories/{id}', [ToolstringController::class, 'getReportingHistory'])->name('getReportingHistory');
+    Route::put('/api/toolstring-reporting-histories/{id}', [ToolstringController::class, 'updateReportingHistory'])->name('updateReportingHistory');
+    Route::delete('/api/toolstring-reporting-histories/{id}', [ToolstringController::class, 'deleteReportingHistory'])->name('deleteReportingHistory');
+
+    // Toolstring reporting history details
+    Route::post('/api/toolstring-reporting-history-details', [ToolstringController::class, 'storeReportingHistoryDetail'])->name('storeReportingHistoryDetail');
+    Route::get('/api/toolstring-reporting-history-details/{templateId}', [ToolstringController::class, 'getReportingHistoryDetails'])->name('getReportingHistoryDetails');
+    Route::get('/api/toolstring-reporting-history-details/{id}', [ToolstringController::class, 'getReportingHistoryDetail'])->name('getReportingHistoryDetail');
+    Route::put('/api/toolstring-reporting-history-details/{id}', [ToolstringController::class, 'updateReportingHistoryDetail'])->name('updateReportingHistoryDetail');
+    
 });
 
 // Storage files should not be routed to SPA

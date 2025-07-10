@@ -428,7 +428,7 @@ const sidebarItems = computed(() => [
     { name: 'Wellstack', path: '/wellstack', icon: 'fa-oil-well' },
     { name: 'Nitrogen', path: '/nitrogen', icon: 'fa-flask' },
     { name: 'Coiled Tubing', path: '/coiled-tubing', icon: 'fa-circle' },
-    { name: 'Reporting', path: '/reporting', icon: 'fa-file-lines' },
+    { name: 'Reporting', path: '/reporting/toolstring-coiled-tubing', icon: 'fa-file-lines' },
     { name: 'Users', path: '/users', icon: 'fa-user' },
     { name: 'Settings', path: '/settings', icon: 'fa-gear' },
 ]);

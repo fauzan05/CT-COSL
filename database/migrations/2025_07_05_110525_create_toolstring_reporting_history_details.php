@@ -13,18 +13,32 @@ return new class extends Migration
     {
         Schema::create('toolstring_reporting_history_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('toolstring_reporting_history_id');
-            $table->foreign('toolstring_reporting_history_id', 'trh_detail_fk')
-                ->references('id')
-                ->on('toolstring_reporting_histories')
-                ->onDelete('cascade');
+
+            // Berikan nama constraint yang lebih pendek
+            $table->foreignId('toolstring_reporting_history_id')
+                ->constrained('toolstring_reporting_histories')
+                ->onDelete('cascade')
+                ->name('fk_trhd_history_id'); // Custom constraint name
+
+            $table->foreignId('toolstring_category_id')
+                ->constrained('toolstring_categories')
+                ->onDelete('cascade')
+                ->name('fk_trhd_category_id'); // Custom constraint name
 
             $table->foreignId('toolstring_item_id')
                 ->constrained('toolstring_items')
-                ->onDelete('cascade');
+                ->onDelete('cascade')
+                ->name('fk_trhd_item_id'); // Custom constraint name
+
+            $table->foreignId('toolstring_item_dimension_id')
+                ->constrained('toolstring_item_dimensions')
+                ->onDelete('cascade')
+                ->name('fk_trhd_dimension_id'); // Custom constraint name
 
             $table->timestamp('created_at')->useCurrent();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->softDeletes();
         });
     }
