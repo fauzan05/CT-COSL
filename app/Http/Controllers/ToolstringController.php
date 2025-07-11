@@ -552,6 +552,7 @@ class ToolstringController extends Controller
         // Transform the details to include additional information
         $details = $details->map(function ($detail) {
             return [
+                'id' => $detail->id,
                 'item_name' => optional($detail->item)->name,
                 'category_name' => optional($detail->category)->name,
                 'image_url' => $detail->item && $detail->item->image
@@ -576,5 +577,22 @@ class ToolstringController extends Controller
 
         // Return the details
         return response()->json($details);
+    }
+
+    public function deleteReportingHistoryDetail(Request $request)
+    {
+        // Get the IDs from the request
+        $ids = $request->input('ids', []);
+
+        // If no IDs are provided, return an error response
+        if (empty($ids)) {
+            return response()->json(['message' => 'No IDs provided'], 400);
+        }
+
+        // Delete the reporting history details
+        ToolstringReportingHistoryDetailModel::whereIn('id', $ids)->delete();
+
+        // Return a success response
+        return response()->json(['message' => 'Reporting history details deleted successfully'], 204);
     }
 }

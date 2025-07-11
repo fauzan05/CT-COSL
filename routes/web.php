@@ -46,6 +46,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/api/toolstring-reporting-history-details/{templateId}', [ToolstringController::class, 'getReportingHistoryDetails'])->name('getReportingHistoryDetails');
     Route::get('/api/toolstring-reporting-history-details/{id}', [ToolstringController::class, 'getReportingHistoryDetail'])->name('getReportingHistoryDetail');
     Route::put('/api/toolstring-reporting-history-details/{id}', [ToolstringController::class, 'updateReportingHistoryDetail'])->name('updateReportingHistoryDetail');
+    Route::delete('/api/toolstring-reporting-history-details', [ToolstringController::class, 'deleteReportingHistoryDetail'])->name('deleteReportingHistoryDetail');
     
 });
 
