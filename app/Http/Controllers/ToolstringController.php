@@ -7,6 +7,7 @@ use App\Models\ToolstringItemDimensionModel;
 use App\Models\ToolstringItemModel;
 use App\Models\ToolstringReportingHistoryDetailModel;
 use App\Models\ToolstringReportingHistoryModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -511,6 +512,7 @@ class ToolstringController extends Controller
             'toolstring_category_id' => 'required|exists:toolstring_categories,id',
             'toolstring_item_id' => 'required|exists:toolstring_items,id',
             'toolstring_item_dimension_id' => 'required|exists:toolstring_item_dimensions,id',
+            'position' => 'nullable|integer',
         ]);
 
         // Create a new reporting history detail
@@ -519,6 +521,7 @@ class ToolstringController extends Controller
             'toolstring_category_id' => $request->toolstring_category_id,
             'toolstring_item_id' => $request->toolstring_item_id,
             'toolstring_item_dimension_id' => $request->toolstring_item_dimension_id,
+            'position' => $request->position,
             'created_at' => now(),
             'updated_at' => now(),
             'created_by' => $request->user()->id, // Assuming the user is authenticated
@@ -529,7 +532,7 @@ class ToolstringController extends Controller
         return response()->json($reportingHistoryDetail, 201);
     }
 
-    public function getReportingHistoryDetails(Request $request, $templateId)
+    public function getReportingHistoryDetails($templateId)
     {
         // Validate the request
         $validator = Validator::make(
@@ -547,13 +550,16 @@ class ToolstringController extends Controller
         // Retrieve reporting history details by template ID
         $details = ToolstringReportingHistoryDetailModel::where('toolstring_reporting_history_id', $templateId)
             ->with(['reportingHistory', 'item', 'dimension'])
+            ->orderBy('position', 'asc')
             ->get();
 
         // Transform the details to include additional information
         $details = $details->map(function ($detail) {
             return [
                 'id' => $detail->id,
+                'position' => $detail->position,
                 'item_name' => optional($detail->item)->name,
+                'description' => optional($detail->item)->description,
                 'category_name' => optional($detail->category)->name,
                 'image_url' => $detail->item && $detail->item->image
                     ? Storage::url('assets/images/toolstring_items/' . $detail->item->image)
@@ -594,5 +600,112 @@ class ToolstringController extends Controller
 
         // Return a success response
         return response()->json(['message' => 'Reporting history details deleted successfully'], 204);
+    }
+
+    public function updateReportingHistoryDetailPosition(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'components' => 'required|array',
+            'components.*.id' => 'required|exists:toolstring_reporting_history_details,id',
+            'components.*.position' => 'required|integer',
+        ]);
+
+        // Update positions
+        foreach ($request->components as $component) {
+            ToolstringReportingHistoryDetailModel::where('id', $component['id'])
+                ->update(['position' => $component['position']]);
+        }
+
+        // Return a success response
+        return response()->json(['message' => 'Positions updated successfully'], 200);
+    }
+
+    public function exportReportingHistoryPdf(Request $request, $templateId)
+    {
+        $get_all_components = ToolstringReportingHistoryDetailModel::where('toolstring_reporting_history_id', $templateId)
+            ->with(['reportingHistory', 'item', 'dimension'])
+            ->orderBy('position', 'asc')
+            ->get();
+
+        $get_all_components = $get_all_components->map(function ($detail) {
+            return [
+                'id' => $detail->id,
+                'position' => $detail->position,
+                'item_name' => optional($detail->item)->name,
+                'description' => optional($detail->item)->description,
+                'category_name' => optional($detail->category)->name,
+                'image_url' => $detail->item && $detail->item->image
+                    ? Storage::url('assets/images/toolstring_items/' . $detail->item->image)
+                    : null,
+                'image_base64' => $detail->item && $detail->item->image
+                    ? $this->getImageAsBase64('assets/images/toolstring_items/' . $detail->item->image)
+                    : null,
+                'dimension' => [
+                    'outer_diameter' => [
+                        'value' => optional($detail->dimension)->outer_diameter,
+                        'unit' => optional($detail->dimension)->outer_diameter_unit,
+                    ],
+                    'inner_diameter' => [
+                        'value' => optional($detail->dimension)->inner_diameter,
+                        'unit' => optional($detail->dimension)->inner_diameter_unit,
+                    ],
+                    'length' => [
+                        'value' => optional($detail->dimension)->length,
+                        'unit' => optional($detail->dimension)->length_unit,
+                    ],
+                ],
+            ];
+        });
+
+        $odUnit = $request->query('od_unit');
+        $idUnit = $request->query('id_unit');
+        $lengthUnit = $request->query('length_unit');
+        $heightPDF = $request->query('height_pdf', 1500);
+        $reportingHistory = ToolstringReportingHistoryModel::findOrFail($templateId);
+        $formattedDate = \Carbon\Carbon::parse($reportingHistory->date)->format('j/n/Y');
+        $logoBase64 = $this->imageToBase64FromPublic('assets/images/company/company-logo.png');
+
+        $pdf = Pdf::loadView('pdf.toolstring-reporting', [
+            'components' => $get_all_components,
+            'reportingHistory' => ToolstringReportingHistoryModel::findOrFail($templateId),
+            'formattedDate' => $formattedDate,
+            'odUnit' => $odUnit,
+            'idUnit' => $idUnit,
+            'lengthUnit' => $lengthUnit,
+            'company_logo' => $logoBase64,
+        ])
+            ->setPaper([0, 0, 595.28, $heightPDF], 'portrait');
+
+        return $pdf->stream('toolstring-reporting.pdf');
+    }
+
+    private function getImageAsBase64($path)
+    {
+        $fullPath = Storage::disk('public')->path($path);
+
+        if (!file_exists($fullPath)) {
+            return null;
+        }
+
+        $type = pathinfo($fullPath, PATHINFO_EXTENSION);
+        $data = file_get_contents($fullPath);
+        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+
+        return $base64;
+    }
+
+    private function imageToBase64FromPublic($relativePath)
+    {
+        $fullPath = public_path($relativePath);
+
+        if (!file_exists($fullPath)) {
+            return null;
+        }
+
+        $type = pathinfo($fullPath, PATHINFO_EXTENSION);
+        $data = file_get_contents($fullPath);
+
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
     }
 }

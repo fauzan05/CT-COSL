@@ -34,7 +34,7 @@ return new class extends Migration
                 ->constrained('toolstring_item_dimensions')
                 ->onDelete('cascade')
                 ->name('fk_trhd_dimension_id'); // Custom constraint name
-
+            $table->integer('position')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

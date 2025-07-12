@@ -14,6 +14,7 @@ class ToolstringReportingHistoryDetailModel extends Model
         'toolstring_category_id',
         'toolstring_item_id',
         'toolstring_item_dimension_id',
+        'position',
         'created_by',
         'updated_by'
     ];

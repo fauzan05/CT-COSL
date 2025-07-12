@@ -43,11 +43,16 @@ Route::middleware([AuthMiddleware::class])->group(function () {
 
     // Toolstring reporting history details
     Route::post('/api/toolstring-reporting-history-details', [ToolstringController::class, 'storeReportingHistoryDetail'])->name('storeReportingHistoryDetail');
+    Route::put('/api/toolstring-reporting-history-details/update-positions', [ToolstringController::class, 'updateReportingHistoryDetailPosition'])->name('updateReportingHistoryDetailPosition');
     Route::get('/api/toolstring-reporting-history-details/{templateId}', [ToolstringController::class, 'getReportingHistoryDetails'])->name('getReportingHistoryDetails');
     Route::get('/api/toolstring-reporting-history-details/{id}', [ToolstringController::class, 'getReportingHistoryDetail'])->name('getReportingHistoryDetail');
     Route::put('/api/toolstring-reporting-history-details/{id}', [ToolstringController::class, 'updateReportingHistoryDetail'])->name('updateReportingHistoryDetail');
     Route::delete('/api/toolstring-reporting-history-details', [ToolstringController::class, 'deleteReportingHistoryDetail'])->name('deleteReportingHistoryDetail');
-    
+
+    // Toolstring Export PDF
+    Route::prefix('backend')->group(function () {
+        Route::get('/toolstring-reporting-histories/export-pdf/{templateId}', [ToolstringController::class, 'exportReportingHistoryPdf'])->name('exportReportingHistoryPdf');
+    });        
 });
 
 // Storage files should not be routed to SPA
