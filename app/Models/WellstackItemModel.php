@@ -42,4 +42,9 @@ class WellstackItemModel extends Model
     {
         return $this->belongsTo(WellstackTypeModel::class, 'wellstack_type_id');
     }
+
+    public function updatedByUser()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 }

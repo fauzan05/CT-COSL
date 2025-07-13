@@ -327,6 +327,7 @@ class ToolstringController extends Controller
             // Update fields
             $item->fill($validatedData);
             $item->updated_by = $request->user()->id; // Assuming the user is authenticated
+            $item->updated_at = now(); // Update the updated_at timestamp
             $item->save();
 
             return response()->json($item);

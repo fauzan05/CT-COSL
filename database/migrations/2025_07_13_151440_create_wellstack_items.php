@@ -17,7 +17,7 @@ return new class extends Migration
                 ->constrained('wellstack_types')
                 ->onDelete('cascade');
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->text('serial_number');
             $table->decimal('height', 8, 2)->nullable();
             $table->string('height_unit')->default('ft');
