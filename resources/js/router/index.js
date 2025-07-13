@@ -20,7 +20,7 @@ const routes = [
         component: ToolstringCoiledTubingType,
     },
     {
-        path: "/reporting/:slug",
+        path: "/reporting",
         component: Reporting,
     },
     {

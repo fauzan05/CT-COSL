@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\WellstackItemModel;
+use App\Models\WellstackReportingHistoryModel;
 use App\Models\WellstackTypeModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -235,5 +237,127 @@ class WellstackController extends Controller
 
         // Return a success response
         return response()->json(['message' => 'Items deleted successfully'], 204);
+    }
+
+    public function getReportingHistories(Request $request)
+    {
+        // Default pagination
+        $perPage = $request->input('per_page', 10);
+
+        // Query builder
+        $query = WellstackReportingHistoryModel::with('updatedByUser');
+
+        // Optional search
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('client', 'like', "%{$search}%");
+            });
+        }
+        // Optional sorting
+        $sortBy = $request->input('sort_by', 'created_at');
+        $direction = $request->input('direction', 'desc');
+        $query->orderBy($sortBy, $direction);
+
+        // Paginate
+        $histories = $query->paginate($perPage);
+        $histories->getCollection()->transform(function ($history) {
+            $history->updated_by_name = $history->updatedByUser ? $history->updatedByUser->fullname : null;
+            if ($history->date) {
+                $history->date = Carbon::parse($history->date)->format('Y-m-d');
+            }
+            return $history;
+        });
+
+        return response()->json($histories);
+    }
+
+    public function storeReportingHistory(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'client' => 'nullable|string|max:255',
+            'field' => 'nullable|string|max:255',
+            'well_name_number' => 'nullable|string|max:255',
+            'min_restriction' => 'nullable|string|max:255',
+            'kop' => 'nullable|string|max:255',
+            'category' => 'nullable|string|max:255',
+            'bhp' => 'nullable|string|max:255',
+            'bhst' => 'nullable|string|max:255',
+            'so' => 'nullable|string|max:255',
+            'supplier' => 'nullable|string|max:255',
+            'date_drawn' => 'nullable|date',
+            'drawn_by' => 'nullable|string|max:255',
+        ]);
+
+        // Create a new reporting history
+        $reportingHistory = WellstackReportingHistoryModel::create([
+            'name' => $request->name,
+            'client' => $request->client ?? null,
+            'field' => $request->field ?? null,
+            'well_name_number' => $request->well_name_number ?? null,
+            'min_restriction' => $request->min_restriction ?? null,
+            'kop' => $request->kop ?? null,
+            'category' => $request->category ?? null,
+            'bhp' => $request->bhp ?? null,
+            'bhst' => $request->bhst ?? null,
+            'so' => $request->so ?? null,
+            'supplier' => $request->supplier ?? null,
+            'date_drawn' => $request->date ? Carbon::parse($request->date) : null,
+            'drawn_by' => $request->drawn_by ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'created_by' => $request->user()->id, // Assuming the user is authenticated
+            'updated_by' => $request->user()->id, // Assuming the user is authenticated
+        ]);
+
+        // Return the created reporting history
+        return response()->json($reportingHistory, 201);
+    }
+
+    public function updateReportingHistory(Request $request, $id)
+    {
+        // Validate the request data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'client' => 'nullable|string|max:255',
+            'field' => 'nullable|string|max:255',
+            'well_name_number' => 'nullable|string|max:255',
+            'min_restriction' => 'nullable|string|max:255',
+            'kop' => 'nullable|string|max:255',
+            'category' => 'nullable|string|max:255',
+            'bhp' => 'nullable|string|max:255',
+            'bhst' => 'nullable|string|max:255',
+            'so' => 'nullable|string|max:255',
+            'supplier' => 'nullable|string|max:255',
+            'date_drawn' => 'nullable|date',
+            'drawn_by' => 'nullable|string|max:255',
+        ]);
+
+        // Find the reporting history by ID
+        $reportingHistory = WellstackReportingHistoryModel::findOrFail($id);
+
+        // Update the reporting history
+        $reportingHistory->name = $request->name;
+        $reportingHistory->client = $request->client ?? null;
+        $reportingHistory->field = $request->field ?? null;
+        $reportingHistory->well_name_number = $request->well_name_number ?? null;
+        $reportingHistory->min_restriction = $request->min_restriction ?? null;
+        $reportingHistory->kop = $request->kop ?? null;
+        $reportingHistory->category = $request->category ?? null;
+        $reportingHistory->bhp = $request->bhp ?? null;
+        $reportingHistory->bhst = $request->bhst ?? null;
+        $reportingHistory->so = $request->so ?? null;
+        $reportingHistory->supplier = $request->supplier ?? null;
+        $reportingHistory->date_drawn = $request->date_drawn ? Carbon::parse($request->date_drawn) : null;
+        $reportingHistory->drawn_by = $request->drawn_by ?? null;
+        $reportingHistory->updated_at = now();
+        $reportingHistory->updated_by = $request->user()->id; // Assuming the user is authenticated
+        $reportingHistory->save();
+
+        // Return the updated reporting history
+        return response()->json($reportingHistory);
     }
 }

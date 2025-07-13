@@ -79,6 +79,13 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::delete('/api/wellstack-items', [WellstackController::class, 'deleteItem'])->name('deleteWellstackItem');
     Route::get('/api/wellstack-items/{id}', [WellstackController::class, 'getItem'])->name('getWellstackItem');
     Route::get('/api/wellstack-items-search', [WellstackController::class, 'searchItemByIdType'])->name('searchWellstackItemByIdType');
+
+    // Wellstack reporting history
+    Route::post('/api/wellstack-reporting-histories', [WellstackController::class, 'storeReportingHistory'])->name('storeWellstackReportingHistory');
+    Route::get('/api/wellstack-reporting-histories', [WellstackController::class, 'getReportingHistories'])->name('getWellstackReportingHistories');
+    Route::get('/api/wellstack-reporting-histories/{id}', [WellstackController::class, 'getReportingHistory'])->name('getWellstackReportingHistory');
+    Route::put('/api/wellstack-reporting-histories/{id}', [WellstackController::class, 'updateReportingHistory'])->name('updateWellstackReportingHistory');
+    Route::delete('/api/wellstack-reporting-histories/{id}', [WellstackController::class, 'deleteReportingHistory'])->name('deleteWellstackReportingHistory');
 });
 
 // Storage files should not be routed to SPA
