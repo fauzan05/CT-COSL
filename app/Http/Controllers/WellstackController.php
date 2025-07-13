@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\WellstackItemModel;
+use App\Models\WellstackReportingHistoryDetailModel;
 use App\Models\WellstackReportingHistoryModel;
 use App\Models\WellstackTypeModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class WellstackController extends Controller
@@ -51,15 +53,15 @@ class WellstackController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
-        
+
         // Find the type by ID
         $type = WellstackTypeModel::findOrFail($id);
 
-         // Update the type
-         $type->name = $request->name;
-         $type->slug = str($request->name)->slug()->lower();
-         $type->updated_by = $request->user()->id; // Assuming the user is authenticated
-         $type->save();
+        // Update the type
+        $type->name = $request->name;
+        $type->slug = str($request->name)->slug()->lower();
+        $type->updated_by = $request->user()->id; // Assuming the user is authenticated
+        $type->save();
 
         return response()->json(['message' => 'Wellstack type updated successfully', 'type' => $type], 200);
     }
@@ -70,6 +72,17 @@ class WellstackController extends Controller
         $type->delete();
 
         return response()->json(['message' => 'Wellstack type deleted successfully'], 204);
+    }
+
+    public function searchTypes(Request $request)
+    {
+        $search = $request->input('search', '');
+        $types = WellstackTypeModel::where('name', 'like', "%{$search}%")
+            ->orWhere('slug', 'like', "%{$search}%")
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return response()->json($types);
     }
 
     public function storeItem(Request $request)
@@ -109,7 +122,7 @@ class WellstackController extends Controller
             // Set created_by and updated_by fields
             $validatedData['created_by'] = $request->user()->id; // Assuming the user is authenticated
             $validatedData['updated_by'] = $request->user()->id; // Assuming the user is authenticated
-            
+
             // Create
             $item = WellstackItemModel::create($validatedData);
 
@@ -359,5 +372,148 @@ class WellstackController extends Controller
 
         // Return the updated reporting history
         return response()->json($reportingHistory);
+    }
+
+    public function getReportingHistoryDetails($templateId)
+    {
+        // Validate the request
+        $validator = Validator::make(
+            ['templateId' => $templateId],
+            ['templateId' => 'required|exists:wellstack_reporting_histories,id']
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Invalid template ID',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Retrieve reporting history details by template ID
+        $details = WellstackReportingHistoryDetailModel::where('wellstack_reporting_history_id', $templateId)
+            ->with(['reportingHistory', 'item'])
+            ->orderBy('position', 'asc')
+            ->get();
+
+        // Transform the details to include additional information
+        $details = $details->map(function ($detail) {
+            return [
+                'id' => $detail->id,
+                'position' => $detail->position,
+                'item_name' => optional($detail->item)->name,
+                'description' => optional($detail->item)->description,
+                'type_name' => optional($detail->type)->name,
+                'image_url' => $detail->item && $detail->item->image
+                    ? Storage::url('assets/images/wellstack_items/' . $detail->item->image)
+                    : null,
+                'serial_number' => optional($detail->item)->serial_number,
+                'height' => optional($detail->item)->height,
+                'height_unit' => optional($detail->item)->height_unit,
+                'weight' => optional($detail->item)->weight,
+                'weight_unit' => optional($detail->item)->weight_unit,
+                'pressure_rating' => optional($detail->item)->pressure_rating,
+                'pressure_rating_unit' => optional($detail->item)->pressure_rating_unit,
+                'owner' => optional($detail->item)->owner,
+                'shear_ram_dist_from_bottom' => optional($detail->item)->shear_ram_dist_from_bottom,
+                'shear_ram_dist_from_bottom_unit' => optional($detail->item)->shear_ram_dist_from_bottom_unit,
+            ];
+        });
+
+        // Return the details
+        return response()->json($details);
+    }
+
+    public function searchItemByIdType(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'wellstack_type_id' => 'required',
+            'search' => 'nullable|string|max:255',
+        ]);
+
+        // Retrieve items by type with optional search
+        $query = WellstackItemModel::where('wellstack_type_id', $request->input('wellstack_type_id'));
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Get the items
+        $items = $query->get();
+        $items->transform(function ($item) {
+            $item->image_url = $item->image
+                ? Storage::url('assets/images/wellstack_items/' . $item->image)
+                : null;
+            return $item;
+        });
+
+        // Return the items
+        return response()->json($items);
+    }
+
+    public function storeReportingHistoryDetail(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'wellstack_reporting_history_id' => 'required|exists:wellstack_reporting_histories,id',
+            'wellstack_type_id' => 'required|exists:wellstack_types,id',
+            'wellstack_item_id' => 'required|exists:wellstack_items,id',
+            'position' => 'nullable|integer',
+        ]);
+
+        // Create a new reporting history detail
+        $reportingHistoryDetail = WellstackReportingHistoryDetailModel::create([
+            'wellstack_reporting_history_id' => $request->wellstack_reporting_history_id,
+            'wellstack_type_id' => $request->wellstack_type_id,
+            'wellstack_item_id' => $request->wellstack_item_id,
+            'position' => $request->position,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'created_by' => $request->user()->id, // Assuming the user is authenticated
+            'updated_by' => $request->user()->id, // Assuming the user is authenticated
+        ]);
+
+        // Return the created reporting history detail
+        return response()->json($reportingHistoryDetail, 201);
+    }
+
+    public function updateReportingHistoryDetailPosition(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'components' => 'required|array',
+            'components.*.id' => 'required|exists:wellstack_reporting_history_details,id',
+            'components.*.position' => 'required|integer',
+        ]);
+
+        // Update positions
+        foreach ($request->components as $component) {
+            WellstackReportingHistoryDetailModel::where('id', $component['id'])
+                ->update(['position' => $component['position']]);
+        }
+
+        // Return a success response
+        return response()->json(['message' => 'Positions updated successfully'], 200);
+    }
+
+    public function deleteReportingHistoryDetail(Request $request)
+    {
+        // Get the IDs from the request
+        $ids = $request->input('ids', []);
+
+        // If no IDs are provided, return an error response
+        if (empty($ids)) {
+            return response()->json(['message' => 'No IDs provided'], 400);
+        }
+
+        // Delete the reporting history details
+        WellstackReportingHistoryDetailModel::whereIn('id', $ids)->delete();
+
+        // Return a success response
+        return response()->json(['message' => 'Reporting history details deleted successfully'], 204);
     }
 }

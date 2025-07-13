@@ -1489,7 +1489,6 @@ watch([search, selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilte
 onMounted(() => {
     fetchAllTemplates();
     fetchAllToolstringTypes();
-    console.log("toolstring")
 });
 </script>
 

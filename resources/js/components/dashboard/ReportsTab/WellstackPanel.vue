@@ -186,6 +186,433 @@
             </div>
         </Dialog>
     </TransitionRoot>
+    <!-- modal create/update report -->
+    <TransitionRoot appear :show="isReportingModalOpen" as="template">
+        <Dialog as="div" @close="closeModal" class="relative z-50">
+            <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100"
+                leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
+                <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+            </TransitionChild>
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                    <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95"
+                        enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100"
+                        leave-to="opacity-0 scale-95">
+                        <DialogPanel
+                            class="relative w-full max-w-8xl h-screen transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
+                            <!-- Close Button -->
+                            <button @click="closeModal"
+                                class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                aria-label="Close modal">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900 mb-4 dark:text-white">
+                                {{ titleModal }}
+                            </DialogTitle>
+                            <div class="flex flex-col gap-6">
+                                <!-- Form Identity -->
+                                <div class="gap-4">
+                                    <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                                        Template Identity
+                                    </h4>
+                                    <div class="w-full flex flex-col justify-between">
+                                        <!-- Baris Pertama -->
+                                        <div class="flex gap-5 mb-4">
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    Name
+                                                </label>
+                                                <input type="text" v-model="templateForm.name"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    Client
+                                                </label>
+                                                <input type="text" v-model="templateForm.client"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    Field
+                                                </label>
+                                                <input type="text" v-model="templateForm.field"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    Well Name & Number
+                                                </label>
+                                                <input type="text" v-model="templateForm.well_name_number"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    Min Restriction
+                                                </label>
+                                                <input type="text" v-model="templateForm.min_restriction"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    KOP
+                                                </label>
+                                                <input type="text" v-model="templateForm.kop"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                        </div>
+
+                                        <!-- Baris Kedua -->
+                                        <div class="flex gap-5">
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    Category
+                                                </label>
+                                                <input type="text" v-model="templateForm.category"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    BHP
+                                                </label>
+                                                <input type="text" v-model="templateForm.bhp"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    BHST
+                                                </label>
+                                                <input type="text" v-model="templateForm.bhst"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    S/O
+                                                </label>
+                                                <input type="text" v-model="templateForm.so"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    Supplier
+                                                </label>
+                                                <input type="text" v-model="templateForm.supplier"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                            <div class="w-1/6">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+                                                    Drawn By
+                                                </label>
+                                                <input type="text" v-model="templateForm.drawn_by"
+                                                    class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md"
+                                                    disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Navigation Selection Component  -->
+                                <div
+                                    class="bg-white w-full rounded-xl shadow-md p-4 sm:p-6 border border-gray-100 dark:bg-slate-800/50 dark:border-slate-700/50">
+                                    <div class="flex flex-wrap gap-3 mb-4">
+                                        <!-- Add Component Button -->
+                                        <button :disabled="AddComponentLoading" @click="handleAddComponent"
+                                            class="inline-flex items-center justify-center h-10 px-4 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <span v-if="!AddComponentLoading" class="flex items-center gap-2">
+                                                <PlusIcon class="w-5 h-5" />
+                                                <span class="font-medium">Add Component</span>
+                                            </span>
+                                            <span v-else class="flex items-center gap-2">
+                                                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4" />
+                                                    <path class="opacity-75" fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                </svg>
+                                                <span class="font-medium">Loading...</span>
+                                            </span>
+                                        </button>
+
+                                        <!-- Update Position Button -->
+                                        <button :disabled="updatePositionLoading" @click="handleUpdatePosition"
+                                            class="inline-flex items-center justify-center h-10 px-4 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <span v-if="!updatePositionLoading" class="flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                                </svg>
+                                                <span class="font-medium">Update Position</span>
+                                            </span>
+                                            <span v-else class="flex items-center gap-2">
+                                                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4" />
+                                                    <path class="opacity-75" fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                </svg>
+                                                <span class="font-medium">Loading...</span>
+                                            </span>
+                                        </button>
+
+                                        <!-- Export PDF Button -->
+                                        <button :disabled="exportPDFLoading" @click="handleExportPDF"
+                                            class="inline-flex items-center justify-center h-10 px-4 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <span v-if="!exportPDFLoading" class="flex items-center gap-2">
+                                                <ClipboardDocumentIcon class="w-5 h-5" />
+                                                <span class="font-medium">Export to PDF</span>
+                                            </span>
+                                            <span v-else class="flex items-center gap-2">
+                                                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4" />
+                                                    <path class="opacity-75" fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                </svg>
+                                                <span class="font-medium">Loading...</span>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="flex flex-col gap-4">
+                                        <div class="flex flex-col sm:flex-row gap-4">
+                                            <!-- Type -->
+                                            <div class="w-full sm:w-1/3 flex flex-col">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700 dark:text-white mb-1">Component
+                                                    Type</label>
+                                                <Combobox v-model="selectedType" class="w-full">
+                                                    <div class="relative mt-1">
+                                                        <div
+                                                            class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
+                                                            <ComboboxInput
+                                                                class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
+                                                                :displayValue="(type) => type?.name"
+                                                                @change="queryTypes = $event.target.value"
+                                                                placeholder="Search Component Type..." />
+                                                            <ComboboxButton
+                                                                class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </ComboboxButton>
+                                                        </div>
+                                                        <transition leave-active-class="transition duration-100 ease-in"
+                                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                                            <ComboboxOptions
+                                                                class="absolute mt-1 z-40 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+
+                                                                <div v-if="loading"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Loading...
+                                                                </div>
+                                                                <div v-else-if="types.length === 0"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Nothing found.
+                                                                </div>
+
+                                                                <ComboboxOption v-for="type in types" :key="type.id"
+                                                                    :value="type" v-slot="{ selected, active }">
+                                                                    <li
+                                                                        :class="['relative cursor-default select-none py-2 pl-10 pr-4', active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white']">
+                                                                        <span
+                                                                            :class="['block truncate', selected ? 'font-medium' : 'font-normal']">
+                                                                            {{ type.name }}
+                                                                        </span>
+                                                                        <span v-if="selected"
+                                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
+                                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        </span>
+                                                                    </li>
+                                                                </ComboboxOption>
+                                                            </ComboboxOptions>
+                                                        </transition>
+                                                    </div>
+                                                </Combobox>
+                                            </div>
+                                            <!-- Component Tools -->
+                                            <div class="w-full sm:w-1/3 flex flex-col">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700 dark:text-white mb-1">Component
+                                                    Tools</label>
+                                                <Combobox v-model="selectedItem" class="w-full">
+                                                    <div class="relative mt-1">
+                                                        <div
+                                                            class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
+                                                            <ComboboxInput
+                                                                class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
+                                                                :displayValue="(item) => item?.name"
+                                                                @change="queryItems = $event.target.value"
+                                                                placeholder="Search Component Tools..." />
+                                                            <ComboboxButton
+                                                                class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </ComboboxButton>
+                                                        </div>
+                                                        <transition leave-active-class="transition duration-100 ease-in"
+                                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                                            <ComboboxOptions
+                                                                class="absolute mt-1 z-40 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+
+                                                                <div v-if="loading"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Loading...
+                                                                </div>
+                                                                <div v-else-if="items.length === 0"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Nothing found.
+                                                                </div>
+
+                                                                <ComboboxOption v-for="item in items" :key="item.id"
+                                                                    :value="item" v-slot="{ selected, active }">
+                                                                    <li :class="[
+                                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
+                                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white'
+                                                                    ]">
+                                                                        <span :class="[
+                                                                            'block truncate',
+                                                                            selected ? 'font-medium' : 'font-normal'
+                                                                        ]">
+                                                                            {{ item.name }}
+                                                                        </span>
+                                                                        <span v-if="selected"
+                                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
+                                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        </span>
+                                                                    </li>
+                                                                </ComboboxOption>
+                                                            </ComboboxOptions>
+                                                        </transition>
+                                                    </div>
+                                                </Combobox>
+                                            </div>
+                                            <!-- Height PDF -->
+                                            <div class="w-full sm:w-48 flex flex-col">
+                                                <label class="text-sm font-medium text-gray-700 dark:text-white mb-1">Height
+                                                    PDF (mm)</label>
+                                                <input type="number" v-model="height_pdf"
+                                                    class="w-full sm:w-48 h-11 mt-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-800/50 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none shadow-md"
+                                                    placeholder="Height PDF (mm)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Table Component -->
+                            <div class="bg-white dark:bg-slate-800 mt-5 rounded-xl shadow-md overflow-hidden">
+                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <thead class="bg-gray-50  dark:bg-gray-800">
+                                        <tr>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                No</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Image</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Description</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Serial Number</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Height</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Weight</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Pressure Rating</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Shear Ram Dist from Bottom</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">BHI or 3d Party</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Actions</th>
+                                        </tr>
+                                    </thead>
+
+                                    <!-- Loading Skeleton -->
+                                    <tbody v-if="componentListLoading"
+                                        class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                        <tr v-for="n in 3" :key="'loading-' + n">
+                                            <td colspan="10" class="px-6 py-4">
+                                                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                    <!-- Draggable Items -->
+                                    <draggable v-else v-model="componentList" tag="tbody" item-key="component_id"
+                                        @end="updatePositions"
+                                        class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                        <template #item="{ element, index }">
+                                            <tr>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ index + 1 }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <img :src="element.image" alt="Component image"
+                                                        class="h-10 w-10 object-contain" />
+                                                </td>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ element.description }}</td>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ element.serial_number }}</td>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ element.height }}</td>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ element.weight }}</td>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ element.pressure_rating }}</td>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ element.shear_ram_dist_from_bottom }}</td>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ element.owner }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <button @click="removeComponent(index, element)"
+                                                        :disabled="element.isRemoving"
+                                                        class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-red-600 hover:text-red-900 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                                                        <div v-if="element.isRemoving" class="spinner mr-2"></div>
+                                                        <svg v-else class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                        {{ element.isRemoving ? 'Removing...' : 'Remove' }}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </template>
+
+                                        <!-- Empty state -->
+                                        <template #footer>
+                                            <tr v-if="componentList.length === 0">
+                                                <td colspan="7"
+                                                    class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                                    No components found
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </draggable>
+                                </table>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
     <div class="rounded-xl bg-white dark:bg-slate-800/50 p-6">
         <div class="space-y-6">
             <!-- Header Section -->
@@ -726,7 +1153,7 @@
                                                 class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-yellow-400">
                                                 Edit
                                             </button>
-                                            <button @click="openReportModal('create', 'toolstring_coiled_tubing', template)"
+                                            <button @click="openReportModal('create', template)"
                                                 class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500">
                                                 Create Report
                                             </button>
@@ -792,7 +1219,6 @@ const itemDimensions = ref([]);
 
 const filteredTypes = ref([]);
 const filteredItems = ref([]);
-const filteredItemDimensions = ref([]);
 
 const selectedType = ref(null);
 const selectedItem = ref(null);
@@ -802,9 +1228,13 @@ const queryTypes = ref('');
 const queryItems = ref('');
 const queryItemDimensions = ref('');
 
+const filteredItemDimensions = ref([]);
 const componentListLoading = ref(false);
 const AddComponentLoading = ref(false);
 const updatePositionLoading = ref(false);
+const isReportingModalOpen = ref(false);
+const isReportModalOpen = ref(false);
+const isCreateReport = ref(true);
 
 const outer_diameter_unit = ref('inch');
 const inner_diameter_unit = ref('inch');
@@ -813,6 +1243,7 @@ const height_pdf = ref(1500);
 const loading = ref(false);
 const isDesc = ref(true);
 const isLoadingData = ref(false);
+const componentList = ref([]);
 
 /* ------------------------------ FILTER & SORT ------------------------------ */
 const search = ref('');
@@ -860,6 +1291,22 @@ const resetForm = () => {
 };
 
 /* ------------------------------ API CALLS ---------------------------------- */
+const fetchAllWellstackTypes = async () => {
+    loading.value = true;
+    try {
+        const response = await axios.get('/api/wellstack-types-search', {
+            params: { search: queryTypes.value }
+        });
+        types.value = response.data;
+        items.value = [];
+        selectedItem.value = null;
+    } catch (error) {
+        console.error('Error fetching types:', error);
+    } finally {
+        loading.value = false;
+    }
+};
+
 const fetchAllTemplates = async () => {
     loading.value = true;
     isLoadingData.value = true;
@@ -882,6 +1329,54 @@ const fetchAllTemplates = async () => {
     }
 };
 
+const fetchAllWellstackItems = async (typeId) => {
+    loading.value = true;
+    try {
+        const response = await axios.get('/api/wellstack-items-search', {
+            params: { wellstack_type_id: typeId }
+        });
+        items.value = response.data;
+        items.value.forEach(item => {
+            item.image_url = item.image_url || 'default-image-url.jpg';
+        });
+    } catch (error) {
+        console.error('Error fetching items:', error);
+    } finally {
+        loading.value = false;
+    }
+};
+
+const fetchAllWellstackReportingDetails = async (templateId) => {
+    loading.value = true;
+    try {
+        const response = await axios.get(`/api/wellstack-reporting-history-details/${templateId}`);
+        componentList.value = response.data.map((detail, index) => ({
+            component_id: detail.id,
+            image: detail.image_url || 'default-image-url.jpg',
+            description: detail.item_name,
+            serial_number: detail.serial_number || '',
+            height: detail.height || 0,
+            height_unit: detail.height_unit || 'ft',
+            weight: detail.weight || 0,
+            weight_unit: detail.weight_unit || 'lbs',
+            pressure_rating: detail.pressure_rating || 0,
+            pressure_rating_unit: detail.pressure_rating_unit || 'psi',
+            shear_ram_dist_from_bottom: detail.shear_ram_dist_from_bottom || 0,
+            shear_ram_dist_from_bottom_unit: detail.shear_ram_dist_from_bottom_unit || 'ft',
+            owner: detail.owner || '',
+            position: index + 1
+        }));
+
+        componentList.value.forEach((component, index) => {
+            console.log(component)
+        });
+    } catch (error) {
+        console.error('Error fetching wellstack reporting details:', error);
+    } finally {
+        loading.value = false;
+    }
+};
+
 /* ----------------------------- FORMAT HELPERS ------------------------------ */
 const formatDate = (utcDateString) => {
     const date = new Date(utcDateString);
@@ -899,6 +1394,88 @@ const formatDateWithoutTime = (utcDateString) => {
     return date
         .toLocaleDateString('en-US', options)
         .replace(',', '');  // hapus koma
+};
+
+/* --------------------------- COMPONENT ACTIONS ----------------------------- */
+const handleAddComponent = async () => {
+    AddComponentLoading.value = true;
+    if (!selectedType.value || !selectedItem.value) {
+        alert('Please select components first');
+        AddComponentLoading.value = false;
+        return;
+    }
+
+    const newComponent = {
+        component_id: selectedItem.value.id,
+        image: selectedItem.value.image_url || 'default-image-url.jpg',
+        description: selectedItem.value.name,
+        serial_number: selectedItem.value.serial_number || '',
+        height: selectedItem.value.height || 0,
+        height_unit: selectedItem.value.height_unit || 'ft',
+        weight: selectedItem.value.weight || 0,
+        weight_unit: selectedItem.value.weight_unit || 'lbs',
+        pressure_rating: selectedItem.value.pressure_rating || 0,
+        pressure_rating_unit: selectedItem.value.pressure_rating_unit || 'psi',
+        shear_ram_dist_from_bottom: selectedItem.value.shear_ram_dist_from_bottom || 0,
+        shear_ram_dist_from_bottom_unit: selectedItem.value.shear_ram_dist_from_bottom_unit || 'ft',
+        owner: selectedItem.value.owner || '',
+        position: componentList.value.length + 1
+    };
+
+    try {
+        await axios.post('/api/wellstack-reporting-history-details', {
+            wellstack_reporting_history_id: templateForm.value.id,
+            wellstack_type_id: selectedType.value.id,
+            wellstack_item_id: selectedItem.value.id,
+        });
+        componentList.value.push(newComponent);
+    } catch (error) {
+        console.error('Error saving component:', error);
+    }
+
+    selectedType.value = null;
+    selectedItem.value = null;
+    selectedItemDimension.value = null;
+    AddComponentLoading.value = false;
+};
+
+const removeComponent = async (index, component) => {
+    // Set loading state
+    component.isRemoving = true;
+
+    let data = {
+        ids: [component.component_id],
+    };
+
+    try {
+        await axios.delete(`/api/wellstack-reporting-history-details`, {
+            data: data
+        });
+
+        // Add fade out animation before removing
+        setTimeout(() => {
+            componentList.value.splice(index, 1);
+        }, 300);
+
+    } catch (error) {
+        console.error('Error removing component:', error);
+        // Reset loading state on error
+        component.isRemoving = false;
+        useToast().error('Failed to remove component');
+    }
+};
+
+const handleUpdatePosition = async (event) => {
+    updatePositionLoading.value = true;
+
+    await axios.put(`/api/wellstack-reporting-history-details/update-positions`, {
+        components: componentList.value.map((component, index) => ({
+            id: component.component_id,
+            position: index + 1
+        }))
+    });
+    useToast().success('Component positions updated successfully');
+    updatePositionLoading.value = false;
 };
 
 
@@ -919,8 +1496,27 @@ function openModal(section = '', selectedItem = null) {
     }
 }
 
+async function openReportModal(section = '', selectedItem = null) {
+    titleModal.value = section === 'create' ? 'Create New Report' : 'Edit Report';
+    titleModalButton.value = section === 'create' ? 'Create' : 'Update';
+    isCreateNewItem.value = section === 'create';
+    isReportingModalOpen.value = true;
+    componentList.value = [];
+
+    if (selectedItem) {
+        componentListLoading.value = true;
+        templateForm.value = { ...selectedItem };
+        await fetchAllWellstackTypes();
+        await fetchAllWellstackReportingDetails(templateForm.value.id);
+        componentListLoading.value = false;
+    } else {
+        resetForm();
+    }
+}
+
 function closeModal() {
     isTemplateModalOpen.value = false;
+    isReportingModalOpen.value = false;
     resetForm();
 }
 
@@ -943,6 +1539,38 @@ const saveTemplate = async () => {
         loading.value = false;
     }
 }
+
+/* ------------------------------- WATCHERS ---------------------------------- */
+watch(queryTypes, (newQuery) => {
+    filteredTypes.value = !newQuery
+        ? types.value
+        : types.value.filter(cat => cat.name.toLowerCase().includes(newQuery.toLowerCase()));
+}, { immediate: true });
+
+watch(selectedType, (newType) => {
+    selectedItem.value = null;
+    selectedItemDimension.value = null;
+    items.value = [];
+    itemDimensions.value = [];
+    if (newType) fetchAllWellstackItems(newType.id);
+}, { immediate: true });
+
+watch(queryItems, (newQuery) => {
+    filteredItems.value = !newQuery
+        ? items.value
+        : items.value.filter(item => item.name.toLowerCase().includes(newQuery.toLowerCase()));
+}, { immediate: true });
+
+
+watch(queryItemDimensions, (newQuery) => {
+    filteredItemDimensions.value = !newQuery
+        ? itemDimensions.value
+        : itemDimensions.value.filter(dim => dimensionLabel(dim).toLowerCase().includes(newQuery.toLowerCase()));
+}, { immediate: true });
+
+watch([search, selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, isDesc], () => {
+    fetchAllTemplates();
+}, { deep: true });
 
 onMounted(() => {
     fetchAllTemplates();

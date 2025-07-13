@@ -131,6 +131,11 @@
                                                         <ListboxButton
                                                             class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.height.unit }}
+                                                            <span
+                                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </span>
                                                         </ListboxButton>
                                                         <ListboxOptions
                                                             class="absolute mt-1 w-full bg-white dark:bg-slate-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-opacity-5 overflow-auto focus:outline-none sm:text-sm z-50">
@@ -158,6 +163,11 @@
                                                         <ListboxButton
                                                             class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.weight.unit }}
+                                                            <span
+                                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </span>
                                                         </ListboxButton>
                                                         <ListboxOptions
                                                             class="absolute mt-1 w-full bg-white dark:bg-slate-700 shadow-lg max-h-60 rounded-md py-1 text-basering-opacity-5 overflow-auto focus:outline-none sm:text-sm z-50">
@@ -186,6 +196,11 @@
                                                         <ListboxButton
                                                             class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.pressureRating.unit }}
+                                                            <span
+                                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </span>
                                                         </ListboxButton>
                                                         <ListboxOptions
                                                             class="absolute mt-1 w-full bg-white dark:bg-slate-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-opacity-5 overflow-auto focus:outline-none sm:text-sm z-50">
@@ -214,6 +229,11 @@
                                                         <ListboxButton
                                                             class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.shearRamDistFromBottom.unit }}
+                                                            <span
+                                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </span>
                                                         </ListboxButton>
                                                         <ListboxOptions
                                                             class="absolute mt-1 w-full bg-white dark:bg-slate-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-opacity-5 overflow-auto focus:outline-none sm:text-sm z-50">
@@ -1077,7 +1097,7 @@ import {
     ComboboxOption
 } from '@headlessui/vue';
 
-import { ChevronUpDownIcon, CheckIcon, PlusIcon, XMarkIcon } from '@heroicons/vue/20/solid';
+import { ChevronUpDownIcon, CheckIcon, PlusIcon, XMarkIcon, } from '@heroicons/vue/20/solid';
 import Pagination from '@/components/Pagination.vue';
 
 // ========== INITIAL SETUP ==========

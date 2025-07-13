@@ -71,6 +71,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::put('/api/wellstack-types/{id}', [WellstackController::class, 'updateType'])->name('updateWellstackType');
     Route::delete('/api/wellstack-types/{id}', [WellstackController::class, 'deleteType'])->name('deleteWellstackType');
     Route::get('/api/wellstack-types/{id}', [WellstackController::class, 'getType'])->name('getWellstackType');
+    Route::get('/api/wellstack-types-search', [WellstackController::class, 'searchTypes'])->name('searchWellstackTypes');
 
     // Wellstack item management
     Route::post('/api/wellstack-items', [WellstackController::class, 'storeItem'])->name('storeWellstackItem');
@@ -86,6 +87,15 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/api/wellstack-reporting-histories/{id}', [WellstackController::class, 'getReportingHistory'])->name('getWellstackReportingHistory');
     Route::put('/api/wellstack-reporting-histories/{id}', [WellstackController::class, 'updateReportingHistory'])->name('updateWellstackReportingHistory');
     Route::delete('/api/wellstack-reporting-histories/{id}', [WellstackController::class, 'deleteReportingHistory'])->name('deleteWellstackReportingHistory');
+
+    // Wellstack reporting history details
+    Route::post('/api/wellstack-reporting-history-details', [WellstackController::class, 'storeReportingHistoryDetail'])->name('storeWellstackReportingHistoryDetail');
+    Route::put('/api/wellstack-reporting-history-details/update-positions', [WellstackController::class, 'updateReportingHistoryDetailPosition'])->name('updateWellstackReportingHistoryDetailPosition');
+    Route::get('/api/wellstack-reporting-history-details/{templateId}', [WellstackController::class, 'getReportingHistoryDetails'])->name('getWellstackReportingHistoryDetails');
+    Route::get('/api/wellstack-reporting-history-details/{id}', [WellstackController::class, 'getReportingHistoryDetail'])->name('getWellstackReportingHistoryDetail');
+    Route::put('/api/wellstack-reporting-history-details/{id}', [WellstackController::class, 'updateReportingHistoryDetail'])->name('updateWellstackReportingHistoryDetail');
+    Route::delete('/api/wellstack-reporting-history-details', [WellstackController::class, 'deleteReportingHistoryDetail'])->name('deleteWellstackReportingHistoryDetail');
+
 });
 
 // Storage files should not be routed to SPA
