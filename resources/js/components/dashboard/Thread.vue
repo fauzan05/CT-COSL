@@ -326,7 +326,7 @@
                             <tr v-for="(thread, index) in listThreads" :key="thread.id"
                                 class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                    {{ (pagination.current_page - 1) * 10 + index + 1 }}
+                                    {{ (pagination.current_page - 1) * perPage + index + 1 }}
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                                     {{ thread.type }}
@@ -355,23 +355,54 @@
                     </table>
                 </div>
 
-                <!-- Improved Pagination -->
-                <div class="flex items-center justify-between mt-6 px-4">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                        Showing page {{ pagination.current_page }} of {{ pagination.last_page }}
+                <!-- Improved Pagination with Per-Page Selector -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mt-6 space-y-3 md:space-y-0 px-4">
+
+                    <!-- Per Page Selector -->
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
+
+                        <Listbox v-model="perPage" @update:modelValue="changePerPage">
+                            <div class="relative">
+                                <ListboxButton
+                                    class="relative w-20 cursor-default rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 py-1.5 pl-3 pr-8 text-left text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    {{ perPage }}
+                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    </span>
+                                </ListboxButton>
+                                <ListboxOptions
+                                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-sm shadow-lgring-opacity-5 focus:outline-none">
+                                    <ListboxOption v-for="option in perPageOptions" :key="option" :value="option"
+                                        class="cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-indigo-50 dark:hover:bg-indigo-900/40">
+                                        {{ option }}
+                                    </ListboxOption>
+                                </ListboxOptions>
+                            </div>
+                        </Listbox>
+
+                        <span class="text-sm text-gray-500 dark:text-gray-400">entries</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button
-                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                            :disabled="pagination.current_page === 1" @click="goToPage(pagination.current_page - 1)">
-                            Previous
-                        </button>
-                        <button
-                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                            :disabled="pagination.current_page === pagination.last_page"
-                            @click="goToPage(pagination.current_page + 1)">
-                            Next
-                        </button>
+
+                    <!-- Pagination Info & Buttons -->
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500 dark:text-gray-400">
+                            Showing page {{ pagination.current_page }} of {{ pagination.last_page }}
+                        </span>
+
+                        <div class="flex space-x-2">
+                            <button
+                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+                                :disabled="pagination.current_page === 1" @click="goToPage(pagination.current_page - 1)">
+                                Previous
+                            </button>
+                            <button
+                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+                                :disabled="pagination.current_page === pagination.last_page"
+                                @click="goToPage(pagination.current_page + 1)">
+                                Next
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -380,207 +411,219 @@
 </template>
   
 <script setup>
-/* --------------------------------- IMPORTS --------------------------------- */
-import { ref, computed, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+/* ------------------------------- IMPORTS ------------------------------- */
+import { ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
-import draggable from 'vuedraggable';
 import { useCurrentUserStore } from '@/stores/CurrentUser';
 
 import {
-    TabGroup, TabList, Tab, TabPanels, TabPanel,
     TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle,
-    Listbox, ListboxButton, ListboxOptions, ListboxOption,
-    Switch, SwitchGroup, SwitchLabel,
-    Combobox, ComboboxInput, ComboboxButton, ComboboxOptions, ComboboxOption
+    DialogTitle as DialogTitleComponent, Listbox, ListboxButton, ListboxOptions, ListboxOption,
 } from '@headlessui/vue';
 
-import {
-    ChevronUpDownIcon, CheckIcon, PlusIcon, ClipboardDocumentIcon
-} from '@heroicons/vue/20/solid';
+import { ChevronUpDownIcon } from '@heroicons/vue/20/solid';
 
-const listThreads = ref([])
-const pagination = ref({
-    current_page: 1,
-    last_page: 1
-})
+/* ----------------------------- STATE & STORES ----------------------------- */
+const listThreads = ref([]);
+const pagination = ref({ current_page: 1, last_page: 1 });
 
-const threadForm = ref({
-    type: '',
-})
+const threadForm = ref({ type: '' });
+const threadFormSize = ref({ top_connection: '', bottom_connection: '' });
+const listThreadSizes = ref([]);
 
-const isLoading = ref(false)
-const componentListLoading = ref(false)
-const isThreadModalOpen = ref(false)
-const titleModal = ref('Add Thread')
-const titleModalButton = ref('Save Thread')
-const addSizeLoading = ref(false)
-const listThreadSizes = ref([])
-const threadFormSize = ref({
-    top_connection: '',
-    bottom_connection: ''
-})
-const selectedThread = ref(null)
-const editingSizeIndex = ref(null)
-const loading = ref(false)
-const editingRowIndex = ref(null)
+const isLoading = ref(false);
+const isThreadModalOpen = ref(false);
+const titleModal = ref('Add Thread');
+const titleModalButton = ref('Save Thread');
+const addSizeLoading = ref(false);
+const editingSizeIndex = ref(null);
+const editingRowIndex = ref(null);
+const loading = ref(false);
+const loadingAllSizes = ref(false);
 
+const selectedThread = ref(null);
+const currentUserStore = useCurrentUserStore();
+
+const perPageOptions = [10, 25, 100];
+const perPage = ref(10);
+
+/* ------------------------------ UTILITIES ------------------------------ */
+const formatDate = (utcDateString) => {
+    const date = new Date(utcDateString);
+    const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+    return date
+        .toLocaleString('en-US', options)
+        .replace(',', '')
+        .replace(',', ' at');
+};
+
+/* ------------------------------ MODAL HANDLERS ------------------------------ */
 function closeModal() {
-    isThreadModalOpen.value = false
-    resetForm()
-}
-function resetForm() {
-    threadForm.value = { type: '' }
-    threadFormSize.value = { top_connection: '', bottom_connection: '' }
-    listThreadSizes.value = []
-    editingSizeIndex.value = null
+    isThreadModalOpen.value = false;
+    resetForm();
 }
 
+function resetForm() {
+    threadForm.value = { type: '' };
+    threadFormSize.value = { top_connection: '', bottom_connection: '' };
+    listThreadSizes.value = [];
+    editingSizeIndex.value = null;
+    editingRowIndex.value = null;
+}
+
+/* ----------------------------- SIZE HANDLERS ----------------------------- */
 function editThreadSize(_, index) {
-    editingRowIndex.value = index
+    editingRowIndex.value = index;
 }
 
 function saveThreadSize(index) {
-    editingRowIndex.value = null
+    editingRowIndex.value = null;
 }
-const currentUserStore = useCurrentUserStore();
 
-// Add or Update size
 function addSize() {
-    if (!threadFormSize.value.top_connection || !threadFormSize.value.bottom_connection) return
+    if (!threadFormSize.value.top_connection || !threadFormSize.value.bottom_connection) return;
 
-    addSizeLoading.value = true
+    addSizeLoading.value = true;
 
     setTimeout(() => {
+        const now = new Date().toISOString();
+        const userName = currentUserStore.user ? currentUserStore.user.fullname : 'Current User';
+
         if (editingSizeIndex.value !== null) {
             // UPDATE MODE
             listThreadSizes.value[editingSizeIndex.value] = {
                 ...listThreadSizes.value[editingSizeIndex.value],
                 top_connection: threadFormSize.value.top_connection,
                 bottom_connection: threadFormSize.value.bottom_connection,
-                updated_at: threadFormSize.value.updated_at || new Date().toISOString(),
-                updated_by_name: threadFormSize.value.updated_by_name || 'Current User'
-            }
+                updated_at: now,
+                updated_by_name: userName,
+            };
         } else {
             // ADD MODE
             listThreadSizes.value.push({
                 id: 0,
                 top_connection: threadFormSize.value.top_connection,
                 bottom_connection: threadFormSize.value.bottom_connection,
-                updated_at: new Date().toISOString(),
-                updated_by_name: currentUserStore.user ? currentUserStore.user.fullname : 'Current User',
-            })
+                updated_at: now,
+                updated_by_name: userName,
+            });
         }
 
-        // clear input
-        threadFormSize.value = { top_connection: '', bottom_connection: '' }
-        editingSizeIndex.value = null
-        addSizeLoading.value = false
-    }, 500)
+        // Clear input
+        threadFormSize.value = { top_connection: '', bottom_connection: '' };
+        editingSizeIndex.value = null;
+        addSizeLoading.value = false;
+    }, 500);
 }
 
-// Remove size
 function deleteThreadSize(index) {
-    listThreadSizes.value.splice(index, 1)
+    listThreadSizes.value.splice(index, 1);
 }
 
+/* ----------------------------- API HANDLERS ----------------------------- */
 async function fetchThreads(page = 1) {
     try {
-        isLoading.value = true
-        const response = await axios.get(`/api/threads?page=${page}`)
-        listThreads.value = response.data.data
+        isLoading.value = true;
+        const response = await axios.get(`/api/threads?page=${page}&per_page=${perPage.value}`);
+        listThreads.value = response.data.data;
         pagination.value = {
             current_page: response.data.current_page,
-            last_page: response.data.last_page
-        }
+            last_page: response.data.last_page,
+        };
     } catch (error) {
-        console.error(error)
+        console.error(error);
     } finally {
-        isLoading.value = false
+        isLoading.value = false;
     }
 }
-const loadingAllSizes = ref(false)
+
 async function fetchThreadSizes(threadId) {
     try {
-        loadingAllSizes.value = true
-        const response = await axios.get(`/api/threads/${threadId}/sizes`)
-        listThreadSizes.value = response.data.data
+        loadingAllSizes.value = true;
+        const response = await axios.get(`/api/threads/${threadId}/sizes`);
+        listThreadSizes.value = response.data.data;
     } catch (error) {
-        console.error(error)
+        console.error(error);
     } finally {
-        loadingAllSizes.value = false
+        loadingAllSizes.value = false;
     }
 }
 
 const openThreadModal = async (thread) => {
-    // Logic to open modal for adding or editing thread
-    // This can be implemented using a modal component or a simple alert for demonstration
     if (thread) {
-        isThreadModalOpen.value = true
-        titleModal.value = 'Edit Thread'
-        titleModalButton.value = 'Update Thread'
-        selectedThread.value = thread
-        threadForm.value.type = thread.type
-        fetchThreadSizes(thread.id)
+        isThreadModalOpen.value = true;
+        titleModal.value = 'Edit Thread';
+        titleModalButton.value = 'Update Thread';
+        selectedThread.value = thread;
+        threadForm.value.type = thread.type;
+        fetchThreadSizes(thread.id);
     } else {
-        isThreadModalOpen.value = true
-        titleModal.value = 'Add Thread'
+        isThreadModalOpen.value = true;
+        titleModal.value = 'Add Thread';
     }
-}
+};
 
 const saveThread = async () => {
-    loading.value = true
+    loading.value = true;
+    const toast = useToast();
+
     try {
-        let data = {
+        const data = {
             type: threadForm.value.type,
-            sizes: listThreadSizes.value
-        }
+            sizes: listThreadSizes.value,
+        };
 
         if (selectedThread.value) {
             // Update existing thread
-            data.id = selectedThread.value.id
-            const response = await axios.put(`/api/threads/${selectedThread.value.id}`, data)
+            data.id = selectedThread.value.id;
+            const response = await axios.put(`/api/threads/${selectedThread.value.id}`, data);
             if (response.status === 200) {
-                useToast().success('Thread updated successfully!')
+                toast.success('Thread updated successfully!');
             }
         } else {
-            const response = await axios.post('/api/threads', data)
+            const response = await axios.post('/api/threads', data);
             if (response.status === 201) {
-                // Reset form and close modal
-                useToast().success('Thread saved successfully!')
+                toast.success('Thread saved successfully!');
             }
         }
-        resetForm()
-        fetchThreads(pagination.value.current_page)
-        closeModal()
-    } catch (error) {
-        console.error(error)
-        useToast().error('Failed to save thread.')
-    } finally {
-        loading.value = false
-    }
-}
 
-const formatDate = (utcDateString) => {
-    const date = new Date(utcDateString);
-    const options = {
-        year: 'numeric', month: 'short', day: 'numeric',
-        hour: '2-digit', minute: '2-digit', hour12: false,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    };
-    return date.toLocaleString('en-US', options).replace(',', '').replace(',', ' at');
+        resetForm();
+        fetchThreads(pagination.value.current_page);
+        closeModal();
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to save thread.');
+    } finally {
+        loading.value = false;
+    }
 };
 
 function goToPage(page) {
-    if (page < 1 || page > pagination.value.last_page) return
-    fetchThreads(page)
+    if (page < 1 || page > pagination.value.last_page) return;
+    fetchThreads(page);
 }
 
+function changePerPage(newPerPage) {
+    perPage.value = newPerPage;
+    pagination.value.current_page = 1;
+    fetchThreads(1);
+}
+
+/* ------------------------------ ON MOUNT ------------------------------ */
 onMounted(async () => {
     if (!currentUserStore.user) {
         await currentUserStore.fetchUser();
     }
-    fetchThreads()
-})
+    fetchThreads();
+});
 </script>
+
   
