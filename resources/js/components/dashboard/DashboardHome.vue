@@ -1,229 +1,125 @@
 <template>
     <head>
-        <Title>Admin Dashboard</Title>
+        <Title>Operations Dashboard</Title>
     </head>
     <div class="p-6 bg-gray-50 dark:bg-slate-900/50 dark:text-gray-100 rounded-xl transition-colors duration-200">
         <div class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-amber-50">Welcome back, {{
-                currentUserStore?.user?.fullname }}!</h1>
-            <p class="text-gray-600 dark:text-gray-400">Here's what's happening with you today.</p>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-amber-50">Welcome back, {{ currentUserStore?.user?.fullname }}!</h1>
+            <p class="text-gray-600 dark:text-gray-400">Oil & Gas Operations Overview</p>
         </div>
 
-        <!-- Statistik Cards -->
+        <!-- Key Performance Indicators -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <!-- Total Orders Card -->
-            <div
-                class="bg-white rounded-xl shadow-md p-6 border border-gray-100 dark:bg-slate-800/50 dark:shadow-slate-900/50 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
+            <!-- Daily Production -->
+            <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 dark:bg-slate-800/50 dark:shadow-slate-900/50 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-amber-50">Total Orders</p>
-                        <h3 class="text-2xl font-bold text-gray-700 dark:text-white">1,234</h3>
+                        <p class="text-sm text-gray-500 dark:text-amber-50">Daily Production</p>
+                        <h3 class="text-2xl font-bold text-gray-700 dark:text-white">85,234 BBL</h3>
                     </div>
-                    <div class="p-3 bg-orange-100 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    <div class="p-3 bg-blue-100 rounded-full">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                         </svg>
                     </div>
                 </div>
                 <p class="mt-2 text-green-600 text-sm flex items-center">
-                    <span class="text-green-500 mr-1">↑</span> 12% from last month
+                    <span class="text-green-500 mr-1">↑</span> 3.2% from yesterday
                 </p>
             </div>
 
-            <!-- Total Revenue Card -->
-            <div
-                class="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-slate-900/50 p-6 border border-gray-50 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
+            <!-- Active Wells -->
+            <div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-slate-900/50 p-6 border border-gray-50 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-amber-50">Revenue</p>
-                        <h3 class="text-2xl font-bold text-gray-700 dark:text-white">Rp 4,567K</h3>
+                        <p class="text-sm text-gray-500 dark:text-amber-50">Active Wells</p>
+                        <h3 class="text-2xl font-bold text-gray-700 dark:text-white">142/156</h3>
                     </div>
                     <div class="p-3 bg-green-100 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                 </div>
                 <p class="mt-2 text-green-600 text-sm flex items-center">
-                    <span class="text-green-500 mr-1">↑</span> 8% from last month
+                    91% Operational Rate
                 </p>
             </div>
 
-            <!-- Total Products Card -->
-            <div
-                class="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-slate-900/50 p-6 border border-gray-100 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
+            <!-- Equipment Status -->
+            <div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-slate-900/50 p-6 border border-gray-100 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-amber-50">Total Products</p>
-                        <h3 class="text-2xl font-bold text-gray-700 dark:text-white">45</h3>
+                        <p class="text-sm text-gray-500 dark:text-amber-50">Equipment Status</p>
+                        <h3 class="text-2xl font-bold text-gray-700 dark:text-white">98.5%</h3>
+                    </div>
+                    <div class="p-3 bg-yellow-100 rounded-full">
+                        <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <p class="mt-2 text-yellow-600 text-sm flex items-center">
+                    3 Maintenance Alerts
+                </p>
+            </div>
+
+            <!-- Safety Metrics -->
+            <div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-slate-900/50 p-6 border border-gray-100 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-amber-50">Days Without Incident</p>
+                        <h3 class="text-2xl font-bold text-gray-700 dark:text-white">365</h3>
                     </div>
                     <div class="p-3 bg-purple-100 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                        <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                     </div>
                 </div>
                 <p class="mt-2 text-purple-600 text-sm flex items-center">
-                    <span>Active products</span>
-                </p>
-            </div>
-
-            <!-- Total Users Card -->
-            <div
-                class="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-slate-900/50 p-6 border border-gray-100 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-amber-50">Total Customers</p>
-                        <h3 class="text-2xl font-bold text-gray-700 dark:text-white">892</h3>
-                    </div>
-                    <div class="p-3 bg-blue-100 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                    </div>
-                </div>
-                <p class="mt-2 text-blue-600 text-sm flex items-center">
-                    <span class="text-blue-500 mr-1">↑</span> 24 new today
+                    Perfect Safety Record
                 </p>
             </div>
         </div>
 
-        <!-- Charts Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Sales Chart -->
-            <div
-                class="bg-white rounded-xl shadow-md p-6 border border-gray-100 dark:bg-slate-800/50 dark:shadow-slate-900/50 dark:border-slate-700/50">
-                <div ref="chartContainer" class="h-80" />
-
-            </div>
-            <!-- Popular Products -->
-            <div
-                class="bg-white rounded-xl shadow-md p-6 border border-gray-100 dark:bg-slate-800/50 dark:shadow-slate-900/50 dark:border-slate-700/50">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4 dark:text-white">Popular Products</h2>
-                <div class="space-y-4">
-                    <div v-for="product in popularProducts" :key="product.id"
-                        class="flex items-center space-x-4 p-2 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg">
-                        <img :src="product.image" :alt="product.name" class="w-12 h-12 rounded-lg object-cover">
-                        <div class="flex-1">
-                            <h3 class="text-sm font-medium text-gray-800 dark:text-gray-500">{{ product.name }}</h3>
-                            <p class="text-sm text-gray-500">{{ product.orders }} orders</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-gray-800 dark:text-amber-50">Rp {{ product.price }}</p>
-                            <p class="text-xs text-gray-500">In stock: {{ product.stock }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Orders Table -->
-        <div
-            class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden dark:bg-slate-800/50 dark:shadow-slate-900/50 dark:border-slate-700/50">
-            <div class="p-6">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4 dark:text-amber-50">Recent Orders</h2>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 dark:bg-slate-800/50 dark:shadow-slate-900/50 dark:border-slate-700/50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order
-                                ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Customer</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Products</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status</th>
-                        </tr>
-                    </thead>
-                    <tbody
-                        class="bg-white divide-y divide-gray-200 dark:bg-slate-800/50 dark:shadow-slate-900/50 dark:border-slate-700/50">
-                        <tr v-for="order in recentOrders" :key="order.id" class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{{ order.id }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="h-8 w-8 rounded-full bg-gray-200"></div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ order.customer }}</div>
-                                        <div class="text-sm text-gray-500">{{ order.email }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.products }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {{ order.total }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span
-                                    :class="`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)}`">
-                                    {{ order.status }}
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <!-- Additional Dashboard Content -->
+        <!-- You can add charts, tables, or other components here -->
     </div>
 </template>
+
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import Highcharts from 'highcharts'
+import { ref, onMounted } from 'vue'
 import { useCurrentUserStore } from '@/stores/CurrentUser'
 
-const getStatusColor = (status) => {
-    const colors = {
-        'Completed': 'bg-green-100 text-green-800',
-        'Processing': 'bg-yellow-100 text-yellow-800',
-        'Pending': 'bg-gray-100 text-gray-800',
-        'Cancelled': 'bg-red-100 text-red-800'
-    }
-    return colors[status] || 'bg-gray-100 text-gray-800'
-}
-// Sample Data
-const popularProducts = ref([
-    { id: 1, name: 'Seblak Original', orders: 125, price: '15.000', stock: 50, image: '#' },
-    { id: 2, name: 'Seblak Spesial', orders: 98, price: '20.000', stock: 30, image: '#' },
-    { id: 3, name: 'Seblak Tulang', orders: 89, price: '25.000', stock: 25, image: '#' },
-    { id: 4, name: 'Seblak Seafood', orders: 75, price: '30.000', stock: 20, image: '#' },
-])
-
-const recentOrders = ref([
-    { id: '1234', customer: 'John Doe', email: 'john@example.com', products: 'Seblak Original x2', total: '30.000', status: 'Completed' },
-    { id: '1235', customer: 'Jane Smith', email: 'jane@example.com', products: 'Seblak Spesial x1', total: '20.000', status: 'Processing' },
-    { id: '1236', customer: 'Bob Johnson', email: 'bob@example.com', products: 'Seblak Tulang x3', total: '75.000', status: 'Pending' },
-])
-
 const currentUserStore = useCurrentUserStore()
-const chartContainer = ref(null)
+
+// Sample Data for Oil & Gas Operations
+const operationalData = ref({
+    dailyProduction: {
+        current: 85234,
+        change: 3.2,
+        unit: 'BBL'
+    },
+    wells: {
+        active: 142,
+        total: 156,
+        operationalRate: 91
+    },
+    equipment: {
+        uptime: 98.5,
+        alerts: 3
+    },
+    safety: {
+        daysWithoutIncident: 365,
+        status: 'Perfect'
+    }
+})
 
 onMounted(async () => {
     if (!currentUserStore.user) {
         await currentUserStore.fetchUser()
     }
-    Highcharts.chart(chartContainer.value, {
-    chart: { type: 'column' },
-    title: { text: 'Sales Overview' },
-    xAxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] },
-    yAxis: { title: { text: 'Sales Amount (Rp)' } },
-    series: [{
-      name: 'Sales',
-      data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0],
-      color: '#FF6B6B'
-    }]
-  })
-});
-
+    // Add any additional initialization logic here
+})
 </script>
-<style lang="">
-    
-</style>

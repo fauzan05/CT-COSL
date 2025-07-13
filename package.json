@@ -23,6 +23,7 @@
         "@heroicons/vue": "^2.2.0",
         "highcharts": "^12.3.0",
         "highcharts-vue": "^2.0.1",
+        "html2pdf.js": "^0.10.3",
         "pinia": "^3.0.3",
         "swiper": "^11.2.10",
         "vue-router": "^4.5.1",
