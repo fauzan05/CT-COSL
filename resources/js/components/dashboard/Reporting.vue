@@ -272,182 +272,202 @@
                                     <div class="flex flex-col gap-4">
                                         <div class="flex flex-col sm:flex-row gap-4">
                                             <!-- Category -->
-                                            <Combobox v-model="selectedCategory" class="w-full sm:w-1/3">
-                                                <div class="relative mt-1">
-                                                    <div
-                                                        class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
-                                                        <ComboboxInput
-                                                            class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
-                                                            :displayValue="(category) => category?.name"
-                                                            @change="queryCategories = $event.target.value"
-                                                            placeholder="Search Category..." />
-                                                        <ComboboxButton
-                                                            class="absolute inset-y-0 right-0 flex items-center pr-2">
-                                                            <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
-                                                                aria-hidden="true" />
-                                                        </ComboboxButton>
-                                                    </div>
-                                                    <transition leave-active-class="transition duration-100 ease-in"
-                                                        leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                                        <ComboboxOptions
-                                                            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                            <div class="w-full sm:w-1/3 flex flex-col">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700 dark:text-white mb-1">Component
+                                                    Type</label>
+                                                <Combobox v-model="selectedCategory" class="w-full">
+                                                    <div class="relative mt-1">
+                                                        <div
+                                                            class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
+                                                            <ComboboxInput
+                                                                class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
+                                                                :displayValue="(category) => category?.name"
+                                                                @change="queryCategories = $event.target.value"
+                                                                placeholder="Search Category..." />
+                                                            <ComboboxButton
+                                                                class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </ComboboxButton>
+                                                        </div>
+                                                        <transition leave-active-class="transition duration-100 ease-in"
+                                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                                            <ComboboxOptions
+                                                                class="absolute mt-1 z-40 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
 
-                                                            <div v-if="loading"
-                                                                class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
-                                                                Loading...
-                                                            </div>
-                                                            <div v-else-if="categories.length === 0"
-                                                                class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
-                                                                Nothing found.
-                                                            </div>
+                                                                <div v-if="loading"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Loading...
+                                                                </div>
+                                                                <div v-else-if="categories.length === 0"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Nothing found.
+                                                                </div>
 
-                                                            <ComboboxOption v-for="category in categories"
-                                                                :key="category.id" :value="category"
-                                                                v-slot="{ selected, active }">
-                                                                <li :class="[
-                                                                    'relative cursor-default select-none py-2 pl-10 pr-4',
-                                                                    active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white'
-                                                                ]">
-                                                                    <span :class="[
-                                                                        'block truncate',
-                                                                        selected ? 'font-medium' : 'font-normal'
+                                                                <ComboboxOption v-for="category in categories"
+                                                                    :key="category.id" :value="category"
+                                                                    v-slot="{ selected, active }">
+                                                                    <li :class="[
+                                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
+                                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white'
                                                                     ]">
-                                                                        {{ category.name }}
-                                                                    </span>
-                                                                    <span v-if="selected"
-                                                                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
-                                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                                    </span>
-                                                                </li>
-                                                            </ComboboxOption>
-                                                        </ComboboxOptions>
-                                                    </transition>
-                                                </div>
-                                            </Combobox>
+                                                                        <span :class="[
+                                                                            'block truncate',
+                                                                            selected ? 'font-medium' : 'font-normal'
+                                                                        ]">
+                                                                            {{ category.name }}
+                                                                        </span>
+                                                                        <span v-if="selected"
+                                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
+                                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        </span>
+                                                                    </li>
+                                                                </ComboboxOption>
+                                                            </ComboboxOptions>
+                                                        </transition>
+                                                    </div>
+                                                </Combobox>
+                                            </div>
                                             <!-- Component Tools -->
-                                            <Combobox v-model="selectedItem" class="w-full sm:w-1/3">
-                                                <div class="relative mt-1">
-                                                    <div
-                                                        class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
-                                                        <ComboboxInput
-                                                            class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
-                                                            :displayValue="(item) => item?.name"
-                                                            @change="queryItems = $event.target.value"
-                                                            placeholder="Search Component Tools..." />
-                                                        <ComboboxButton
-                                                            class="absolute inset-y-0 right-0 flex items-center pr-2">
-                                                            <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
-                                                                aria-hidden="true" />
-                                                        </ComboboxButton>
-                                                    </div>
-                                                    <transition leave-active-class="transition duration-100 ease-in"
-                                                        leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                                        <ComboboxOptions
-                                                            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                            <div class="w-full sm:w-1/3 flex flex-col">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700 dark:text-white mb-1">Component
+                                                    Tools</label>
+                                                <Combobox v-model="selectedItem" class="w-full">
+                                                    <div class="relative mt-1">
+                                                        <div
+                                                            class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
+                                                            <ComboboxInput
+                                                                class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
+                                                                :displayValue="(item) => item?.name"
+                                                                @change="queryItems = $event.target.value"
+                                                                placeholder="Search Component Tools..." />
+                                                            <ComboboxButton
+                                                                class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </ComboboxButton>
+                                                        </div>
+                                                        <transition leave-active-class="transition duration-100 ease-in"
+                                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                                            <ComboboxOptions
+                                                                class="absolute mt-1 z-40 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
 
-                                                            <div v-if="loading"
-                                                                class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
-                                                                Loading...
-                                                            </div>
-                                                            <div v-else-if="items.length === 0"
-                                                                class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
-                                                                Nothing found.
-                                                            </div>
+                                                                <div v-if="loading"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Loading...
+                                                                </div>
+                                                                <div v-else-if="items.length === 0"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Nothing found.
+                                                                </div>
 
-                                                            <ComboboxOption v-for="item in items" :key="item.id"
-                                                                :value="item" v-slot="{ selected, active }">
-                                                                <li :class="[
-                                                                    'relative cursor-default select-none py-2 pl-10 pr-4',
-                                                                    active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white'
-                                                                ]">
-                                                                    <span :class="[
-                                                                        'block truncate',
-                                                                        selected ? 'font-medium' : 'font-normal'
+                                                                <ComboboxOption v-for="item in items" :key="item.id"
+                                                                    :value="item" v-slot="{ selected, active }">
+                                                                    <li :class="[
+                                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
+                                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white'
                                                                     ]">
-                                                                        {{ item.name }}
-                                                                    </span>
-                                                                    <span v-if="selected"
-                                                                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
-                                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                                    </span>
-                                                                </li>
-                                                            </ComboboxOption>
-                                                        </ComboboxOptions>
-                                                    </transition>
-                                                </div>
-                                            </Combobox>
+                                                                        <span :class="[
+                                                                            'block truncate',
+                                                                            selected ? 'font-medium' : 'font-normal'
+                                                                        ]">
+                                                                            {{ item.name }}
+                                                                        </span>
+                                                                        <span v-if="selected"
+                                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
+                                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        </span>
+                                                                    </li>
+                                                                </ComboboxOption>
+                                                            </ComboboxOptions>
+                                                        </transition>
+                                                    </div>
+                                                </Combobox>
+                                            </div>
                                             <!-- Height PDF -->
-                                            <input type="number" v-model="height_pdf"
-                                                class="w-full sm:w-48 h-11 mt-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-800/50 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none shadow-md"
-                                                placeholder="Height PDF (mm)" />
+                                            <div class="w-full sm:w-48 flex flex-col">
+                                                <label class="text-sm font-medium text-gray-700 dark:text-white mb-1">Height
+                                                    PDF (mm)</label>
+                                                <input type="number" v-model="height_pdf"
+                                                    class="w-full sm:w-48 h-11 mt-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-800/50 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none shadow-md"
+                                                    placeholder="Height PDF (mm)" />
+                                            </div>
                                         </div>
                                         <div class="w-full">
                                             <!-- Component Dimension -->
-                                            <Combobox v-model="selectedItemDimension">
-                                                <div class="relative mt-1 w-full">
-                                                    <div
-                                                        class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
-                                                        <ComboboxInput
-                                                            class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
-                                                            :displayValue="dimensionLabel"
-                                                            @change="queryItemDimensions = $event.target.value"
-                                                            placeholder="Search Dimension Tools..." />
-                                                        <ComboboxButton
-                                                            class="absolute inset-y-0 right-0 flex items-center pr-2">
-                                                            <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
-                                                                aria-hidden="true" />
-                                                        </ComboboxButton>
-                                                    </div>
-                                                    <transition leave-active-class="transition duration-100 ease-in"
-                                                        leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                                        <ComboboxOptions
-                                                            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                            <div class="w-full flex flex-col">
+                                                <label
+                                                    class="text-sm font-medium text-gray-700 dark:text-white mb-1">Component
+                                                    Dimension</label>
+                                                <Combobox v-model="selectedItemDimension">
+                                                    <div class="relative mt-1 w-full">
+                                                        <div
+                                                            class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
+                                                            <ComboboxInput
+                                                                class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
+                                                                :displayValue="dimensionLabel"
+                                                                @change="queryItemDimensions = $event.target.value"
+                                                                placeholder="Search Dimension Tools..." />
+                                                            <ComboboxButton
+                                                                class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </ComboboxButton>
+                                                        </div>
+                                                        <transition leave-active-class="transition duration-100 ease-in"
+                                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                                            <ComboboxOptions
+                                                                class="absolute mt-1 z-30 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
 
-                                                            <div v-if="loading"
-                                                                class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
-                                                                Loading...
-                                                            </div>
-                                                            <div v-else-if="itemDimensions.length === 0"
-                                                                class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
-                                                                Nothing found.
-                                                            </div>
+                                                                <div v-if="loading"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Loading...
+                                                                </div>
+                                                                <div v-else-if="itemDimensions.length === 0"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Nothing found.
+                                                                </div>
 
-                                                            <ComboboxOption v-for="dimension in itemDimensions"
-                                                                :key="dimension.id" :value="dimension"
-                                                                v-slot="{ selected, active }">
-                                                                <li :class="[
-                                                                    'relative cursor-default select-none py-2 pl-10 pr-4',
-                                                                    active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white'
-                                                                ]">
-                                                                    <span :class="[
-                                                                        'block truncate',
-                                                                        selected ? 'font-medium' : 'font-normal'
+                                                                <ComboboxOption v-for="dimension in itemDimensions"
+                                                                    :key="dimension.id" :value="dimension"
+                                                                    v-slot="{ selected, active }">
+                                                                    <li :class="[
+                                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
+                                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white'
                                                                     ]">
-                                                                        OD: {{ dimension.outer_diameter.value }} {{
-                                                                            dimension.outer_diameter.unit }} - ID: {{
+                                                                        <span :class="[
+                                                                            'block truncate',
+                                                                            selected ? 'font-medium' : 'font-normal'
+                                                                        ]">
+                                                                            OD: {{ dimension.outer_diameter.value }} {{
+                                                                                dimension.outer_diameter.unit }} - ID: {{
         dimension.inner_diameter.value }} {{
-        dimension.inner_diameter.unit }}- Length: {{
-        dimension.length.value }} {{ dimension.length.unit
+        dimension.inner_diameter.unit }} - Length: {{
+        dimension.length.value }} {{
+        dimension.length.unit
     }}
-                                                                    </span>
-                                                                    <span v-if="selected"
-                                                                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
-                                                                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                                    </span>
-                                                                </li>
-                                                            </ComboboxOption>
-                                                        </ComboboxOptions>
-                                                    </transition>
-                                                </div>
-                                            </Combobox>
+                                                                        </span>
+                                                                        <span v-if="selected"
+                                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
+                                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        </span>
+                                                                    </li>
+                                                                </ComboboxOption>
+                                                            </ComboboxOptions>
+                                                        </transition>
+                                                    </div>
+                                                </Combobox>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <!-- Table Component -->
-                            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden">
+                            <div class="bg-white dark:bg-slate-800 mt-5 rounded-xl shadow-md overflow-hidden">
                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                    <thead class="bg-gray-50 dark:bg-gray-800">
+                                    <thead class="bg-gray-50  dark:bg-gray-800">
                                         <tr>
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -456,6 +476,8 @@
                                             <th class="px-6 py-3 dark:text-gray-300">Description</th>
                                             <th class="px-6 py-3 dark:text-gray-300">OD</th>
                                             <th class="px-6 py-3 dark:text-gray-300">ID</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Top Connection</th>
+                                            <th class="px-6 py-3 dark:text-gray-300">Bottom Connection</th>
                                             <th class="px-6 py-3 dark:text-gray-300">Length</th>
                                             <th class="px-6 py-3 dark:text-gray-300">Actions</th>
                                         </tr>
@@ -465,7 +487,7 @@
                                     <tbody v-if="componentListLoading"
                                         class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                                         <tr v-for="n in 3" :key="'loading-' + n">
-                                            <td colspan="7" class="px-6 py-4">
+                                            <td colspan="9" class="px-6 py-4">
                                                 <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full">
                                                 </div>
                                             </td>
@@ -483,7 +505,7 @@
                                                     {{ index + 1 }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <img :src="element.image" alt="Component image"
-                                                        class="h-10 w-10 rounded-full" />
+                                                        class="h-10 w-10 object-contain" />
                                                 </td>
                                                 <td
                                                     class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
@@ -494,6 +516,12 @@
                                                 <td
                                                     class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                                     {{ element.id }}</td>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ element.top_connection }}</td>
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {{ element.bottom_connection }}</td>
                                                 <td
                                                     class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                                     {{ element.length }}</td>
@@ -1887,9 +1915,11 @@ const fetchAllToolstringReportingDetails = async (templateId) => {
             component_id: detail.id,
             image: detail.image_url || 'default-image-url.jpg',
             description: detail.description,
-            od: `${detail.dimension.outer_diameter.value} ${detail.dimension.outer_diameter.unit}`,
-            id: `${detail.dimension.inner_diameter.value} ${detail.dimension.inner_diameter.unit}`,
-            length: `${detail.dimension.length.value} ${detail.dimension.length.unit}`,
+            od: `${detail.dimension?.outer_diameter.value} ${detail.dimension?.outer_diameter.unit}` || 'N/A',
+            id: `${detail.dimension?.inner_diameter.value} ${detail.dimension?.inner_diameter.unit}` || 'N/A',
+            top_connection: detail.thread_size?.top_connection || 'N/A',
+            bottom_connection: detail.thread_size?.bottom_connection || 'N/A',
+            length: `${detail.dimension?.length.value} ${detail.dimension?.length.unit}` || 'N/A',
             position: index + 1
         }));
 
@@ -1968,6 +1998,7 @@ const handleAddComponent = async () => {
     AddComponentLoading.value = true;
     if (!selectedCategory.value || !selectedItem.value || !selectedItemDimension.value) {
         alert('Please select all components first');
+        AddComponentLoading.value = false;
         return;
     }
 

@@ -11,20 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('toolstring_items', function (Blueprint $table) {
+        Schema::create('thread_sizes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('toolstring_category_id')
-                ->constrained('toolstring_categories')
-                ->onDelete('cascade');
             $table->foreignId('thread_id')
                 ->constrained('threads')
                 ->onDelete('cascade');
-            $table->foreignId('thread_size_id')
-                ->constrained('thread_sizes')
-                ->onDelete('cascade');
-            $table->string('name');
-            $table->text('description');
-            $table->string('image');
+            $table->string('top_connection')->nullable();
+            $table->string('bottom_connection')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
@@ -38,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('toolstring_items');
+        Schema::dropIfExists('thread_sizes');
     }
 };

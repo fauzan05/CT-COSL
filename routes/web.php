@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ToolstringController;
 use App\Http\Middleware\AuthMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -52,7 +53,16 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     // Toolstring Export PDF
     Route::prefix('backend')->group(function () {
         Route::get('/toolstring-reporting-histories/export-pdf/{templateId}', [ToolstringController::class, 'exportReportingHistoryPdf'])->name('exportReportingHistoryPdf');
-    });        
+    });
+    
+    // Thread management
+    Route::post('/api/threads', [ThreadController::class, 'storeThread'])->name('storeThread');
+    Route::get('/api/threads/sizes/search/{id}', [ThreadController::class, 'searchThreadById'])->name('searchThreadById');
+    Route::get('/api/threads/no-paginate', [ThreadController::class, 'getThreadsNoPaginate'])->name('getThreadsNoPaginate');
+    Route::get('/api/threads', [ThreadController::class, 'getThreads'])->name('getThreads');
+    Route::put('/api/threads/{id}', [ThreadController::class, 'updateThread'])->name('updateThread');
+    Route::delete('/api/threads/{id}', [ThreadController::class, 'deleteThread'])->name('deleteThread');
+    Route::get('/api/threads/{id}', [ThreadController::class, 'getThread'])->name('getThread');
 });
 
 // Storage files should not be routed to SPA

@@ -153,13 +153,13 @@
                     </td>
                     <td>{{ $component['description'] }}</td>
                     <td>
-                        {{ $component['dimension']['outer_diameter']['value'] ?? 'NA' }}
+                        {{ $component['dimension']['outer_diameter']['value'] ?? 'N/A' }}
                     </td>
                     <td>
-                        {{ $component['dimension']['inner_diameter']['value'] ?? 'NA' }}
+                        {{ $component['dimension']['inner_diameter']['value'] ?? 'N/A' }}
                     </td>
-                    <td>NA</td>
-                    <td>NA</td>
+                    <td>{{ $component['thread_size']['top_connection'] ?? 'N/A' }}</td>
+                    <td>{{ $component['thread_size']['bottom_connection'] ?? 'N/A' }}</td>
                     <td>
                         {{ $length ?? 'NA' }}
                     </td>

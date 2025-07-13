@@ -16,6 +16,8 @@ class ToolstringItemModel extends Model
         'name',
         'description',
         'image',
+        'thread_id',
+        'thread_size_id',
         'created_by',
         'updated_by',
     ];
@@ -39,5 +41,15 @@ class ToolstringItemModel extends Model
     public function createdByUser()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function thread()
+    {
+        return $this->belongsTo(ThreadModel::class, 'thread_id');
+    }
+
+    public function threadSize()
+    {
+        return $this->belongsTo(ThreadSizeModel::class, 'thread_size_id');
     }
 }

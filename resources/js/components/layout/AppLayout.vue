@@ -414,6 +414,7 @@ const isActive = (path) => route.path.startsWith(path);
 
 const sidebarItems = computed(() => [
     { name: 'Dashboard', path: '/dashboard', icon: 'fa-home' },
+    { name: 'Thread', path: '/thread', icon: 'fa-stream' },
     {
         name: 'Toolstring Coiled Tubing',
         path: '/toolstring-coiled-tubing',

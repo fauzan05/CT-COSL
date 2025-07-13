@@ -72,6 +72,59 @@
                                             </p>
                                         </div>
                                     </div>
+                                    <!-- Thread Card -->
+                                    <div
+                                        class="my-6 border rounded-lg bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600 p-4">
+                                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Thread</h3>
+
+                                        <!-- Type Combobox -->
+                                        <div class="mb-4">
+                                            <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Type</label>
+                                            <Combobox v-model="selectedThreadType">
+                                                <div class="relative">
+                                                    <ComboboxInput
+                                                        class="w-full border border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                        :displayValue="(item) => item?.type || ''"
+                                                        @input="queryThreadType = $event.target.value"
+                                                        placeholder="Search Type..." />
+                                                    <ComboboxOptions v-if="filteredThreadTypes.length > 0"
+                                                        class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-1ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                                                        <ComboboxOption v-for="(type, index) in filteredThreadTypes"
+                                                            :key="index" :value="type"
+                                                            class="cursor-pointer select-none relative py-2 pl-3 pr-9 text-gray-900 dark:text-white hover:bg-blue-600 hover:text-white">
+                                                            {{ type.type }}
+                                                        </ComboboxOption>
+                                                    </ComboboxOptions>
+                                                </div>
+                                            </Combobox>
+                                        </div>
+
+                                        <!-- Type Size Combobox -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                                                Type Size (Top - Bottom Connection)
+                                            </label>
+                                            <Combobox v-model="selectedThreadSize">
+                                                <div class="relative">
+                                                    <ComboboxInput
+                                                        class="w-full border border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                        :displayValue="(item) => item ? `${item.top_connection} - ${item.bottom_connection}` : ''"
+                                                        @input="queryThreadSize = $event.target.value"
+                                                        placeholder="Search Type Size..." />
+                                                    <ComboboxOptions v-if="filteredThreadSizes.length > 0"
+                                                        class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                                                        <ComboboxOption v-for="(size, index) in filteredThreadSizes"
+                                                            :key="index" :value="size"
+                                                            class="cursor-pointer select-none relative py-2 pl-3 pr-9 text-gray-900 dark:text-white hover:bg-blue-600 hover:text-white">
+                                                            {{ size.top_connection }} - {{ size.bottom_connection }}
+                                                        </ComboboxOption>
+                                                    </ComboboxOptions>
+                                                </div>
+                                            </Combobox>
+                                        </div>
+
+                                    </div>
                                 </div>
                                 <!-- Form Details - Full width on mobile, right column on desktop -->
                                 <div class="w-full md:w-1/2 flex flex-col justify-between">
@@ -1143,6 +1196,10 @@ import {
     Switch,
     SwitchGroup,
     SwitchLabel,
+    Combobox,
+    ComboboxInput,
+    ComboboxOptions,
+    ComboboxOption
 } from '@headlessui/vue';
 
 import { ChevronUpDownIcon, CheckIcon, PlusIcon, XMarkIcon } from '@heroicons/vue/20/solid';
@@ -1181,6 +1238,11 @@ const itemImage = ref(null);
 const uploadedItemImageFile = ref(null);
 const dragover = ref(false);
 const nextSetId = ref(2); // For adding new dimension sets
+const selectedThreadType = ref(null)
+const selectedThreadSize = ref(null)
+
+const queryThreadType = ref('')
+const queryThreadSize = ref('')
 
 // ========== FILTER OPTIONS ==========
 const sortByItems = [
@@ -1226,6 +1288,8 @@ const itemForm = ref({
     dimension_sets_deleted_ids: [],
 });
 
+const threadTypes = ref([])
+
 // ========== COMPUTED ==========
 const direction = computed(() => (isDesc.value ? 'desc' : 'asc'));
 const totalActiveItems = ref(0);
@@ -1246,18 +1310,20 @@ function openModal(selectedItem = null) {
                 is_current: false,
             }
         ];
-        console.log(itemForm.value.dimensionSets);
         itemForm.value.image = selectedItem.image || null;
         itemImage.value = selectedItem.image_url || null;
         titleModal.value = 'Edit Item';
         titleModalButton.value = 'Update Item';
         isCreateNewItem.value = false;
+        selectedThreadType.value = selectedItem.thread || null;
+        selectedThreadSize.value = selectedItem.thread_size || null;
     } else {
         titleModal.value = 'Create New Item';
         titleModalButton.value = 'Create Item';
         resetForm();
     }
     isItemModalOpen.value = true;
+    fetchAllThread();
 }
 
 function openDeleteModal(item) {
@@ -1291,6 +1357,9 @@ function resetForm() {
     };
     itemImage.value = null;
     itemsToDelete.value = [];
+    selectedThreadType.value = null;
+    selectedThreadSize.value = null;
+    uploadedItemImageFile.value = null;
 }
 
 // ========== FUNCTIONS: FILE HANDLING ==========
@@ -1404,6 +1473,8 @@ const saveItem = async () => {
         formData.append('name', itemForm.value.name);
         formData.append('description', itemForm.value.description);
         formData.append('dimension_sets', JSON.stringify(getDimensionSetsData()));
+        formData.append('thread_id', selectedThreadType.value ? selectedThreadType.value.id : null);
+        formData.append('thread_size_id', selectedThreadSize.value ? selectedThreadSize.value.id : null);
 
         if (uploadedItemImageFile.value) {
             const response = await fetch(itemImage.value);
@@ -1417,13 +1488,6 @@ const saveItem = async () => {
         if (itemForm.value.dimension_sets_deleted_ids.length > 0) {
             formData.append('dimension_sets_deleted_ids', JSON.stringify(itemForm.value.dimension_sets_deleted_ids));
         }
-
-        // formData.forEach((value, key) => {
-        //     console.log(`${key}: ${value}`);
-        // });
-
-        // let dimension = getDimensionSetsData()
-        // console.log('Dimension Summary:', dimension);
 
         if (isCreateNewItem.value) {
             await axios.post(`${baseUrl}/api/toolstring-items`, formData, {
@@ -1573,6 +1637,34 @@ function getDimensionsSummary() {
         return `Set ${--index}: OD=${set.outer_diameter.value}${set.outer_diameter.unit}, ID=${set.inner_diameter.value}${set.inner_diameter.unit}, L=${set.length.value}${set.length.unit}`;
     });
 }
+
+// ========== FUNCTIONS: THREADS ==========
+const fetchAllThread = async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/api/threads/no-paginate`);
+        threadTypes.value = response.data;
+    } catch (error) {
+        console.error('Error fetching thread types and sizes:', error);
+    }
+};
+
+const filteredThreadTypes = computed(() =>
+    queryThreadType.value === ''
+        ? threadTypes.value
+        : threadTypes.value.filter((item) =>
+            item.type.toLowerCase().includes(queryThreadType.value.toLowerCase())
+        )
+)
+
+const filteredThreadSizes = computed(() => {
+    if (!selectedThreadType.value || !selectedThreadType.value.sizes) return []
+    return queryThreadSize.value === ''
+        ? selectedThreadType.value.sizes
+        : selectedThreadType.value.sizes.filter(size =>
+            (size.top_connection ?? '').toLowerCase().includes(queryThreadSize.value.toLowerCase()) ||
+            (size.bottom_connection ?? '').toLowerCase().includes(queryThreadSize.value.toLowerCase())
+        )
+})
 
 // ========== WATCHERS ==========
 watch([selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, search, isDesc], () => {

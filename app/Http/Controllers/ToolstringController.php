@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ThreadModel;
 use App\Models\ToolstringCategoryModel;
 use App\Models\ToolstringItemDimensionModel;
 use App\Models\ToolstringItemModel;
@@ -108,7 +109,7 @@ class ToolstringController extends Controller
         $perPage = $request->input('per_page', 10);
 
         // Query builder
-        $query = ToolstringItemModel::with(['toolstringCategory', 'updatedByUser']);
+        $query = ToolstringItemModel::with(['toolstringCategory', 'updatedByUser', 'thread', 'threadSize']);
 
         // Filter by category_id
         if ($request->filled('toolstring_category_id')) {
@@ -149,6 +150,15 @@ class ToolstringController extends Controller
                 : null;
             $item->status = is_null($item->deleted_at) ? 'active' : 'inactive';
             $item->updated_by_name = $item->updatedByUser ? $item->updatedByUser->fullname : null;
+            $item->thread = $item->thread ? [
+                'id' => $item->thread->id,
+                'type' => $item->thread->type,
+            ] : null;
+            $item->thread_size = $item->threadSize ? [
+                'id' => $item->threadSize->id,
+                'top_connection' => $item->threadSize->top_connection,
+                'bottom_connection' => $item->threadSize->bottom_connection,
+            ] : null;
             $item->dimension_sets = ToolstringItemDimensionModel::where('toolstring_item_id', $item->id)
                 ->get()
                 ->map(function ($dimension) {
@@ -190,6 +200,8 @@ class ToolstringController extends Controller
                 'description' => 'nullable|string',
                 'image' => 'nullable|file|image|max:3072',
                 'dimension_sets' => 'nullable|json', // Assuming dimensions are sent as JSON
+                'thread_id' => 'nullable|exists:threads,id',
+                'thread_size_id' => 'nullable|exists:thread_sizes,id',
             ]);
 
             // Handle file upload
@@ -251,6 +263,8 @@ class ToolstringController extends Controller
                 'image' => 'nullable|file|image|max:3072',
                 'dimension_sets' => 'nullable|json', // Assuming dimensions are sent as JSON
                 'dimension_sets_deleted_ids' => 'nullable|json', // IDs of dimensions to delete
+                'thread_id' => 'nullable|exists:threads,id',
+                'thread_size_id' => 'nullable|exists:thread_sizes,id',
             ]);
 
             // Find the item
@@ -578,6 +592,15 @@ class ToolstringController extends Controller
                         'unit' => optional($detail->dimension)->length_unit,
                     ],
                 ],
+                'thread' => ThreadModel::find(optional($detail->item)->thread_id) ? [
+                    'id' => optional($detail->item)->thread_id,
+                    'type' => optional($detail->item)->thread->type ?? null,
+                ] : null,
+                'thread_size' => optional($detail->item)->threadSize ? [
+                    'id' => optional($detail->item)->threadSize->id,
+                    'top_connection' => optional($detail->item)->threadSize->top_connection,
+                    'bottom_connection' => optional($detail->item)->threadSize->bottom_connection,
+                ] : null,
             ];
         });
 
@@ -655,6 +678,15 @@ class ToolstringController extends Controller
                         'unit' => optional($detail->dimension)->length_unit,
                     ],
                 ],
+                'thread' => ThreadModel::find(optional($detail->item)->thread_id) ? [
+                    'id' => optional($detail->item)->thread_id,
+                    'type' => optional($detail->item)->thread->type ?? null,
+                ] : null,
+                'thread_size' => optional($detail->item)->threadSize ? [
+                    'id' => optional($detail->item)->threadSize->id,
+                    'top_connection' => optional($detail->item)->threadSize->top_connection,
+                    'bottom_connection' => optional($detail->item)->threadSize->bottom_connection,
+                ] : null,
             ];
         });
 
