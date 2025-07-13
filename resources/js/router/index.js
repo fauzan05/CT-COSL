@@ -4,6 +4,7 @@ import LoginPage from "../components/auth/LoginPage.vue";
 import ToolstringCoiledTubingType from "../components/dashboard/ToolstringCoiledTubingType.vue";
 import Reporting from "../components/dashboard/Reporting.vue";
 import Thread from "../components/dashboard/Thread.vue";
+import Wellstack from "../components/dashboard/WellstackType.vue";
 
 const routes = [
     {
@@ -26,6 +27,10 @@ const routes = [
         path: "/login",
         component: LoginPage,
     },
+    {
+        path: "/wellstack/:slug/:wellstackTypeId",
+        component: Wellstack,
+    }
 ];
 
 export default createRouter({

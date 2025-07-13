@@ -57,7 +57,8 @@
                     <!-- Navigation -->
                     <nav class="space-y-2 flex-1 overflow-y-auto pb-20">
                         <div v-for="(item, index) in sidebarItems" :key="index">
-                            <RouterLink v-if="item.name !== 'Toolstring Coiled Tubing'" :to="item.path" class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
+                            <RouterLink v-if="item.name !== 'Toolstring Coiled Tubing' && item.name !== 'Wellstack'"
+                                :to="item.path" class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
     hover:bg-blue-500 hover:text-white
     dark:hover:bg-white/10 dark:hover:text-blue-500
     transition-colors duration-200" :class="isActive(item.path)
@@ -74,7 +75,7 @@
                                 </div>
                             </RouterLink>
                             <button v-else @click="toggleDropdown(index)"
-                                @contextmenu.prevent="item.name === 'Toolstring Coiled Tubing' && openContextMenu($event, true, false, false)"
+                                @contextmenu.prevent="(item.name === 'Toolstring Coiled Tubing' || item.name === 'Wellstack') && openContextMenu($event, true, false, false, null, item)"
                                 :to="item.path" class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
     hover:bg-blue-500 hover:text-white
     dark:hover:bg-white/10 dark:hover:text-blue-500
@@ -138,7 +139,7 @@
                                         </div>
                                     </button>
                                     <!-- Rename Button -->
-                                    <button v-if="showRenameType" @click="handleRenameType()"
+                                    <button v-if="showRenameType" @click="handleRenameType"
                                         class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors duration-200 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700">
                                         <span
                                             class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30">
@@ -151,7 +152,7 @@
                                         </div>
                                     </button>
                                     <!-- Delete Button -->
-                                    <button v-if="showDeleteType" @click="handleDeleteType()"
+                                    <button v-if="showDeleteType" @click="handleDeleteType"
                                         class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors duration-200 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30">
                                         <span
                                             class="flex items-center justify-center w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30">
@@ -423,7 +424,17 @@ const sidebarItems = computed(() => [
             icon: 'fa-folder',
         })),
     },
-    { name: 'Wellstack', path: '/wellstack', icon: 'fa-oil-well' },
+    {
+        name: 'Wellstack',
+        path: '/wellstack',
+        icon: 'fa-oil-well',
+        children: appStore.wellstackTypes.map(type => ({
+            id: type.id,
+            name: type.name,
+            path: `/wellstack/${type.slug}/${type.id}`,
+            icon: 'fa-folder',
+        })),
+    },
     { name: 'Nitrogen', path: '/nitrogen', icon: 'fa-flask' },
     { name: 'Coiled Tubing', path: '/coiled-tubing', icon: 'fa-circle' },
     { name: 'Reporting', path: '/reporting/toolstring-coiled-tubing', icon: 'fa-file-lines' },
@@ -448,7 +459,7 @@ onMounted(async () => {
         await currentUserStore.fetchUser();
     }
     await appStore.getToolstringTypes();
-
+    await appStore.getWellstackTypes();
     window.addEventListener('click', closeNotificationDropdown);
     window.addEventListener('click', closeProfileDropdown);
 
@@ -516,7 +527,7 @@ function toggleDropdown(index) {
     appStore.getToolstringTypes();
 }
 
-function openContextMenu(event, addType = false, renameType = false, deleteType = false, selectedType = null) {
+function openContextMenu(event, addType = false, renameType = false, deleteType = false, selectedType = null, selectedDropdownMenu = null) {
     contextMenu.value = {
         visible: true,
         x: event.clientX,
@@ -530,6 +541,7 @@ function openContextMenu(event, addType = false, renameType = false, deleteType 
     showDeleteType.value = deleteType;
 
     appStore.selectedTypeData = selectedType ?? null;
+    appStore.selectedDropdownMenu = selectedDropdownMenu ?? null;
 }
 
 function closeContextMenu() {

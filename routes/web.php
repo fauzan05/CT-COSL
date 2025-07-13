@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ToolstringController;
+use App\Http\Controllers\WellstackController;
 use App\Http\Middleware\AuthMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -63,6 +64,13 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::put('/api/threads/{id}', [ThreadController::class, 'updateThread'])->name('updateThread');
     Route::delete('/api/threads/{id}', [ThreadController::class, 'deleteThread'])->name('deleteThread');
     Route::get('/api/threads/{id}', [ThreadController::class, 'getThread'])->name('getThread');
+
+    // Wellstack type management
+    Route::post('/api/wellstack-types', [WellstackController::class, 'storeType'])->name('storeWellstackType');
+    Route::get('/api/wellstack-types', [WellstackController::class, 'getTypes'])->name('getWellstackTypes');
+    Route::put('/api/wellstack-types/{id}', [WellstackController::class, 'updateType'])->name('updateWellstackType');
+    Route::delete('/api/wellstack-types/{id}', [WellstackController::class, 'deleteType'])->name('deleteWellstackType');
+    Route::get('/api/wellstack-types/{id}', [WellstackController::class, 'getType'])->name('getWellstackType');
 });
 
 // Storage files should not be routed to SPA

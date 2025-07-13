@@ -10,6 +10,8 @@ export const useAppStore = defineStore("app", {
         toolstringTypes: [],
         typeFormAction: 'create',
         selectedTypeData: null,
+        wellstackTypes: [],
+        selectedDropdownMenu: null,
     }),
     actions: {
         async getToolstringTypes() {
@@ -18,6 +20,18 @@ export const useAppStore = defineStore("app", {
                     `${baseUrl}/api/toolstring-types`
                 );
                 this.toolstringTypes = res.data;
+            } catch (error) {
+                console.error(error);
+                throw error;
+            }
+        },
+        async getWellstackTypes() {
+            try {
+                const res = await axios.get(
+                    `${baseUrl}/api/wellstack-types`
+                );
+                this.wellstackTypes = res.data;
+                console.log("Wellstack Types:", this.wellstackTypes);
             } catch (error) {
                 console.error(error);
                 throw error;
