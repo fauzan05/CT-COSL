@@ -9,7 +9,7 @@
                 </path>
             </svg>
         </div>
-        <CategoryForm />
+        <TypeForm />
         <div v-if="!loading" class="h-screen flex overflow-hidden bg-white dark:bg-slate-800 dark:text-white">
             <!-- Sidebar backdrop -->
             <Transition enter-active-class="transition-opacity ease-out duration-300" enter-from-class="opacity-0"
@@ -123,8 +123,8 @@
                                 </div>
                                 <!-- Menu Items -->
                                 <div class="p-2">
-                                    <!-- Add Category Button -->
-                                    <button v-if="showAddCategory" @click="handleAddCategory"
+                                    <!-- Add type Button -->
+                                    <button v-if="showAddType" @click="handleAddType"
                                         class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors duration-200 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700">
                                         <span
                                             class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30">
@@ -132,13 +132,13 @@
                                         </span>
                                         <div>
                                             <span class="font-medium text-gray-700 dark:text-gray-200">Add
-                                                Category</span>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">Create a new category
+                                                type</span>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Create a new type
                                             </p>
                                         </div>
                                     </button>
                                     <!-- Rename Button -->
-                                    <button v-if="showRenameCategory" @click="handleRenameCategory()"
+                                    <button v-if="showRenameType" @click="handleRenameType()"
                                         class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors duration-200 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700">
                                         <span
                                             class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30">
@@ -146,12 +146,12 @@
                                         </span>
                                         <div>
                                             <span class="font-medium text-gray-700 dark:text-gray-200">Edit</span>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">Rename category
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Rename type
                                             </p>
                                         </div>
                                     </button>
                                     <!-- Delete Button -->
-                                    <button v-if="showDeleteCategory" @click="handleDeleteCategory()"
+                                    <button v-if="showDeleteType" @click="handleDeleteType()"
                                         class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors duration-200 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30">
                                         <span
                                             class="flex items-center justify-center w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30">
@@ -364,7 +364,7 @@ import { useToast } from 'vue-toastification';
 
 import SearchButton from '../modals/SearchButton.vue';
 import ToggleDarkMode from '../buttons/DarkModeToggle.vue';
-import CategoryForm from '../modals/CategoryForm.vue';
+import TypeForm from '../modals/TypeForm.vue';
 
 import { useCurrentUserStore } from '@/stores/CurrentUser';
 import { useAppStore } from '@/stores/useAppStore';
@@ -401,9 +401,9 @@ const contextMenu = ref({
     y: 0,
 });
 
-const showAddCategory = ref(false);
-const showRenameCategory = ref(false);
-const showDeleteCategory = ref(false);
+const showAddType = ref(false);
+const showRenameType = ref(false);
+const showDeleteType = ref(false);
 
 
 /* ==================== COMPUTED ==================== */
@@ -416,10 +416,10 @@ const sidebarItems = computed(() => [
         name: 'Toolstring Coiled Tubing',
         path: '/toolstring-coiled-tubing',
         icon: 'fa-screwdriver-wrench',
-        children: appStore.toolstringCategories.map(category => ({
-            id: category.id,
-            name: category.name,
-            path: `/toolstring-coiled-tubing/${category.slug}/${category.id}`,
+        children: appStore.toolstringTypes.map(type => ({
+            id: type.id,
+            name: type.name,
+            path: `/toolstring-coiled-tubing/${type.slug}/${type.id}`,
             icon: 'fa-folder',
         })),
     },
@@ -447,7 +447,7 @@ onMounted(async () => {
     if (!currentUserStore.user) {
         await currentUserStore.fetchUser();
     }
-    await appStore.getToolstringCategories();
+    await appStore.getToolstringTypes();
 
     window.addEventListener('click', closeNotificationDropdown);
     window.addEventListener('click', closeProfileDropdown);
@@ -510,13 +510,13 @@ function closeMobileSidebar() {
 }
 
 
-/* ==================== CATEGORY MENU HANDLERS ==================== */
+/* ==================== TYPE MENU HANDLERS ==================== */
 function toggleDropdown(index) {
     dropdownOpen.value[index] = !dropdownOpen.value[index];
-    appStore.getToolstringCategories();
+    appStore.getToolstringTypes();
 }
 
-function openContextMenu(event, addCategory = false, renameCategory = false, deleteCategory = false, selectedCategory = null) {
+function openContextMenu(event, addType = false, renameType = false, deleteType = false, selectedType = null) {
     contextMenu.value = {
         visible: true,
         x: event.clientX,
@@ -525,34 +525,34 @@ function openContextMenu(event, addCategory = false, renameCategory = false, del
 
     document.addEventListener('click', closeContextMenu);
 
-    showAddCategory.value = addCategory;
-    showRenameCategory.value = renameCategory;
-    showDeleteCategory.value = deleteCategory;
+    showAddType.value = addType;
+    showRenameType.value = renameType;
+    showDeleteType.value = deleteType;
 
-    appStore.selectedCategoryData = selectedCategory ?? null;
+    appStore.selectedTypeData = selectedType ?? null;
 }
 
 function closeContextMenu() {
     contextMenu.value.visible = false;
     document.removeEventListener('click', closeContextMenu);
-    appStore.selectedCategoryData = null;
+    appStore.selectedTypeData = null;
 }
 
-function handleAddCategory() {
-    appStore.isCategoryModalOpen = true;
-    appStore.categoryFormAction = 'create';
+function handleAddType() {
+    appStore.isTypeModalOpen = true;
+    appStore.typeFormAction = 'create';
     closeContextMenu();
 }
 
-function handleRenameCategory() {
-    appStore.isCategoryModalOpen = true;
-    appStore.categoryFormAction = 'update';
+function handleRenameType() {
+    appStore.isTypeModalOpen = true;
+    appStore.typeFormAction = 'update';
     closeContextMenu();
 }
 
-function handleDeleteCategory() {
-    appStore.isCategoryModalOpen = true;
-    appStore.categoryFormAction = 'delete';
+function handleDeleteType() {
+    appStore.isTypeModalOpen = true;
+    appStore.typeFormAction = 'delete';
     closeContextMenu();
 }
 
@@ -565,8 +565,8 @@ async function logout() {
 
         await axios.post(`${baseUrl}/api/logout`);
         currentUserStore.user = null;
-        appStore.toolstringCategories = [];
-        appStore.selectedCategoryData = null;
+        appStore.toolstringTypes = [];
+        appStore.selectedTypeData = null;
 
         toast.success('Logged out successfully!');
         window.location.href = `${baseUrl}/login`;

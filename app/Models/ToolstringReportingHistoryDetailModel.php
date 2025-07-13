@@ -11,7 +11,7 @@ class ToolstringReportingHistoryDetailModel extends Model
     protected $table = 'toolstring_reporting_history_details';
     protected $fillable = [
         'toolstring_reporting_history_id',
-        'toolstring_category_id',
+        'toolstring_type_id',
         'toolstring_item_id',
         'toolstring_item_dimension_id',
         'position',
@@ -29,9 +29,9 @@ class ToolstringReportingHistoryDetailModel extends Model
         return $this->belongsTo(ToolstringReportingHistoryModel::class, 'toolstring_reporting_history_id');
     }
 
-    public function category()
+    public function type()
     {
-        return $this->belongsTo(ToolstringCategoryModel::class, 'toolstring_category_id');
+        return $this->belongsTo(ToolstringTypeModel::class, 'toolstring_type_id');
     }
 
     public function item()

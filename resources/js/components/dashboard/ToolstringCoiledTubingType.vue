@@ -1,6 +1,6 @@
 <template>
     <head>
-        <Title>Toolstring Coiled Tubing - {{ currentCategory?.name }}</Title>
+        <Title>Toolstring Coiled Tubing - {{ currentType?.name }}</Title>
     </head>
     <!-- modal create/update item -->
     <TransitionRoot appear :show="isItemModalOpen" as="template">
@@ -37,7 +37,7 @@
                                         :class="{ 'border-blue-500 bg-blue-50': dragover }">
                                         <div v-if="itemImage" class="w-full h-full relative">
                                             <!-- Gambar -->
-                                            <img :src="itemImage" alt="Category"
+                                            <img :src="itemImage" alt="Type"
                                                 class="w-full h-full rounded-lg object-contain" />
                                             <!-- Overlay tombol "Change Image" -->
                                             <div class="absolute bottom-4 left-1/2 -translate-x-1/2">
@@ -469,7 +469,7 @@
                                                     {{ item.name }}
                                                 </h4>
                                                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                                    {{ item.category || 'No category' }}
+                                                    {{ item.type || 'No type' }}
                                                 </p>
                                                 <div v-if="item.dimensions && item.dimensions.length > 0" class="mt-1">
                                                     <span
@@ -561,7 +561,7 @@
 
                 <!-- Actual Content -->
                 <template v-else>
-                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ currentCategory?.name }}</h1>
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ currentType?.name }}</h1>
                     <p class="text-gray-600 dark:text-gray-400">Manage your items and organize your inventory</p>
                 </template>
             </div>
@@ -1211,8 +1211,8 @@ const route = useRoute();
 const baseUrl = document.querySelector('meta[name="base-url"]').content;
 
 // ========== STATE ==========
-const toolstringCategoryId = ref(route.params.toolstringCategoryId);
-const currentCategory = ref(null);
+const toolstringTypeId = ref(route.params.toolstringTypeId);
+const currentType = ref(null);
 const loading = ref(false);
 const isLoadingData = ref(true);
 const isItemModalOpen = ref(false);
@@ -1418,12 +1418,12 @@ const nextPage = () => {
 };
 
 // ========== FUNCTIONS: API ==========
-const getCurrentCategory = async () => {
+const getCurrentType = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/toolstring-categories/${toolstringCategoryId.value}`);
-        currentCategory.value = response.data;
+        const response = await axios.get(`${baseUrl}/api/toolstring-types/${toolstringTypeId.value}`);
+        currentType.value = response.data;
     } catch (error) {
-        console.error('Error fetching current category:', error);
+        console.error('Error fetching current type:', error);
     }
 };
 
@@ -1434,7 +1434,7 @@ const fetchAllItems = async (page = 1) => {
 
         const response = await axios.get(`${baseUrl}/api/toolstring-items`, {
             params: {
-                toolstring_category_id: toolstringCategoryId.value,
+                toolstring_type_id: toolstringTypeId.value,
                 page,
                 per_page: selectedPageSizeFilter.value.value,
                 search: search.value,
@@ -1469,7 +1469,7 @@ const saveItem = async () => {
         loading.value = true;
 
         const formData = new FormData();
-        formData.append('toolstring_category_id', toolstringCategoryId.value);
+        formData.append('toolstring_type_id', toolstringTypeId.value);
         formData.append('name', itemForm.value.name);
         formData.append('description', itemForm.value.description);
         formData.append('dimension_sets', JSON.stringify(getDimensionSetsData()));
@@ -1676,10 +1676,10 @@ watch(selectedCategories, (newVal) => {
 });
 
 watch(
-    () => route.params.toolstringCategoryId,
+    () => route.params.toolstringTypeId,
     (newVal) => {
-        toolstringCategoryId.value = newVal;
-        getCurrentCategory();
+        toolstringTypeId.value = newVal;
+        getCurrentType();
         fetchAllItems();
     },
     { immediate: true }

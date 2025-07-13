@@ -3,18 +3,19 @@
 namespace Database\Seeders;
 
 use App\Models\ToolstringCategoryModel;
+use App\Models\ToolstringTypeModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class ToolstringCategory extends Seeder
+class ToolstringType extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $toolstring_categories = [
+        $toolstring_types = [
             ['name' => 'Fishing', 'slug' => 'fishing', 'created_by' => 1, 'updated_by' => 1],
             ['name' => 'Drilling', 'slug' => 'drilling', 'created_by' => 1, 'updated_by' => 1],
             ['name' => 'Completion', 'slug' => 'completion', 'created_by' => 1, 'updated_by' => 1],
@@ -33,6 +34,6 @@ class ToolstringCategory extends Seeder
             // ['name' => 'Surface Equipment', 'slug' => 'surface-equipment', 'created_by' => 1, 'updated_by' => 1],
         ];
 
-        ToolstringCategoryModel::insert($toolstring_categories);
+        ToolstringTypeModel::insert($toolstring_types);
     }
 }

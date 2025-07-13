@@ -1,6 +1,6 @@
 <template>
-  <!-- modal create/update/delete category -->
-  <TransitionRoot appear :show="appStore.isCategoryModalOpen" as="template">
+  <!-- modal create/update/delete type -->
+  <TransitionRoot appear :show="appStore.isTypeModalOpen" as="template">
     <Dialog as="div" @close="closeModal" class="relative z-50">
       <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100"
         leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
@@ -25,10 +25,10 @@
                 <i class="fa-solid fa-folder-plus"></i> &nbsp;
                 {{ modalTitle }}
               </DialogTitle>
-              <form @submit.prevent="saveNewCategory" class="flex flex-col md:flex-row items-center justify-center gap-6">
+              <form @submit.prevent="saveNewType" class="flex flex-col md:flex-row items-center justify-center gap-6">
                 <!-- Form Details - Full width on mobile, right column on desktop -->
                 <div class="w-full mx-3 flex flex-col justify-between">
-                  <div v-if="appStore.categoryFormAction !=
+                  <div v-if="appStore.typeFormAction !=
                     'delete'
                     " class="w-full mt-4">
                     <!-- Name -->
@@ -36,7 +36,7 @@
                       <label for="name" class="block me-3 text-sm font-medium text-gray-700 mb-2 dark:text-white">
                         Name
                       </label>
-                      <input ref="nameInput" type="text" id="name" v-model="categoryForm.name"
+                      <input ref="nameInput" type="text" id="name" v-model="typeForm.name"
                         class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         required />
                     </div>
@@ -44,8 +44,8 @@
                   <div v-else class="w-full mt-4 text-center space-y-4">
                     <p class="text-gray-700 dark:text-gray-200">
                       Are you sure you want to delete the
-                      category
-                      <span class="font-semibold text-red-600">{{ categoryForm.name }}</span>? Deleting this category will
+                      type
+                      <span class="font-semibold text-red-600">{{ typeForm.name }}</span>? Deleting this type will
                       also
                       remove all data associated with it.
                       This action cannot be undone.
@@ -61,9 +61,9 @@
                       <button type="submit" :disabled="loading"
                         class="inline-flex justify-center cursor-pointer rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                         :class="titleButton ==
-                            'Delete Category'
-                            ? 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-500'
-                            : 'bg-blue-600 hover:bg-blue-700 focus-visible:ring-blue-500'
+                          'Delete type'
+                          ? 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-500'
+                          : 'bg-blue-600 hover:bg-blue-700 focus-visible:ring-blue-500'
                           ">
                         <span v-if="!loading">{{
                           titleButton
@@ -113,37 +113,37 @@ const loading = ref(false);
 const nameInput = ref(null);
 const baseUrl = document.querySelector('meta[name="base-url"]').content;
 
-const categoryForm = ref({
+const typeForm = ref({
   id: 0,
   name: "",
 });
 
 /* ==================== COMPUTED ==================== */
 const modalTitle = computed(() => {
-  if (appStore.categoryFormAction === "create") {
-    return "Create New Category";
-  } else if (appStore.categoryFormAction === "update") {
-    return "Update Category";
+  if (appStore.typeFormAction === "create") {
+    return "Create New Type";
+  } else if (appStore.typeFormAction === "update") {
+    return "Update Type";
   } else {
     return "Delete Confirmation";
   }
 });
 
 const titleButton = computed(() => {
-  if (appStore.categoryFormAction === "create") {
-    return "Add Category";
-  } else if (appStore.categoryFormAction === "update") {
-    return "Update Category";
+  if (appStore.typeFormAction === "create") {
+    return "Add Type";
+  } else if (appStore.typeFormAction === "update") {
+    return "Update Type";
   } else {
-    return "Delete Category";
+    return "Delete Type";
   }
 });
 
 /* ==================== WATCHERS ==================== */
 watch(
-  () => appStore.isCategoryModalOpen,
+  () => appStore.isTypeModalOpen,
   (isOpen) => {
-    if (isOpen && appStore.categoryFormAction !== "delete") {
+    if (isOpen && appStore.typeFormAction !== "delete") {
       nextTick(() => {
         nameInput.value?.focus();
       });
@@ -152,11 +152,11 @@ watch(
 );
 
 watch(
-  () => appStore.selectedCategoryData,
+  () => appStore.selectedTypeData,
   (newVal) => {
     if (newVal) {
-      categoryForm.value.id = newVal.id;
-      categoryForm.value.name = newVal.name;
+      typeForm.value.id = newVal.id;
+      typeForm.value.name = newVal.name;
     }
   },
   { immediate: true }
@@ -164,52 +164,52 @@ watch(
 
 /* ==================== METHODS ==================== */
 const closeModal = () => {
-  appStore.isCategoryModalOpen = false;
-  categoryForm.value.id = 0;
-  categoryForm.value.name = "";
+  appStore.isTypeModalOpen = false;
+  typeForm.value.id = 0;
+  typeForm.value.name = "";
 };
 
-const saveNewCategory = async () => {
+const saveNewType = async () => {
   try {
     loading.value = true;
     let message = "";
 
-    if (appStore.categoryFormAction === "update") {
-      message = `Category ${categoryForm.value.name} updated successfully!`;
+    if (appStore.typeFormAction === "update") {
+      message = `Type ${typeForm.value.name} updated successfully!`;
       await axios.put(
-        `${baseUrl}/api/toolstring-categories/${categoryForm.value.id}`,
+        `${baseUrl}/api/toolstring-types/${typeForm.value.id}`,
         {
-          name: categoryForm.value.name,
+          name: typeForm.value.name,
         }
       );
-      await appStore.getToolstringCategories();
+      await appStore.getToolstringTypes();
       closeModal();
       toast.success(message);
       return;
     }
 
-    if (appStore.categoryFormAction === "delete") {
-      message = `Category ${categoryForm.value.name} deleted successfully!`;
+    if (appStore.typeFormAction === "delete") {
+      message = `Type ${typeForm.value.name} deleted successfully!`;
       await axios.delete(
-        `${baseUrl}/api/toolstring-categories/${categoryForm.value.id}`
+        `${baseUrl}/api/toolstring-types/${typeForm.value.id}`
       );
-      await appStore.getToolstringCategories();
+      await appStore.getToolstringTypes();
       closeModal();
       toast.success(message);
       return;
     }
 
     // Default: create
-    await axios.post(`${baseUrl}/api/toolstring-categories`, {
-      name: categoryForm.value.name,
+    await axios.post(`${baseUrl}/api/toolstring-types`, {
+      name: typeForm.value.name,
     });
-    await appStore.getToolstringCategories();
-    message = `Category ${categoryForm.value.name} created successfully!`;
+    await appStore.getToolstringTypes();
+    message = `Type ${typeForm.value.name} created successfully!`;
     closeModal();
     toast.success(message);
   } catch (error) {
-    console.error("Error saving category:", error);
-    toast.error("Failed to save category. Please try again.");
+    console.error("Error saving type:", error);
+    toast.error("Failed to save type. Please try again.");
   } finally {
     loading.value = false;
   }

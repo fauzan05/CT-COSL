@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ThreadModel;
-use App\Models\ToolstringCategoryModel;
+use App\Models\ToolstringTypeModel;
 use App\Models\ToolstringItemDimensionModel;
 use App\Models\ToolstringItemModel;
 use App\Models\ToolstringReportingHistoryDetailModel;
@@ -18,7 +18,7 @@ use Illuminate\Support\Str;
 
 class ToolstringController extends Controller
 {
-    public function storeCategory(Request $request)
+    public function storeType(Request $request)
     {
         // Validate the request data
         $request->validate([
@@ -29,78 +29,78 @@ class ToolstringController extends Controller
             ->slug()
             ->lower();
 
-        // Create a new category
-        $category = ToolstringCategoryModel::create([
+        // Create a new type
+        $type = ToolstringTypeModel::create([
             'name' => $request->name,
             'slug' => $slug,
             'created_by' => $request->user()->id, // Assuming the user is authenticated
             'updated_by' => $request->user()->id, // Assuming the user is authenticated
         ]);
 
-        // Return the created category
-        return response()->json($category, 201);
+        // Return the created type
+        return response()->json($type, 201);
     }
 
-    public function getCategories()
+    public function getTypes()
     {
-        // Retrieve all categories
-        $categories = ToolstringCategoryModel::orderBy('name', 'asc')->get();
+        // Retrieve all types
+        $types = ToolstringTypeModel::orderBy('name', 'asc')->get();
 
-        // Return the categories
-        return response()->json($categories);
+        // Return the types
+        return response()->json($types);
     }
 
-    public function searchCategories(Request $request)
+    public function searchTypes(Request $request)
     {
-        // Retrieve all categories with search functionality
+        // Retrieve all types with search functionality
         $search = $request->input('search', '');
-        $categories = ToolstringCategoryModel::where('name', 'like', "%{$search}%")
+        $types = ToolstringTypeModel::where('name', 'like', "%{$search}%")
             ->orderBy('name', 'asc')
             ->get();
 
-        // Return the categories
-        return response()->json($categories);
+        // Return the types
+        return response()->json($types);
     }
 
-    public function getCategory($id)
+    public function getType($id)
     {
-        // Find the category by ID
-        $category = ToolstringCategoryModel::findOrFail($id);
+        // Find the type by ID
+        $type = ToolstringTypeModel::findOrFail($id);
 
-        // Return the category
-        return response()->json($category);
+        // Return the type
+        return response()->json($type);
     }
 
-    public function updateCategory(Request $request, $id)
+    public function updateType(Request $request, $id)
     {
         // Validate the request data
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
-        // Find the category by ID
-        $category = ToolstringCategoryModel::findOrFail($id);
+        // Find the type by ID
+        $type = ToolstringTypeModel::findOrFail($id);
 
-        // Update the category
-        $category->name = $request->name;
-        $category->slug = str($request->name)->slug()->lower();
-        $category->updated_by = $request->user()->id; // Assuming the user is authenticated
-        $category->save();
+        // Update the type
+        $type->name = $request->name;
+        $type->slug = str($request->name)->slug()->lower();
+        $type->updated_by = $request->user()->id; // Assuming the user is authenticated
+        $type->save();
 
-        // Return the updated category
-        return response()->json($category);
+        // Return the updated type
+        return response()->json($type);
     }
 
-    public function deleteCategory($id)
+    public function deleteType($id)
     {
-        // Find the category by ID
-        $category = ToolstringCategoryModel::findOrFail($id);
+        // Find the type by ID
+        $type = ToolstringTypeModel::findOrFail($id);
 
-        // Delete the category
-        $category->delete();
+        // Delete the type
+        $type->delete();
 
         // Return a success response
-        return response()->json(['message' => 'Category deleted successfully'], 204);
+        return response()->json(['message' => 'Type deleted successfully'], 204);
     }
 
     public function getItems(Request $request)
@@ -109,11 +109,11 @@ class ToolstringController extends Controller
         $perPage = $request->input('per_page', 10);
 
         // Query builder
-        $query = ToolstringItemModel::with(['toolstringCategory', 'updatedByUser', 'thread', 'threadSize']);
+        $query = ToolstringItemModel::with(['toolstringType', 'updatedByUser', 'thread', 'threadSize']);
 
-        // Filter by category_id
-        if ($request->filled('toolstring_category_id')) {
-            $query->where('toolstring_category_id', $request->input('toolstring_category_id'));
+        // Filter by type_id
+        if ($request->filled('toolstring_type_id')) {
+            $query->where('toolstring_type_id', $request->input('toolstring_type_id'));
         }
 
         // Optional search
@@ -182,8 +182,8 @@ class ToolstringController extends Controller
             return $item;
         });
 
-        $totalActive = ToolstringItemModel::where('toolstring_category_id', $request->input('toolstring_category_id'))->whereNull('deleted_at')->count();
-        $totalInactive = ToolstringItemModel::where('toolstring_category_id', $request->input('toolstring_category_id'))->onlyTrashed()->count();
+        $totalActive = ToolstringItemModel::where('toolstring_type_id', $request->input('toolstring_type_id'))->whereNull('deleted_at')->count();
+        $totalInactive = ToolstringItemModel::where('toolstring_type_id', $request->input('toolstring_type_id'))->onlyTrashed()->count();
         $itemsArray = $items->toArray();
         $itemsArray['total_active_items'] = $totalActive;
         $itemsArray['total_inactive_items'] = $totalInactive;
@@ -195,13 +195,11 @@ class ToolstringController extends Controller
         DB::transaction(function () use ($request) {
             // Validate input
             $validatedData = $request->validate([
-                'toolstring_category_id' => 'required|exists:toolstring_categories,id',
+                'toolstring_type_id' => 'required|exists:toolstring_types,id',
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'image' => 'nullable|file|image|max:3072',
                 'dimension_sets' => 'nullable|json', // Assuming dimensions are sent as JSON
-                'thread_id' => 'nullable|exists:threads,id',
-                'thread_size_id' => 'nullable|exists:thread_sizes,id',
             ]);
 
             // Handle file upload
@@ -220,7 +218,9 @@ class ToolstringController extends Controller
             // Set created_by and updated_by fields
             $validatedData['created_by'] = $request->user()->id; // Assuming the user is authenticated
             $validatedData['updated_by'] = $request->user()->id; // Assuming the user is authenticated
-
+            $validatedData['thread_id'] = $validatedData['thread_id'] ?? null;
+            $validatedData['thread_size_id'] = $validatedData['thread_size_id'] ?? null;
+            
             // Create
             $item = ToolstringItemModel::create($validatedData);
 
@@ -257,7 +257,7 @@ class ToolstringController extends Controller
         DB::transaction(function () use ($request, $id) {
             // Validate input
             $validatedData = $request->validate([
-                'toolstring_category_id' => 'required|exists:toolstring_categories,id',
+                'toolstring_type_id' => 'required|exists:toolstring_types,id',
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'image' => 'nullable|file|image|max:3072',
@@ -350,16 +350,16 @@ class ToolstringController extends Controller
         return response()->json(['message' => 'Items deleted successfully'], 204);
     }
 
-    public function searchItemByIdCategory(Request $request)
+    public function searchItemByIdType(Request $request)
     {
         // Validate the request
         $request->validate([
-            'toolstring_category_id' => 'required',
+            'toolstring_type_id' => 'required',
             'search' => 'nullable|string|max:255',
         ]);
 
-        // Retrieve items by category with optional search
-        $query = ToolstringItemModel::where('toolstring_category_id', $request->input('toolstring_category_id'));
+        // Retrieve items by type with optional search
+        $query = ToolstringItemModel::where('toolstring_type_id', $request->input('toolstring_type_id'));
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -523,7 +523,7 @@ class ToolstringController extends Controller
         // Validate the request data
         $request->validate([
             'toolstring_reporting_history_id' => 'required|exists:toolstring_reporting_histories,id',
-            'toolstring_category_id' => 'required|exists:toolstring_categories,id',
+            'toolstring_type_id' => 'required|exists:toolstring_types,id',
             'toolstring_item_id' => 'required|exists:toolstring_items,id',
             'toolstring_item_dimension_id' => 'required|exists:toolstring_item_dimensions,id',
             'position' => 'nullable|integer',
@@ -532,7 +532,7 @@ class ToolstringController extends Controller
         // Create a new reporting history detail
         $reportingHistoryDetail = ToolstringReportingHistoryDetailModel::create([
             'toolstring_reporting_history_id' => $request->toolstring_reporting_history_id,
-            'toolstring_category_id' => $request->toolstring_category_id,
+            'toolstring_type_id' => $request->toolstring_type_id,
             'toolstring_item_id' => $request->toolstring_item_id,
             'toolstring_item_dimension_id' => $request->toolstring_item_dimension_id,
             'position' => $request->position,
@@ -574,7 +574,7 @@ class ToolstringController extends Controller
                 'position' => $detail->position,
                 'item_name' => optional($detail->item)->name,
                 'description' => optional($detail->item)->description,
-                'category_name' => optional($detail->category)->name,
+                'type_name' => optional($detail->type)->name,
                 'image_url' => $detail->item && $detail->item->image
                     ? Storage::url('assets/images/toolstring_items/' . $detail->item->image)
                     : null,
@@ -657,7 +657,7 @@ class ToolstringController extends Controller
                 'position' => $detail->position,
                 'item_name' => optional($detail->item)->name,
                 'description' => optional($detail->item)->description,
-                'category_name' => optional($detail->category)->name,
+                'type_name' => optional($detail->type)->name,
                 'image_url' => $detail->item && $detail->item->image
                     ? Storage::url('assets/images/toolstring_items/' . $detail->item->image)
                     : null,

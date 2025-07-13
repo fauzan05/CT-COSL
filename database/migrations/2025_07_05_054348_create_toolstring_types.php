@@ -11,22 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('toolstring_items', function (Blueprint $table) {
+        Schema::create('toolstring_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('toolstring_type_id')
-                ->constrained('toolstring_types')
-                ->onDelete('cascade');
-            $table->foreignId('thread_id')
-                ->nullable()
-                ->constrained('threads')
-                ->onDelete('cascade');
-            $table->foreignId('thread_size_id')
-                ->nullable()
-                ->constrained('thread_sizes')
-                ->onDelete('cascade');
             $table->string('name');
-            $table->text('description');
-            $table->string('image');
+            $table->string('slug');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
@@ -40,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('toolstring_items');
+        Schema::dropIfExists('toolstring_types');
     }
 };

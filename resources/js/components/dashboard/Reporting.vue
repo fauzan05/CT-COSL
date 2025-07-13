@@ -271,19 +271,19 @@
                                     </div>
                                     <div class="flex flex-col gap-4">
                                         <div class="flex flex-col sm:flex-row gap-4">
-                                            <!-- Category -->
+                                            <!-- Type -->
                                             <div class="w-full sm:w-1/3 flex flex-col">
                                                 <label
                                                     class="text-sm font-medium text-gray-700 dark:text-white mb-1">Component
                                                     Type</label>
-                                                <Combobox v-model="selectedCategory" class="w-full">
+                                                <Combobox v-model="selectedType" class="w-full">
                                                     <div class="relative mt-1">
                                                         <div
                                                             class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
                                                             <ComboboxInput
                                                                 class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
-                                                                :displayValue="(category) => category?.name"
-                                                                @change="queryCategories = $event.target.value"
+                                                                :displayValue="(type) => type?.name"
+                                                                @change="queryTypes = $event.target.value"
                                                                 placeholder="Search Component Type..." />
                                                             <ComboboxButton
                                                                 class="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -300,13 +300,13 @@
                                                                     class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
                                                                     Loading...
                                                                 </div>
-                                                                <div v-else-if="categories.length === 0"
+                                                                <div v-else-if="types.length === 0"
                                                                     class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
                                                                     Nothing found.
                                                                 </div>
 
-                                                                <ComboboxOption v-for="category in categories"
-                                                                    :key="category.id" :value="category"
+                                                                <ComboboxOption v-for="type in types"
+                                                                    :key="type.id" :value="type"
                                                                     v-slot="{ selected, active }">
                                                                     <li :class="[
                                                                         'relative cursor-default select-none py-2 pl-10 pr-4',
@@ -316,7 +316,7 @@
                                                                             'block truncate',
                                                                             selected ? 'font-medium' : 'font-normal'
                                                                         ]">
-                                                                            {{ category.name }}
+                                                                            {{ type.name }}
                                                                         </span>
                                                                         <span v-if="selected"
                                                                             class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
@@ -564,15 +564,15 @@
         <div class="w-full px-4 py-6">
             <TabGroup>
                 <TabList class="flex space-x-1 rounded-xl bg-slate-100 dark:bg-slate-800/50 p-1">
-                    <Tab v-for="category in menus" :key="category.id" as="template">
-                        <RouterLink :to="category.link" :class="[
+                    <Tab v-for="type in menus" :key="type.id" as="template">
+                        <RouterLink :to="type.link" :class="[
                             'w-full text-center rounded-lg py-2.5 text-sm font-medium leading-5',
                             'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                            isActive(category.link)
+                            isActive(type.link)
                                 ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow'
                                 : 'text-gray-700 dark:text-gray-300 hover:bg-white/[0.12] hover:text-blue-600'
                         ]">
-                            {{ category.name }}
+                            {{ type.name }}
                         </RouterLink>
                     </Tab>
                 </TabList>
@@ -1745,19 +1745,19 @@ const tableLoadingState = computed(() =>
 
 
 /* --------------------------- TOOLSTRING PICKERS ---------------------------- */
-const categories = ref([]);
+const types = ref([]);
 const items = ref([]);
 const itemDimensions = ref([]);
 
-const filteredCategories = ref([]);
+const filteredTypes = ref([]);
 const filteredItems = ref([]);
 const filteredItemDimensions = ref([]);
 
-const selectedCategory = ref(null);
+const selectedType = ref(null);
 const selectedItem = ref(null);
 const selectedItemDimension = ref(null);
 
-const queryCategories = ref('');
+const queryTypes = ref('');
 const queryItems = ref('');
 const queryItemDimensions = ref('');
 
@@ -1815,29 +1815,29 @@ const fetchAllTemplates = async () => {
     }
 };
 
-const fetchAllToolstringCategories = async () => {
+const fetchAllToolstringTypes = async () => {
     loading.value = true;
     try {
-        const response = await axios.get('/api/toolstring-categories-search', {
-            params: { search: queryCategories.value }
+        const response = await axios.get('/api/toolstring-types-search', {
+            params: { search: queryTypes.value }
         });
-        categories.value = response.data;
+        types.value = response.data;
         items.value = [];
         itemDimensions.value = [];
         selectedItem.value = null;
         selectedItemDimension.value = null;
     } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching types:', error);
     } finally {
         loading.value = false;
     }
 };
 
-const fetchAllToolstringItems = async (categoryId) => {
+const fetchAllToolstringItems = async (typeId) => {
     loading.value = true;
     try {
         const response = await axios.get('/api/toolstring-items-search', {
-            params: { toolstring_category_id: categoryId }
+            params: { toolstring_type_id: typeId }
         });
         items.value = response.data;
         items.value.forEach(item => {
@@ -1913,7 +1913,7 @@ async function openReportModal(section = '', type = '', selectedItem = null) {
     if (selectedItem) {
         componentListLoading.value = true;
         templateToolstringForm.value = { ...selectedItem };
-        await fetchAllToolstringCategories();
+        await fetchAllToolstringTypes();
         await fetchAllToolstringReportingDetails(templateToolstringForm.value.id);
         componentListLoading.value = false;
     } else {
@@ -1952,7 +1952,7 @@ const saveTemplate = async () => {
 /* --------------------------- COMPONENT ACTIONS ----------------------------- */
 const handleAddComponent = async () => {
     AddComponentLoading.value = true;
-    if (!selectedCategory.value || !selectedItem.value || !selectedItemDimension.value) {
+    if (!selectedType.value || !selectedItem.value || !selectedItemDimension.value) {
         alert('Please select all components first');
         AddComponentLoading.value = false;
         return;
@@ -1971,7 +1971,7 @@ const handleAddComponent = async () => {
     try {
         await axios.post('/api/toolstring-reporting-history-details', {
             toolstring_reporting_history_id: templateToolstringForm.value.id,
-            toolstring_category_id: selectedCategory.value.id,
+            toolstring_type_id: selectedType.value.id,
             toolstring_item_id: selectedItem.value.id,
             toolstring_item_dimension_id: selectedItemDimension.value.id,
         });
@@ -1981,7 +1981,7 @@ const handleAddComponent = async () => {
 
     componentList.value.push(newComponent);
 
-    selectedCategory.value = null;
+    selectedType.value = null;
     selectedItem.value = null;
     selectedItemDimension.value = null;
     AddComponentLoading.value = false;
@@ -2038,18 +2038,18 @@ const handleExportPDF = () => {
 
 
 /* ------------------------------- WATCHERS ---------------------------------- */
-watch(queryCategories, (newQuery) => {
-    filteredCategories.value = !newQuery
-        ? categories.value
-        : categories.value.filter(cat => cat.name.toLowerCase().includes(newQuery.toLowerCase()));
+watch(queryTypes, (newQuery) => {
+    filteredTypes.value = !newQuery
+        ? types.value
+        : types.value.filter(cat => cat.name.toLowerCase().includes(newQuery.toLowerCase()));
 }, { immediate: true });
 
-watch(selectedCategory, (newCategory) => {
+watch(selectedType, (newType) => {
     selectedItem.value = null;
     selectedItemDimension.value = null;
     items.value = [];
     itemDimensions.value = [];
-    if (newCategory) fetchAllToolstringItems(newCategory.id);
+    if (newType) fetchAllToolstringItems(newType.id);
 }, { immediate: true });
 
 watch(queryItems, (newQuery) => {
@@ -2078,7 +2078,7 @@ watch([search, selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilte
 /* ------------------------------- LIFECYCLE ---------------------------------- */
 onMounted(() => {
     fetchAllTemplates();
-    fetchAllToolstringCategories();
+    fetchAllToolstringTypes();
 });
 </script>
 

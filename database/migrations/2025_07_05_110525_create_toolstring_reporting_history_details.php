@@ -20,10 +20,10 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->name('fk_trhd_history_id'); // Custom constraint name
 
-            $table->foreignId('toolstring_category_id')
-                ->constrained('toolstring_categories')
+            $table->foreignId('toolstring_type_id')
+                ->constrained('toolstring_types')
                 ->onDelete('cascade')
-                ->name('fk_trhd_category_id'); // Custom constraint name
+                ->name('fk_trhd_type_id'); // Custom constraint name
 
             $table->foreignId('toolstring_item_id')
                 ->constrained('toolstring_items')

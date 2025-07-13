@@ -11,21 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('toolstring_items', function (Blueprint $table) {
+        Schema::create('wellstack_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('toolstring_type_id')
-                ->constrained('toolstring_types')
-                ->onDelete('cascade');
-            $table->foreignId('thread_id')
-                ->nullable()
-                ->constrained('threads')
-                ->onDelete('cascade');
-            $table->foreignId('thread_size_id')
-                ->nullable()
-                ->constrained('thread_sizes')
+            $table->foreignId('wellstack_type_id')
+                ->constrained('wellstack_types')
                 ->onDelete('cascade');
             $table->string('name');
             $table->text('description');
+            $table->text('serial_number');
+            $table->decimal('height', 8, 2)->nullable();
+            $table->string('height_unit')->default('ft');
+            $table->decimal('weight', 8, 2)->nullable();
+            $table->string('weight_unit')->default('lbs');
+            $table->decimal('pressure_rating', 8, 2)->nullable();
+            $table->string('pressure_rating_unit')->default('psi');
+            $table->string('owner')->nullable();
+            $table->decimal('shear_ram_dist_from_bottom', 8, 2)->nullable();
+            $table->string('shear_ram_dist_from_bottom_unit')->default('ft');
             $table->string('image');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
@@ -40,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('toolstring_items');
+        Schema::dropIfExists('wellstack_items');
     }
 };

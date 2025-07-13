@@ -17,19 +17,19 @@ Route::get('/api/current-user', [AuthController::class, 'currentUser'])->name('c
 // API routes that need auth
 Route::middleware([AuthMiddleware::class])->group(function () {
     // Toolstring management
-    Route::post('/api/toolstring-categories', [ToolstringController::class, 'storeCategory'])->name('storeCategory');
-    Route::get('/api/toolstring-categories', [ToolstringController::class, 'getCategories'])->name('getCategories');
-    Route::put('/api/toolstring-categories/{id}', [ToolstringController::class, 'updateCategory'])->name('updateCategory');
-    Route::delete('/api/toolstring-categories/{id}', [ToolstringController::class, 'deleteCategory'])->name('deleteCategory');
-    Route::get('/api/toolstring-categories/{id}', [ToolstringController::class, 'getCategory'])->name('getCategory');
-    Route::get('/api/toolstring-categories-search', [ToolstringController::class, 'searchCategories'])->name('searchCategories');
+    Route::post('/api/toolstring-types', [ToolstringController::class, 'storeType'])->name('storeType');
+    Route::get('/api/toolstring-types', [ToolstringController::class, 'getTypes'])->name('getTypes');
+    Route::put('/api/toolstring-types/{id}', [ToolstringController::class, 'updateType'])->name('updateType');
+    Route::delete('/api/toolstring-types/{id}', [ToolstringController::class, 'deleteType'])->name('deleteType');
+    Route::get('/api/toolstring-types/{id}', [ToolstringController::class, 'getType'])->name('getType');
+    Route::get('/api/toolstring-types-search', [ToolstringController::class, 'searchTypes'])->name('searchTypes');
 
     // Toolstring items management
     Route::post('/api/toolstring-items', [ToolstringController::class, 'storeItem'])->name('storeItem');
     Route::get('/api/toolstring-items', [ToolstringController::class, 'getItems'])->name('getItems');
     Route::put('/api/toolstring-items/{id}', [ToolstringController::class, 'updateItem'])->name('updateItem');
     Route::delete('/api/toolstring-items', [ToolstringController::class, 'deleteItem'])->name('deleteItem');
-    Route::get('/api/toolstring-items-search', [ToolstringController::class, 'searchItemByIdCategory'])->name('searchItemByIdCategory');
+    Route::get('/api/toolstring-items-search', [ToolstringController::class, 'searchItemByIdType'])->name('searchItemByIdType');
     Route::get('/api/toolstring-item-dimensions/{itemId}', [ToolstringController::class, 'getItemDimensions'])->name('getItemDimensions');
 
     // User management

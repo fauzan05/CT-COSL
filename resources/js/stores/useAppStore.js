@@ -6,18 +6,18 @@ const baseUrl = document.querySelector('meta[name="base-url"]').content;
 
 export const useAppStore = defineStore("app", {
     state: () => ({
-        isCategoryModalOpen: false,
-        toolstringCategories: [],
-        categoryFormAction: 'create',
-        selectedCategoryData: null,
+        isTypeModalOpen: false,
+        toolstringTypes: [],
+        typeFormAction: 'create',
+        selectedTypeData: null,
     }),
     actions: {
-        async getToolstringCategories() {
+        async getToolstringTypes() {
             try {
                 const res = await axios.get(
-                    `${baseUrl}/api/toolstring-categories`
+                    `${baseUrl}/api/toolstring-types`
                 );
-                this.toolstringCategories = res.data;
+                this.toolstringTypes = res.data;
             } catch (error) {
                 console.error(error);
                 throw error;

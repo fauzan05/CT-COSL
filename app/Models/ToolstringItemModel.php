@@ -12,7 +12,7 @@ class ToolstringItemModel extends Model
     protected $table = 'toolstring_items';
 
     protected $fillable = [
-        'toolstring_category_id',
+        'toolstring_type_id',
         'name',
         'description',
         'image',
@@ -27,9 +27,9 @@ class ToolstringItemModel extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function toolstringCategory()
+    public function toolstringType()
     {
-        return $this->belongsTo(ToolstringCategoryModel::class, 'toolstring_category_id');
+        return $this->belongsTo(ToolstringTypeModel::class, 'toolstring_type_id');
     }
 
     // ToolstringItemModel.php
