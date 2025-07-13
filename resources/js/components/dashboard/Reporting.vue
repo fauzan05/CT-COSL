@@ -284,7 +284,7 @@
                                                                 class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
                                                                 :displayValue="(category) => category?.name"
                                                                 @change="queryCategories = $event.target.value"
-                                                                placeholder="Search Category..." />
+                                                                placeholder="Search Component Type..." />
                                                             <ComboboxButton
                                                                 class="absolute inset-y-0 right-0 flex items-center pr-2">
                                                                 <ChevronUpDownIcon class="h-5 w-5 text-gray-400"

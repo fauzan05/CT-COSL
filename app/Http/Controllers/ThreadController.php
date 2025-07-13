@@ -172,4 +172,23 @@ class ThreadController extends Controller
 
         return response()->json($threads, 200);
     }
+
+    public function getThreadSizesById(Request $request, $id)
+    {
+        $threadSizes = \App\Models\ThreadSizeModel::where('thread_id', $id)
+            ->get();
+
+        return response()->json([
+            'data' => $threadSizes->map(function ($size) {
+                return [
+                    'id' => $size->id,
+                    'top_connection' => $size->top_connection,
+                    'bottom_connection' => $size->bottom_connection,
+                    'updated_at' => $size->updated_at,
+                    'updated_by' => $size->updated_by,
+                    'updated_by_name' => $size->updated_by ? User::find($size->updated_by)->fullname : null,
+                ];
+            }),
+        ], 200);
+    }
 }

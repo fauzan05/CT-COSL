@@ -57,7 +57,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     
     // Thread management
     Route::post('/api/threads', [ThreadController::class, 'storeThread'])->name('storeThread');
-    Route::get('/api/threads/sizes/search/{id}', [ThreadController::class, 'searchThreadById'])->name('searchThreadById');
+    Route::get('/api/threads/{id}/sizes', [ThreadController::class, 'getThreadSizesById'])->name('searchThreadById');
     Route::get('/api/threads/no-paginate', [ThreadController::class, 'getThreadsNoPaginate'])->name('getThreadsNoPaginate');
     Route::get('/api/threads', [ThreadController::class, 'getThreads'])->name('getThreads');
     Route::put('/api/threads/{id}', [ThreadController::class, 'updateThread'])->name('updateThread');
