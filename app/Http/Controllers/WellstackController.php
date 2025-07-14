@@ -6,12 +6,14 @@ use App\Models\WellstackItemModel;
 use App\Models\WellstackReportingHistoryDetailModel;
 use App\Models\WellstackReportingHistoryModel;
 use App\Models\WellstackTypeModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Mpdf\Mpdf;
 
 class WellstackController extends Controller
 {
@@ -515,5 +517,103 @@ class WellstackController extends Controller
 
         // Return a success response
         return response()->json(['message' => 'Reporting history details deleted successfully'], 204);
+    }
+
+    public function exportReportingHistoryPdf(Request $request, $templateId)
+    {
+        $get_all_components = WellstackReportingHistoryDetailModel::where('wellstack_reporting_history_id', $templateId)
+            ->with(['item', 'type'])
+            ->orderBy('position', 'asc')
+            ->get();
+
+        $get_all_components = $get_all_components->map(function ($component) {
+            return [
+                'id' => $component->id,
+                'position' => $component->position,
+                'item_name' => optional($component->item)->name,
+                'description' => optional($component->item)->description,
+                'type_name' => optional($component->type)->name,
+                'image_url' => $component->item && $component->item->image
+                    ? Storage::url('assets/images/wellstack_items/' . $component->item->image)
+                    : null,
+                'image_base64' => $component->item && $component->item->image
+                    ? $this->getImageAsBase64('assets/images/wellstack_items/' . $component->item->image)
+                    : null,
+                'serial_number' => optional($component->item)->serial_number,
+                'height' => optional($component->item)->height,
+                'height_unit' => optional($component->item)->height_unit,
+                'weight' => optional($component->item)->weight,
+                'weight_unit' => optional($component->item)->weight_unit,
+                'pressure_rating' => optional($component->item)->pressure_rating,
+                'pressure_rating_unit' => optional($component->item)->pressure_rating_unit,
+                'owner' => optional($component->item)->owner,
+                'shear_ram_dist_from_bottom' => optional($component->item)->shear_ram_dist_from_bottom,
+                'shear_ram_dist_from_bottom_unit' => optional($component->item)->shear_ram_dist_from_bottom_unit
+            ];
+        });
+
+        // Retrieve the reporting history
+        $heightPDF = $request->query('height_pdf', 1500);
+        $logoBase64 = $this->imageToBase64FromPublic('assets/images/company/company-logo.png');
+        $data = [
+            'components' => $get_all_components,
+            'company_logo' => $logoBase64,
+            'reportingHistory' => WellstackReportingHistoryModel::findOrFail($templateId),
+        ];
+        // Render Blade view to HTML
+        $html = view('pdf.wellstack-reporting', $data)->render();
+
+        // Konfigurasi mPDF
+        $mpdfConfig = [
+            'mode' => 'utf-8',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 15,
+            'margin_bottom' => 15,
+            'margin_header' => 5,
+            'margin_footer' => 5,
+            'orientation' => 'P',
+            'default_font_size' => 10,
+            'default_font' => 'sans-serif',
+            'format' => [210, $heightPDF], // A4 size in mm, height can be adjusted
+        ];
+
+        // Inisialisasi mPDF
+        $mpdf = new Mpdf($mpdfConfig);
+        $mpdf->SetAutoPageBreak(false);
+        // Tambahkan konten
+        $mpdf->WriteHTML($html);
+
+        // Output PDF
+        return $mpdf->Output('Well_Stack_Schematic.pdf', 'I');
+    }
+
+    private function getImageAsBase64($path)
+    {
+        $fullPath = Storage::disk('public')->path($path);
+
+        if (!file_exists($fullPath)) {
+            return null;
+        }
+
+        $type = pathinfo($fullPath, PATHINFO_EXTENSION);
+        $data = file_get_contents($fullPath);
+        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+
+        return $base64;
+    }
+
+    private function imageToBase64FromPublic($relativePath)
+    {
+        $fullPath = public_path($relativePath);
+
+        if (!file_exists($fullPath)) {
+            return null;
+        }
+
+        $type = pathinfo($fullPath, PATHINFO_EXTENSION);
+        $data = file_get_contents($fullPath);
+
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
     }
 }
