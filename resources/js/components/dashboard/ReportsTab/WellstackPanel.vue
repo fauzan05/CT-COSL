@@ -1236,9 +1236,12 @@ const isReportingModalOpen = ref(false);
 const isReportModalOpen = ref(false);
 const isCreateReport = ref(true);
 
-const outer_diameter_unit = ref('inch');
-const inner_diameter_unit = ref('inch');
+
 const length_unit = ref('inch');
+const weight_unit = ref('lbs');
+const pressure_rating_unit = ref('psi');
+const shear_ram_dist_from_bottom_unit = ref('ft');
+const height_unit = ref('ft');
 const height_pdf = ref(1500);
 const loading = ref(false);
 const isDesc = ref(true);
@@ -1478,6 +1481,14 @@ const handleUpdatePosition = async (event) => {
     updatePositionLoading.value = false;
 };
 
+const handleExportPDF = () => {
+    const url = baseUrl + '/backend/wellstack-reporting-histories/export-pdf/' + templateForm.value.id + '?height=' + height_pdf.value +
+        '&length_unit=' + length_unit.value + '&weight_unit=' + weight_unit.value +
+        '&pressure_rating_unit=' + pressure_rating_unit.value +
+        '&shear_ram_dist_from_bottom_unit=' + shear_ram_dist_from_bottom_unit.value +
+        '&height_unit=' + height_unit.value;
+    window.open(url, '_blank');
+}
 
 /* ----------------------------- MODAL HANDLERS ------------------------------ */
 function openModal(section = '', selectedItem = null) {
