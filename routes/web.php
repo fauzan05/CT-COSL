@@ -41,7 +41,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/api/toolstring-reporting-histories', [ToolstringController::class, 'getReportingHistories'])->name('getReportingHistories');
     Route::get('/api/toolstring-reporting-histories/{id}', [ToolstringController::class, 'getReportingHistory'])->name('getReportingHistory');
     Route::put('/api/toolstring-reporting-histories/{id}', [ToolstringController::class, 'updateReportingHistory'])->name('updateReportingHistory');
-    Route::delete('/api/toolstring-reporting-histories/{id}', [ToolstringController::class, 'deleteReportingHistory'])->name('deleteReportingHistory');
+    Route::delete('/api/toolstring-reporting-histories', [ToolstringController::class, 'deleteReportingHistory'])->name('deleteReportingHistory');
 
     // Toolstring reporting history details
     Route::post('/api/toolstring-reporting-history-details', [ToolstringController::class, 'storeReportingHistoryDetail'])->name('storeReportingHistoryDetail');
@@ -87,7 +87,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/api/wellstack-reporting-histories', [WellstackController::class, 'getReportingHistories'])->name('getWellstackReportingHistories');
     Route::get('/api/wellstack-reporting-histories/{id}', [WellstackController::class, 'getReportingHistory'])->name('getWellstackReportingHistory');
     Route::put('/api/wellstack-reporting-histories/{id}', [WellstackController::class, 'updateReportingHistory'])->name('updateWellstackReportingHistory');
-    Route::delete('/api/wellstack-reporting-histories/{id}', [WellstackController::class, 'deleteReportingHistory'])->name('deleteWellstackReportingHistory');
+    Route::delete('/api/wellstack-reporting-histories', [WellstackController::class, 'deleteReportingHistory'])->name('deleteWellstackReportingHistory');
 
     // Wellstack reporting history details
     Route::post('/api/wellstack-reporting-history-details', [WellstackController::class, 'storeReportingHistoryDetail'])->name('storeWellstackReportingHistoryDetail');

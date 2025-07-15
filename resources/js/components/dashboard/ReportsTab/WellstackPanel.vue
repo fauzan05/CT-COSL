@@ -514,8 +514,7 @@
                                 </div>
                             </div>
                             <!-- Table Component -->
-                            <div
-                                class="bg-white dark:bg-slate-800 rounded-xl my-5 shadow-md overflow-hidden">
+                            <div class="bg-white dark:bg-slate-800 rounded-xl my-5 shadow-md overflow-hidden">
                                 <!-- Table container with fixed height and scroll -->
                                 <div class="max-h-96 overflow-y-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -630,6 +629,80 @@
                                         </draggable>
                                     </table>
                                 </div>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
+    <!-- Delete Confirmation Modal -->
+    <TransitionRoot appear :show="isDeleteModalOpen" as="template">
+        <Dialog as="div" @close="closeModal" class="relative z-50">
+            <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100"
+                leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
+                <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+            </TransitionChild>
+
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                    <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95"
+                        enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100"
+                        leave-to="opacity-0 scale-95">
+                        <DialogPanel
+                            class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
+                            <!-- Close Button -->
+                            <button @click="closeModal"
+                                class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                aria-label="Close modal">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                            <!-- Modal Title -->
+                            <DialogTitle as="h3"
+                                class="text-lg font-medium leading-6 text-gray-900 mb-4 dark:text-white flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Confirm Delete
+                            </DialogTitle>
+
+                            <!-- Modal Content -->
+                            <div class="mt-4 text-center space-y-4">
+                                <p class="text-gray-700 dark:text-gray-200">
+                                    Are you sure you want to delete the template
+                                    <span class="font-semibold text-red-600">{{ selectedTemplate?.name }}</span>?
+                                    This action cannot be undone.
+                                </p>
+                            </div>
+
+                            <!-- Modal Actions -->
+                            <div class="mt-6 flex justify-center space-x-3">
+                                <button type="button"
+                                    class="inline-flex justify-center cursor-pointer rounded-md border dark:text-white/75 border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                                    @click="closeModal">
+                                    Cancel
+                                </button>
+                                <button type="button" :disabled="isDeleting" @click="handleDeleteTemplate"
+                                    class="inline-flex justify-center cursor-pointer rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2">
+                                    <span v-if="!isDeleting">Delete</span>
+                                    <span v-else class="flex items-center">
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                            </path>
+                                        </svg>
+                                        Deleting...
+                                    </span>
+                                </button>
                             </div>
                         </DialogPanel>
                     </TransitionChild>
@@ -1174,12 +1247,31 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         <div class="flex justify-end gap-2">
                                             <button @click="openModal('update', template)"
-                                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-yellow-400">
+                                                class="inline-flex items-center px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors duration-150">
+                                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
                                                 Edit
                                             </button>
                                             <button @click="openReportModal('create', template)"
-                                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500">
+                                                class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
+                                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
                                                 Create Report
+                                            </button>
+                                            <button @click="confirmDeleteModal(template)"
+                                                class="inline-flex items-center px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-md hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors duration-150">
+                                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                                Delete
                                             </button>
                                         </div>
                                     </td>
@@ -1252,6 +1344,9 @@ const componentListLoading = ref(false);
 const AddComponentLoading = ref(false);
 const updatePositionLoading = ref(false);
 const isReportingModalOpen = ref(false);
+const isDeleteModalOpen = ref(false);
+const selectedTemplate = ref(null)
+const isDeleting = ref(false);
 
 const length_unit = ref('inch');
 const weight_unit = ref('lbs');
@@ -1497,6 +1592,26 @@ const handleUpdatePosition = async (event) => {
     updatePositionLoading.value = false;
 };
 
+const handleDeleteTemplate = async () => {
+    if (!selectedTemplate.value) return;
+    isDeleting.value = true;
+    try {
+        let ids = [selectedTemplate.value.id];
+        await axios.delete(`/api/wellstack-reporting-histories`, {
+            data: { ids }
+        });
+        useToast().success('Template deleted successfully');
+        fetchAllTemplates();
+        closeModal();
+    } catch (error) {
+        console.error('Error deleting template:', error);
+        useToast().error('Failed to delete template');
+    } finally {
+        isDeleteModalOpen.value = false;
+        isDeleting.value = false;
+    }
+};
+
 const handleExportPDF = () => {
     const url = baseUrl + '/backend/wellstack-reporting-histories/export-pdf/' + templateForm.value.id + '?height=' + height_pdf.value +
         '&length_unit=' + length_unit.value + '&weight_unit=' + weight_unit.value +
@@ -1541,9 +1656,16 @@ async function openReportModal(section = '', selectedItem = null) {
     }
 }
 
+const confirmDeleteModal = (template) => {
+    selectedTemplate.value = template
+    isDeleteModalOpen.value = true
+}
+
 function closeModal() {
     isTemplateModalOpen.value = false;
     isReportingModalOpen.value = false;
+    isDeleteModalOpen.value = false;
+    selectedTemplate.value = null;
     resetForm();
 }
 

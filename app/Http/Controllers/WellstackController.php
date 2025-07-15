@@ -445,6 +445,23 @@ class WellstackController extends Controller
         return response()->json($reportingHistory);
     }
 
+    public function deleteReportingHistory(Request $request)
+    {
+        // Get the IDs from the request
+        $ids = $request->input('ids', []);
+
+        // If no IDs are provided, return an error response
+        if (empty($ids)) {
+            return response()->json(['message' => 'No IDs provided'], 400);
+        }
+
+        // Delete the reporting histories
+        WellstackReportingHistoryModel::whereIn('id', $ids)->delete();
+
+        // Return a success response
+        return response()->json(['message' => 'Reporting histories deleted successfully'], 204);
+    }
+
     public function getReportingHistoryDetails($templateId)
     {
         // Validate the request
