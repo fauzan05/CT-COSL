@@ -352,6 +352,311 @@
             </div>
         </div>
 
+        <!-- Search and Filter Section -->
+        <div
+            class="bg-white rounded-xl shadow-md p-4 sm:p-6 border border-gray-100 mb-6 dark:bg-slate-800/50 dark:border-slate-700/50">
+            <!-- Mobile: Stack everything vertically -->
+            <div class="space-y-4">
+
+                <!-- Search Bar - Full width on all screens -->
+                <div class="w-full">
+                    <div class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input v-model="search" type="text" placeholder="Search items..."
+                            class="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
+                    </div>
+                </div>
+
+                <!-- Mobile: Show/Hide Filters Toggle -->
+                <div class="block sm:hidden">
+                    <button @click="showMobileFilters = !showMobileFilters"
+                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                        </svg>
+                        <span class="text-sm font-medium">
+                            {{ showMobileFilters ? 'Hide Filters' : 'Show Filters' }}
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-4 h-4 transition-transform"
+                            :class="{ 'rotate-180': showMobileFilters }">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Filters Container -->
+                <div class="space-y-4 sm:space-y-0" :class="{ 'hidden sm:block': !showMobileFilters }">
+
+                    <!-- Mobile: Grid for Refresh button -->
+                    <div class="block sm:hidden">
+                        <button @click="fetchCategories" :disabled="loading"
+                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span v-if="!loading" class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" class="h-4 w-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                                Refresh Data
+                            </span>
+                            <span v-else class="flex items-center gap-2">
+                                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4" />
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                Loading...
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- Desktop: Horizontal layout -->
+                    <div class="hidden sm:flex sm:items-center sm:justify-between sm:space-x-4">
+                        <!-- Refresh Button -->
+                        <button @click="fetchAllItems" :disabled="loading"
+                            class="inline-flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span v-if="!loading" class="flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" class="h-4 w-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                                Refresh
+                            </span>
+                            <span v-else class="flex items-center gap-1">
+                                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4" />
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                Loading...
+                            </span>
+                        </button>
+
+                        <div class="flex items-center space-x-3">
+                            <!-- Status Filter -->
+                            <div class="w-32">
+                                <Listbox v-model="selectedStatusFilter">
+                                    <div class="relative">
+                                        <ListboxButton
+                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
+                                            <span class="block truncate text-gray-900 dark:text-white">{{
+                                                selectedStatusFilter.name }}</span>
+                                            <span
+                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                            </span>
+                                        </ListboxButton>
+
+                                        <transition leave-active-class="transition duration-100 ease-in"
+                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                            <ListboxOptions
+                                                class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                                <ListboxOption v-slot="{ active, selected }"
+                                                    v-for="statusItem in statusItems" :key="statusItem.name"
+                                                    :value="statusItem" as="template">
+                                                    <li :class="[
+                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
+                                                    ]">
+                                                        <span
+                                                            :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
+                                                                statusItem.name }}</span>
+                                                        <span v-if="selected"
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                        </span>
+                                                    </li>
+                                                </ListboxOption>
+                                            </ListboxOptions>
+                                        </transition>
+                                    </div>
+                                </Listbox>
+                            </div>
+
+                            <!-- Sort By Filter -->
+                            <div class="w-40">
+                                <Listbox v-model="selectedSortByFilter">
+                                    <div class="relative">
+                                        <ListboxButton
+                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
+                                            <span class="block truncate text-gray-900 dark:text-white">{{
+                                                selectedSortByFilter.name }}</span>
+                                            <span
+                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                            </span>
+                                        </ListboxButton>
+
+                                        <transition leave-active-class="transition duration-100 ease-in"
+                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                            <ListboxOptions
+                                                class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                                <ListboxOption v-slot="{ active, selected }"
+                                                    v-for="sortByItem in sortByItems" :key="sortByItem.name"
+                                                    :value="sortByItem" as="template">
+                                                    <li :class="[
+                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
+                                                    ]">
+                                                        <span
+                                                            :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
+                                                                sortByItem.name }}</span>
+                                                        <span v-if="selected"
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                        </span>
+                                                    </li>
+                                                </ListboxOption>
+                                            </ListboxOptions>
+                                        </transition>
+                                    </div>
+                                </Listbox>
+                            </div>
+
+                            <!-- Sort Direction Toggle -->
+                            <SwitchGroup as="div" class="flex items-center space-x-2">
+                                <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc</SwitchLabel>
+                                <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                    class="relative inline-flex items-center h-6 w-11 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+                                    <span class="sr-only">Toggle sort direction</span>
+                                    <span aria-hidden="true" :class="isDesc ? 'translate-x-5' : 'translate-x-0'"
+                                        class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
+                                </Switch>
+                                <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc</SwitchLabel>
+                            </SwitchGroup>
+                        </div>
+                    </div>
+
+                    <!-- Mobile: Vertical Grid Layout for Filters -->
+                    <div class="grid grid-cols-1 gap-4 sm:hidden">
+                        <!-- Row 1: Status and Sort By -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Status Filter -->
+                            <div>
+                                <label
+                                    class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                                <Listbox v-model="selectedStatusFilter">
+                                    <div class="relative">
+                                        <ListboxButton
+                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
+                                            <span class="block truncate text-gray-900 dark:text-white">{{
+                                                selectedStatusFilter.name }}</span>
+                                            <span
+                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                <ChevronUpDownIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
+                                            </span>
+                                        </ListboxButton>
+
+                                        <transition leave-active-class="transition duration-100 ease-in"
+                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                            <ListboxOptions
+                                                class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                                <ListboxOption v-slot="{ active, selected }"
+                                                    v-for="statusItem in statusItems" :key="statusItem.name"
+                                                    :value="statusItem" as="template">
+                                                    <li :class="[
+                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
+                                                    ]">
+                                                        <span
+                                                            :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
+                                                                statusItem.name }}</span>
+                                                        <span v-if="selected"
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                        </span>
+                                                    </li>
+                                                </ListboxOption>
+                                            </ListboxOptions>
+                                        </transition>
+                                    </div>
+                                </Listbox>
+                            </div>
+
+                            <!-- Sort By Filter -->
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Sort
+                                    By</label>
+                                <Listbox v-model="selectedSortByFilter">
+                                    <div class="relative">
+                                        <ListboxButton
+                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
+                                            <span class="block truncate text-gray-900 dark:text-white">{{
+                                                selectedSortByFilter.name }}</span>
+                                            <span
+                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                <ChevronUpDownIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
+                                            </span>
+                                        </ListboxButton>
+
+                                        <transition leave-active-class="transition duration-100 ease-in"
+                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                            <ListboxOptions
+                                                class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                                <ListboxOption v-slot="{ active, selected }"
+                                                    v-for="sortByItem in sortByItems" :key="sortByItem.name"
+                                                    :value="sortByItem" as="template">
+                                                    <li :class="[
+                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
+                                                    ]">
+                                                        <span
+                                                            :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
+                                                                sortByItem.name }}</span>
+                                                        <span v-if="selected"
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                        </span>
+                                                    </li>
+                                                </ListboxOption>
+                                            </ListboxOptions>
+                                        </transition>
+                                    </div>
+                                </Listbox>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Page Size and Sort Direction -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Sort Direction Toggle -->
+                            <div>
+                                <label
+                                    class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Direction</label>
+                                <div
+                                    class="flex items-center justify-center h-10 bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600">
+                                    <SwitchGroup as="div" class="flex items-center space-x-2">
+                                        <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc
+                                        </SwitchLabel>
+                                        <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                            class="relative inline-flex items-center h-5 w-9 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+                                            <span class="sr-only">Toggle sort direction</span>
+                                            <span aria-hidden="true" :class="isDesc ? 'translate-x-4' : 'translate-x-0'"
+                                                class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
+                                        </Switch>
+                                        <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc
+                                        </SwitchLabel>
+                                    </SwitchGroup>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Table Section with improved styling -->
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -504,7 +809,10 @@ import { useCurrentUserStore } from '@/stores/CurrentUser';
 
 import {
     TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle,
-    DialogTitle as DialogTitleComponent, Listbox, ListboxButton, ListboxOptions, ListboxOption,
+    Listbox, ListboxButton, ListboxOptions, ListboxOption,
+    Switch,
+    SwitchGroup,
+    SwitchLabel,
 } from '@headlessui/vue';
 
 import { ChevronUpDownIcon } from '@heroicons/vue/20/solid';
@@ -528,6 +836,22 @@ const loading = ref(false);
 const loadingAllSizes = ref(false);
 const isDeleteModalOpen = ref(false);
 const isDeleting = ref(false);
+
+const statusItems = ref([
+    { name: 'All', value: '' },
+    { name: 'Active', value: 'active' },
+    { name: 'Inactive', value: 'inactive' },
+]);
+
+const selectedStatusFilter = ref(statusItems.value[0]);
+const sortByItems = ref([
+    { name: 'Type', value: 'type' },
+    { name: 'Updated At', value: 'updated_at' },
+]);
+
+const selectedSortByFilter = ref(sortByItems.value[0]);
+
+const isDesc = ref(false);
 
 const selectedThread = ref(null);
 const currentUserStore = useCurrentUserStore();

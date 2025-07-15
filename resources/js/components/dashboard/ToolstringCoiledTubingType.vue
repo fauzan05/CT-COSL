@@ -1460,8 +1460,12 @@ const saveItem = async () => {
         formData.append('name', itemForm.value.name);
         formData.append('description', itemForm.value.description);
         formData.append('dimension_sets', JSON.stringify(getDimensionSetsData()));
-        formData.append('thread_id', selectedThreadType.value ? selectedThreadType.value.id : null);
-        formData.append('thread_size_id', selectedThreadSize.value ? selectedThreadSize.value.id : null);
+        if (selectedThreadType.value) {
+            formData.append('thread_type_id', selectedThreadType.value.id);
+        }
+        if (selectedThreadSize.value) {
+            formData.append('thread_size_id', selectedThreadSize.value.id);
+        }
 
         if (uploadedItemImageFile.value) {
             const response = await fetch(itemImage.value);

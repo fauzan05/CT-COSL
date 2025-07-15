@@ -200,6 +200,8 @@ class ToolstringController extends Controller
                 'description' => 'nullable|string',
                 'image' => 'nullable|file|image|max:3072',
                 'dimension_sets' => 'nullable|json', // Assuming dimensions are sent as JSON
+                'thread_id' => 'nullable|exists:threads,id',
+                'thread_size_id' => 'nullable|exists:thread_sizes,id',
             ]);
 
             // Handle file upload

@@ -18,12 +18,10 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->foreignId('thread_id')
                 ->nullable()
-                ->constrained('threads')
-                ->onDelete('cascade');
+                ->constrained('threads');
             $table->foreignId('thread_size_id')
                 ->nullable()
-                ->constrained('thread_sizes')
-                ->onDelete('cascade');
+                ->constrained('thread_sizes');
             $table->string('name');
             $table->text('description');
             $table->string('image');
