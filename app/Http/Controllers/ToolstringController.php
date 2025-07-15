@@ -499,10 +499,13 @@ class ToolstringController extends Controller
         }
 
         // Soft delete the reporting histories
-        ToolstringReportingHistoryModel::whereIn('id', $ids)->delete();
+        $deletedCount = ToolstringReportingHistoryModel::whereIn('id', $ids)->delete();
 
-        // Return a success response
-        return response()->json(['message' => 'Reporting histories deleted successfully'], 204);
+        if ($deletedCount > 0) {
+            return response()->json(['message' => 'Reporting histories deleted successfully', 'deleted_count' => $deletedCount], 204);
+        } else {
+            return response()->json(['message' => 'No reporting histories found for the provided IDs'], 404);
+        }
     }
 
     public function getItemDimensions($itemId)

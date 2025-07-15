@@ -63,7 +63,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/api/threads/no-paginate', [ThreadController::class, 'getThreadsNoPaginate'])->name('getThreadsNoPaginate');
     Route::get('/api/threads', [ThreadController::class, 'getThreads'])->name('getThreads');
     Route::put('/api/threads/{id}', [ThreadController::class, 'updateThread'])->name('updateThread');
-    Route::delete('/api/threads/{id}', [ThreadController::class, 'deleteThread'])->name('deleteThread');
+    Route::delete('/api/threads', [ThreadController::class, 'deleteThread'])->name('deleteThread');
     Route::get('/api/threads/{id}', [ThreadController::class, 'getThread'])->name('getThread');
 
     // Wellstack type management

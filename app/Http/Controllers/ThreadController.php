@@ -121,12 +121,21 @@ class ThreadController extends Controller
         return response()->json(['thread' => $thread], 200);
     }
 
-    public function deleteThread($id)
+    public function deleteThread(Request $request) 
     {
-        $thread = \App\Models\ThreadModel::findOrFail($id);
-        $thread->delete();
+        $ids  = $request->input('ids', []);
 
-        return response()->json(['message' => 'Thread deleted successfully'], 200);
+        if (empty($ids)) {
+            return response()->json(['message' => 'No thread IDs provided'], 400);
+        }
+
+        $deletedCount = ThreadModel::whereIn('id', $ids)->delete();
+
+        if ($deletedCount > 0) {
+            return response()->json(['message' => 'Threads deleted successfully', 'deleted_count' => $deletedCount], 200);
+        } else {
+            return response()->json(['message' => 'No threads found for the provided IDs'], 404);
+        }
     }
 
     public function searchThreads(Request $request)

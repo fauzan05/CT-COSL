@@ -258,6 +258,80 @@
             </div>
         </Dialog>
     </TransitionRoot>
+    <!-- Delete Confirmation Modal -->
+    <TransitionRoot appear :show="isDeleteModalOpen" as="template">
+        <Dialog as="div" @close="closeModal" class="relative z-50">
+            <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100"
+                leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
+                <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+            </TransitionChild>
+
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                    <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95"
+                        enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100"
+                        leave-to="opacity-0 scale-95">
+                        <DialogPanel
+                            class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
+                            <!-- Close Button -->
+                            <button @click="closeModal"
+                                class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                aria-label="Close modal">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                            <!-- Modal Title -->
+                            <DialogTitle as="h3"
+                                class="text-lg font-medium leading-6 text-gray-900 mb-4 dark:text-white flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Confirm Delete
+                            </DialogTitle>
+
+                            <!-- Modal Content -->
+                            <div class="mt-4 text-center space-y-4">
+                                <p class="text-gray-700 dark:text-gray-200">
+                                    Are you sure you want to delete the thread
+                                    <span class="font-semibold text-red-600">{{ selectedThread?.type }}</span>?
+                                    This action cannot be undone.
+                                </p>
+                            </div>
+
+                            <!-- Modal Actions -->
+                            <div class="mt-6 flex justify-center space-x-3">
+                                <button type="button"
+                                    class="inline-flex justify-center cursor-pointer rounded-md border dark:text-white/75 border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                                    @click="closeModal">
+                                    Cancel
+                                </button>
+                                <button type="button" :disabled="isDeleting" @click="handleDeleteThread"
+                                    class="inline-flex justify-center cursor-pointer rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2">
+                                    <span v-if="!isDeleting">Delete</span>
+                                    <span v-else class="flex items-center">
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                            </path>
+                                        </svg>
+                                        Deleting...
+                                    </span>
+                                </button>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
     <!-- Main Content -->
     <div class="p-6 bg-gray-50 min-h-screen dark:bg-slate-900/50 dark:text-gray-100 rounded-xl">
         <!-- Header Section with improved styling -->
@@ -341,6 +415,7 @@
                                     {{ thread.updated_by_name }}
                                 </td>
                                 <td class="px-6 py-4 text-sm">
+                                    <!-- Edit -->
                                     <button @click="openThreadModal(thread)"
                                         class="inline-flex items-center px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors duration-150">
                                         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -348,6 +423,17 @@
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                         </svg>
                                         Edit
+                                    </button>
+
+                                    <!-- Delete -->
+                                    <button @click="confirmDeleteModal(thread)"
+                                        class="inline-flex items-center px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
+                                        <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        <span class="text-sm font-medium">Delete</span>
                                     </button>
                                 </td>
                             </tr>
@@ -440,6 +526,8 @@ const editingSizeIndex = ref(null);
 const editingRowIndex = ref(null);
 const loading = ref(false);
 const loadingAllSizes = ref(false);
+const isDeleteModalOpen = ref(false);
+const isDeleting = ref(false);
 
 const selectedThread = ref(null);
 const currentUserStore = useCurrentUserStore();
@@ -468,6 +556,7 @@ const formatDate = (utcDateString) => {
 /* ------------------------------ MODAL HANDLERS ------------------------------ */
 function closeModal() {
     isThreadModalOpen.value = false;
+    isDeleteModalOpen.value = false;
     resetForm();
 }
 
@@ -571,6 +660,11 @@ const openThreadModal = async (thread) => {
     }
 };
 
+const confirmDeleteModal = (thread) => {
+    selectedThread.value = thread;
+    isDeleteModalOpen.value = true
+}
+
 const saveThread = async () => {
     loading.value = true;
     const toast = useToast();
@@ -605,6 +699,30 @@ const saveThread = async () => {
         loading.value = false;
     }
 };
+
+function handleDeleteThread() {
+    isDeleting.value = true;
+    const toast = useToast();
+
+    let ids = [selectedThread.value.id];
+    axios.delete(`/api/threads`, {
+        data: { ids }
+    })
+        .then(response => {
+            if (response.status === 200) {
+                toast.success('Thread deleted successfully!');
+                fetchThreads(pagination.value.current_page);
+                closeModal();
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            toast.error('Failed to delete thread.');
+        })
+        .finally(() => {
+            isDeleting.value = false;
+        });
+}
 
 function goToPage(page) {
     if (page < 1 || page > pagination.value.last_page) return;
