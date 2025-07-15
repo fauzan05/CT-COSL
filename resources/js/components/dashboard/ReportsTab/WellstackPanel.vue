@@ -1237,7 +1237,7 @@ const tableLoadingState = computed(() =>
         id: index, no: '', name: '', created_at: '', updated_at: '', created_by: ''
     }))
 );
-const baseUrl = document.querySelector('meta[name="base-url"]').content;
+const baseUrl = import.meta.env.VITE_API_URL;
 
 const types = ref([]);
 const items = ref([]);

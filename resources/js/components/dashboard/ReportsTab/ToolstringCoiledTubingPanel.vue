@@ -1089,7 +1089,7 @@ const isReportingModalOpen = ref(false);
 const loading = ref(false);
 const showMobileFilters = ref(false);
 const isDesc = ref(true);
-const baseUrl = document.querySelector('meta[name="base-url"]').content;
+const baseUrl = import.meta.env.VITE_API_URL;
 
 /* ------------------------------ FILTER & SORT ------------------------------ */
 const search = ref('');

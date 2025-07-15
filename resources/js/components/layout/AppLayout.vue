@@ -379,7 +379,7 @@ const route = useRoute();
 
 
 /* ==================== CONSTANTS & STATIC ==================== */
-const baseUrl = document.querySelector('meta[name="base-url"]').content;
+const baseUrl = import.meta.env.VITE_API_URL;
 const imgSrc = `${baseUrl}/assets/images/company/company-logo.png`;
 
 

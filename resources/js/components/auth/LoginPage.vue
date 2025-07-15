@@ -151,7 +151,7 @@ const loginForm = ref({
     password: "",
     remember: false,
 });
-const baseUrl = document.querySelector('meta[name="base-url"]').content;
+const baseUrl = import.meta.env.VITE_API_URL;
 const imgSrc = `${baseUrl}/assets/images/company/company-logo.png`;
 const imgBgSrc = `${baseUrl}/assets/images/company/company-bg-login.jpeg`;
 const loading = ref(false);

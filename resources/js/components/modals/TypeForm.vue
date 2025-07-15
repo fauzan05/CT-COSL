@@ -189,7 +189,7 @@ const toast = useToast();
 /* ==================== STATE ==================== */
 const loading = ref(false);
 const nameInput = ref(null);
-const baseUrl = document.querySelector('meta[name="base-url"]').content;
+const baseUrl = import.meta.env.VITE_API_URL;
 const currentMenu = ref('');
 const typeForm = ref({
     id: 0,

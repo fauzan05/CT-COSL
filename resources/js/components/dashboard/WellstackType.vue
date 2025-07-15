@@ -1103,7 +1103,7 @@ import Pagination from '@/components/Pagination.vue';
 // ========== INITIAL SETUP ==========
 const toast = useToast();
 const route = useRoute();
-const baseUrl = document.querySelector('meta[name="base-url"]').content;
+const baseUrl = import.meta.env.VITE_API_URL;
 
 // ========== STATE ==========
 const wellstackTypeId = ref(route.params.wellstackTypeId);
