@@ -1440,11 +1440,11 @@ const formatDate = (utcDateString) => {
 // ========== WATCHERS ==========
 watch([selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, search, isDesc], () => {
     fetchAllItems(items.value.current_page || 1);
-});
+}, { deep: true });
 
 watch(selectedCategories, (newVal) => {
     showButtonDeleteSelectedItems.value = newVal.length > 0;
-});
+}, { immediate:true });
 
 watch(
     () => route.params.wellstackTypeId,

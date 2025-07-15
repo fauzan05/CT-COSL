@@ -182,16 +182,28 @@ class WellstackController extends Controller
     {
         // Default pagination
         $perPage = $request->input('per_page', 10);
+        $wellstackTypeId = $request->input('wellstack_type_id');
 
-        // Query builder
-        $query = WellstackItemModel::with(['updatedByUser']);
+        // Base query with eager loading
+        $query = WellstackItemModel::with(['updatedByUser:id,fullname'])
+            ->select([
+                'id',
+                'name',
+                'description',
+                'image',
+                'wellstack_type_id',
+                'updated_by',
+                'created_at',
+                'updated_at',
+                'deleted_at'
+            ]);
 
-        // Filter by type_id
-        if ($request->filled('wellstack_type_id')) {
-            $query->where('wellstack_type_id', $request->input('wellstack_type_id'));
+        // Filter by type_id (apply early for better performance)
+        if ($wellstackTypeId) {
+            $query->where('wellstack_type_id', $wellstackTypeId);
         }
 
-        // Optional search
+        // Search optimization with index hints
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -200,40 +212,98 @@ class WellstackController extends Controller
             });
         }
 
-        // Optional status filter (active = not soft-deleted, inactive = soft-deleted)
+        // Status filter optimization
         if ($request->filled('status')) {
-            if ((bool)$request->input('status') === 'active') {
-                $query->whereNull('deleted_at');
-            } elseif ($request->input('status') === 'inactive') {
-                $query->onlyTrashed();
-            } elseif ($request->input('status') === 'all') {
-                $query->withTrashed();
+            $status = $request->input('status');
+            switch ($status) {
+                case 'active':
+                    $query->whereNull('deleted_at');
+                    break;
+                case 'inactive':
+                    $query->onlyTrashed();
+                    break;
+                case 'all':
+                    $query->withTrashed();
+                    break;
             }
         }
 
-        // Optional sorting
+        // Sorting
         $sortBy = $request->input('sort_by', 'created_at');
         $direction = $request->input('direction', 'desc');
+        $allowedSortColumns = ['id', 'name', 'created_at', 'updated_at'];
 
-        $query->orderBy($sortBy, $direction);
+        if (in_array($sortBy, $allowedSortColumns)) {
+            $query->orderBy($sortBy, $direction);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
 
-        // Paginate
+        // For counting, we need to get filtered data only once
+        $countQuery = WellstackItemModel::select(['deleted_at']);
+
+        // Apply same filters as main query for accurate counting
+        if ($wellstackTypeId) {
+            $countQuery->where('wellstack_type_id', $wellstackTypeId);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $countQuery->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Get all filtered items for counting (only deleted_at column)
+        $allFilteredItems = $countQuery->withTrashed()->get(['deleted_at']);
+
+        // Count in PHP - much faster than database aggregation
+        $totalActive = $allFilteredItems->whereNull('deleted_at')->count();
+        $totalInactive = $allFilteredItems->whereNotNull('deleted_at')->count();
+
+        // Now apply status filter to main query if needed
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            switch ($status) {
+                case 'active':
+                    $query->whereNull('deleted_at');
+                    break;
+                case 'inactive':
+                    $query->onlyTrashed();
+                    break;
+                case 'all':
+                    $query->withTrashed();
+                    break;
+            }
+        }
+
+        // Get paginated results
         $items = $query->paginate($perPage);
+
+        // Transform collection efficiently
         $items->getCollection()->transform(function ($item) {
-            $item->image_url = $item->image
-                ? Storage::url('assets/images/wellstack_items/' . $item->image)
-                : null;
-            $item->status = is_null($item->deleted_at) ? 'active' : 'inactive';
-            $item->updated_by_name = $item->updatedByUser ? $item->updatedByUser->fullname : null;
-            return $item;
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'description' => $item->description,
+                'image_url' => $item->image
+                    ? Storage::url('assets/images/wellstack_items/' . $item->image)
+                    : null,
+                'wellstack_type_id' => $item->wellstack_type_id,
+                'status' => is_null($item->deleted_at) ? 'active' : 'inactive',
+                'updated_by_name' => $item->updatedByUser?->fullname,
+                'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
+            ];
         });
 
-        $totalActive = WellstackItemModel::where('wellstack_type_id', $request->input('wellstack_type_id'))->whereNull('deleted_at')->count();
-        $totalInactive = WellstackItemModel::where('wellstack_type_id', $request->input('wellstack_type_id'))->onlyTrashed()->count();
-        $itemsArray = $items->toArray();
-        $itemsArray['total_active_items'] = $totalActive;
-        $itemsArray['total_inactive_items'] = $totalInactive;
-        return response()->json($itemsArray);
+        // Build response
+        $response = $items->toArray();
+        $response['total_active_items'] = $totalActive;
+        $response['total_inactive_items'] = $totalInactive;
+
+        return response()->json($response);
     }
 
     public function deleteItem(Request $request)
@@ -580,7 +650,7 @@ class WellstackController extends Controller
                 $distance_from_upper_shear = $total_height + $sum_without_max_shear;
             }
         }
-        
+
         // Retrieve the reporting history
         $heightPDF = $request->query('height_pdf', 1500);
         $logoBase64 = $this->imageToBase64FromPublic('assets/images/company/company-logo.png');
