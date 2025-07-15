@@ -277,3 +277,5 @@ After running seeders, you can login with (you can see in AdminSeeder file):
 
 
 For more detailed documentation, visit the [Laravel Documentation](https://laravel.com/docs) and [Vue.js Documentation](https://vuejs.org/guide/).
+
+> **⚠️ WARNING:** This guide is for development installation only. For production installation, you can adjust it to your server configuration.
