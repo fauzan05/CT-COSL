@@ -1132,12 +1132,6 @@ const dataPerPages = ref(0);
 const itemImage = ref(null);
 const uploadedItemImageFile = ref(null);
 const dragover = ref(false);
-const nextSetId = ref(2); // For adding new dimension sets
-const selectedThreadType = ref(null)
-const selectedThreadSize = ref(null)
-
-const queryThreadType = ref('')
-const queryThreadSize = ref('')
 
 // ========== FILTER OPTIONS ==========
 const sortByItems = [
@@ -1183,8 +1177,6 @@ const itemForm = ref({
     owner: '',
 });
 
-const threadTypes = ref([])
-
 // ========== COMPUTED ==========
 const direction = computed(() => (isDesc.value ? 'desc' : 'asc'));
 const totalActiveItems = ref(0);
@@ -1217,7 +1209,6 @@ function openModal(selectedItem = null) {
         resetForm();
     }
     isItemModalOpen.value = true;
-    fetchAllThread();
 }
 
 function openDeleteModal(item) {

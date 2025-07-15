@@ -80,7 +80,6 @@ class WellstackController extends Controller
     {
         $search = $request->input('search', '');
         $types = WellstackTypeModel::where('name', 'like', "%{$search}%")
-            ->orWhere('slug', 'like', "%{$search}%")
             ->orderBy('name', 'asc')
             ->get();
 
@@ -526,6 +525,9 @@ class WellstackController extends Controller
             ->orderBy('position', 'asc')
             ->get();
 
+        $distance_from_lower_shear = 0;
+        $distance_from_upper_shear = 0;
+
         $get_all_components = $get_all_components->map(function ($component) {
             return [
                 'id' => $component->id,
@@ -552,6 +554,33 @@ class WellstackController extends Controller
             ];
         });
 
+        $total_height = $get_all_components->sum('height') ?: 0;
+
+        $component_has_shear = $get_all_components->filter(function ($component) {
+            return !is_null($component['shear_ram_dist_from_bottom']);
+        });
+
+        if (count($component_has_shear) > 0) {
+            if (count($component_has_shear) === 1) {
+                $distance_from_lower_shear = $component_has_shear->firstWhere('shear_ram_dist_from_bottom', '!=', null)['shear_ram_dist_from_bottom'];
+            } else if (count($component_has_shear) === 2) {
+                $lower_shear_component = $component_has_shear->sortBy('shear_ram_dist_from_bottom')->first();
+                $upper_shear_component = $component_has_shear->sortByDesc('shear_ram_dist_from_bottom')->first();
+
+                $distance_from_lower_shear = $lower_shear_component['shear_ram_dist_from_bottom'];
+                $distance_from_upper_shear = $upper_shear_component['shear_ram_dist_from_bottom'];
+            } else {
+                $sum_without_max_shear = $component_has_shear->pluck('shear_ram_dist_from_bottom')->filter(function ($value) {
+                    return !is_null($value);
+                })->sum() - $component_has_shear->max('shear_ram_dist_from_bottom');
+                $sum_without_min_shear = $component_has_shear->pluck('shear_ram_dist_from_bottom')->filter(function ($value) {
+                    return !is_null($value);
+                })->sum() - $component_has_shear->min('shear_ram_dist_from_bottom');
+                $distance_from_lower_shear = $total_height + $sum_without_min_shear;
+                $distance_from_upper_shear = $total_height + $sum_without_max_shear;
+            }
+        }
+        
         // Retrieve the reporting history
         $heightPDF = $request->query('height_pdf', 1500);
         $logoBase64 = $this->imageToBase64FromPublic('assets/images/company/company-logo.png');
@@ -559,7 +588,13 @@ class WellstackController extends Controller
             'components' => $get_all_components,
             'company_logo' => $logoBase64,
             'reportingHistory' => WellstackReportingHistoryModel::findOrFail($templateId),
+            'distance_from_lower_shear' => $distance_from_lower_shear,
+            'distance_from_upper_shear' => $distance_from_upper_shear,
+            'total_height' => $total_height,
+            'total_weight' => $get_all_components->sum('weight') ?: 0,
+            'min_psi' => $get_all_components->min('pressure_rating') ?: 0,
         ];
+
         // Render Blade view to HTML
         $html = view('pdf.wellstack-reporting', $data)->render();
 

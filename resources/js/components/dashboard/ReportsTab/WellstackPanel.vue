@@ -520,7 +520,7 @@
                                 <div class="max-h-96 overflow-y-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                         <!-- Sticky Header -->
-                                        <thead class="bg-gray-50 dark:bg-gray-800 sticky top-0 z-50">
+                                        <thead class="bg-gray-50 dark:bg-gray-800 sticky top-0">
                                             <tr>
                                                 <th
                                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -1329,6 +1329,7 @@ const fetchAllWellstackTypes = async () => {
         types.value = response.data;
         items.value = [];
         selectedItem.value = null;
+        console.log(types.value);
     } catch (error) {
         console.error('Error fetching types:', error);
     } finally {
@@ -1611,8 +1612,6 @@ watch([search, selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilte
 
 onMounted(() => {
     fetchAllTemplates();
-    console.log("wellstack")
-
 });
 
 </script>

@@ -462,9 +462,9 @@
             <!-- Calculation rows -->
             <tr class="totals-section">
                 <td class="col-a">Distance from Lower Shear</td>
-                <td class="col-b">12.5</td>
+                <td class="col-b">{{ $distance_from_lower_shear }}</td>
                 <td class="col-c">Total Height:</td>
-                <td class="col-d">58.0</td>
+                <td class="col-d">{{ $total_height }}</td>
                 <td class="col-e">ft</td>
                 <td class="col-f"></td>
                 <td class="col-g"></td>
@@ -472,10 +472,10 @@
             </tr>
             <tr class="totals-section">
                 <td class="col-a">Distance from Upper Shear</td>
-                <td class="col-b">18.7</td>
+                <td class="col-b">{{ $distance_from_upper_shear }}</td>
                 <td class="col-c">Total Weight:</td>
                 <td class="col-d"></td>
-                <td class="col-e">12.85</td>
+                <td class="col-e">{{ $total_weight }}</td>
                 <td class="col-f">TonUS</td>
                 <td class="col-g"></td>
                 <td class="col-n"></td>
@@ -486,7 +486,7 @@
                 <td class="col-c">Min PSI:</td>
                 <td class="col-d"></td>
                 <td class="col-e"></td>
-                <td class="col-f">8,000</td>
+                <td class="col-f">{{ $min_psi }}</td>
                 <td class="col-g">psi</td>
                 <td class="col-n"></td>
             </tr>
