@@ -1232,11 +1232,6 @@ const pageSizeItems = [
 ];
 
 const listTemplates = ref([]);
-const tableLoadingState = computed(() =>
-    Array(selectedPageSizeFilter.value.value).fill().map((_, index) => ({
-        id: index, no: '', name: '', created_at: '', updated_at: '', created_by: ''
-    }))
-);
 const baseUrl = import.meta.env.VITE_API_URL;
 
 const types = ref([]);
@@ -1259,9 +1254,6 @@ const componentListLoading = ref(false);
 const AddComponentLoading = ref(false);
 const updatePositionLoading = ref(false);
 const isReportingModalOpen = ref(false);
-const isReportModalOpen = ref(false);
-const isCreateReport = ref(true);
-
 
 const length_unit = ref('inch');
 const weight_unit = ref('lbs');
@@ -1280,7 +1272,6 @@ const selectedStatusFilter = ref({ name: 'Active', value: 'active' });
 const selectedSortByFilter = ref({ name: 'Created Date', value: 'created_at' });
 const selectedPageSizeFilter = ref({ name: '10', value: 10 });
 
-const direction = computed(() => (isDesc.value ? 'desc' : 'asc'));
 const isTemplateModalOpen = ref(false);
 const titleModal = ref('Create New Template');
 const titleModalButton = ref('Create');

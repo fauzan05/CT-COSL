@@ -1090,14 +1090,10 @@ import {
     ListboxOption,
     Switch,
     SwitchGroup,
-    SwitchLabel,
-    Combobox,
-    ComboboxInput,
-    ComboboxOptions,
-    ComboboxOption
+    SwitchLabel
 } from '@headlessui/vue';
 
-import { ChevronUpDownIcon, CheckIcon, PlusIcon, XMarkIcon, } from '@heroicons/vue/20/solid';
+import { ChevronUpDownIcon, CheckIcon } from '@heroicons/vue/20/solid';
 import Pagination from '@/components/Pagination.vue';
 
 // ========== INITIAL SETUP ==========
@@ -1112,7 +1108,6 @@ const loading = ref(false);
 const isLoadingData = ref(true);
 const isItemModalOpen = ref(false);
 const isDeleteItemModalOpen = ref(false);
-const isDeleteModalOpen = ref(false);
 const showMobileFilters = ref(false);
 const showButtonDeleteSelectedItems = ref(false);
 
@@ -1127,7 +1122,6 @@ const search = ref('');
 const isDesc = ref(true);
 const currentPage = ref(1);
 const totalPages = ref(1);
-const dataPerPages = ref(0);
 
 const itemImage = ref(null);
 const uploadedItemImageFile = ref(null);
@@ -1159,9 +1153,6 @@ const selectedPageSizeFilter = ref(pageSizeItems[0]);
 const imperialLengthUnits = ['ft', 'm'];
 const imperialWeightUnits = ['lbs', 'kg'];
 const pressureUnits = ['psi', 'bar'];
-
-// ========== UNITS ==========
-const units = ref(['inch', 'mm', 'cm']);
 
 // ========== FORM DATA ==========
 const itemForm = ref({

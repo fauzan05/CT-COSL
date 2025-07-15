@@ -1079,8 +1079,6 @@ watch(() => route.params.slug, (newVal) => {
     reportingSlug.value = newVal;
 }, { immediate: true });
 
-const isActive = (link) => link === `/reporting/${reportingSlug.value}`;
-
 
 /* ------------------------------ UI STATE FLAGS ----------------------------- */
 const isLoadingData = ref(false);
@@ -1096,9 +1094,6 @@ const search = ref('');
 const selectedStatusFilter = ref({ name: 'Active', value: 'active' });
 const selectedSortByFilter = ref({ name: 'Created Date', value: 'created_at' });
 const selectedPageSizeFilter = ref({ name: '10', value: 10 });
-
-const direction = computed(() => (isDesc.value ? 'desc' : 'asc'));
-
 
 /* ------------------------------ FILTER & SORT ITEMS ------------------------- */
 const sortByItems = [
@@ -1147,12 +1142,6 @@ const resetForm = () => {
 
 /* --------------------------- DATA LIST & TABLE ----------------------------- */
 const listTemplates = ref([]);
-const tableLoadingState = computed(() =>
-    Array(selectedPageSizeFilter.value.value).fill().map((_, index) => ({
-        id: index, no: '', name: '', created_at: '', updated_at: '', created_by: ''
-    }))
-);
-
 
 /* --------------------------- TOOLSTRING PICKERS ---------------------------- */
 const types = ref([]);

@@ -1217,7 +1217,6 @@ const loading = ref(false);
 const isLoadingData = ref(true);
 const isItemModalOpen = ref(false);
 const isDeleteItemModalOpen = ref(false);
-const isDeleteModalOpen = ref(false);
 const showMobileFilters = ref(false);
 const showButtonDeleteSelectedItems = ref(false);
 
@@ -1237,7 +1236,6 @@ const dataPerPages = ref(0);
 const itemImage = ref(null);
 const uploadedItemImageFile = ref(null);
 const dragover = ref(false);
-const nextSetId = ref(2); // For adding new dimension sets
 const selectedThreadType = ref(null)
 const selectedThreadSize = ref(null)
 
@@ -1396,16 +1394,6 @@ const handleDrop = (event) => {
     dragover.value = false;
     const file = event.dataTransfer.files[0];
     if (file) processFile(file);
-};
-
-// ========== FUNCTIONS: SELECTION ==========
-const selectAllCategories = () => {
-    selectedCategories.value = items.value.data.map((cat) => cat);
-};
-
-const clearSelectAllCategories = () => {
-    selectedCategories.value = [];
-    showButtonDeleteSelectedItems.value = false;
 };
 
 // ========== FUNCTIONS: PAGINATION ==========
@@ -1612,30 +1600,6 @@ function getDimensionSetsData() {
         },
         is_current: set.is_current || false,
     }));
-}
-
-function validateDimensionSets() {
-    return itemForm.value.dimensionSets.every(set => {
-        const outerDiameterValid = set.outer_diameter.value &&
-            set.outer_diameter.value.trim() !== '' &&
-            !isNaN(parseFloat(set.outer_diameter.value));
-
-        const innerDiameterValid = set.inner_diameter.value &&
-            set.inner_diameter.value.trim() !== '' &&
-            !isNaN(parseFloat(set.inner_diameter.value));
-
-        // Length bisa optional, jadi tidak wajib diisi
-        const lengthValid = !set.length.value ||
-            (set.length.value.trim() !== '' && !isNaN(parseFloat(set.length.value)));
-
-        return outerDiameterValid && innerDiameterValid && lengthValid;
-    });
-}
-
-function getDimensionsSummary() {
-    return itemForm.value.dimensionSets.map((set, index) => {
-        return `Set ${--index}: OD=${set.outer_diameter.value}${set.outer_diameter.unit}, ID=${set.inner_diameter.value}${set.inner_diameter.unit}, L=${set.length.value}${set.length.unit}`;
-    });
 }
 
 // ========== FUNCTIONS: THREADS ==========
