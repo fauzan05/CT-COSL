@@ -1231,7 +1231,6 @@ const search = ref('');
 const isDesc = ref(true);
 const currentPage = ref(1);
 const totalPages = ref(1);
-const dataPerPages = ref(0);
 
 const itemImage = ref(null);
 const uploadedItemImageFile = ref(null);

@@ -1194,13 +1194,11 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, watch, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import draggable from 'vuedraggable';
 
 import {
-    TabGroup, TabList, Tab, TabPanels, TabPanel,
     TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle,
     Listbox, ListboxButton, ListboxOptions, ListboxOption,
     Switch, SwitchGroup, SwitchLabel,
