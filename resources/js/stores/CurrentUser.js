@@ -10,9 +10,7 @@ export const useCurrentUserStore = defineStore("currentUser", {
 
     actions: {
         async fetchUser() {
-            const baseUrl = document.querySelector(
-                'meta[name="base-url"]'
-            ).content;
+            const baseUrl = import.meta.env.VITE_API_URL;
             this.loading = true;
             this.error = null;
             try {

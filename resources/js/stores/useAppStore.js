@@ -2,7 +2,7 @@ import {
     defineStore
 } from 'pinia';
 import axios from "axios";
-const baseUrl = document.querySelector('meta[name="base-url"]').content;
+const baseUrl = import.meta.env.VITE_API_URL;
 
 export const useAppStore = defineStore("app", {
     state: () => ({
