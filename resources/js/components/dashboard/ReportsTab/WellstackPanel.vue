@@ -199,7 +199,7 @@
                         enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100"
                         leave-to="opacity-0 scale-95">
                         <DialogPanel
-                            class="relative w-full max-w-8xl h-screen transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
+                            class="relative w-full max-w-8xl h-auto transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
                             <!-- Close Button -->
                             <button @click="closeModal"
                                 class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -514,98 +514,122 @@
                                 </div>
                             </div>
                             <!-- Table Component -->
-                            <div class="bg-white dark:bg-slate-800 mt-5 rounded-xl shadow-md overflow-hidden">
-                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                    <thead class="bg-gray-50  dark:bg-gray-800">
-                                        <tr>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                No</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Image</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Description</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Serial Number</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Height</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Weight</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Pressure Rating</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Shear Ram Dist from Bottom</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">BHI or 3d Party</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Actions</th>
-                                        </tr>
-                                    </thead>
-
-                                    <!-- Loading Skeleton -->
-                                    <tbody v-if="componentListLoading"
-                                        class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                        <tr v-for="n in 3" :key="'loading-' + n">
-                                            <td colspan="10" class="px-6 py-4">
-                                                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full">
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-
-                                    <!-- Draggable Items -->
-                                    <draggable v-else v-model="componentList" tag="tbody" item-key="component_id"
-                                        @end="updatePositions"
-                                        class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                        <template #item="{ element, index }">
+                            <div
+                                class="bg-white dark:bg-slate-800 rounded-xl my-5 shadow-md overflow-hidden">
+                                <!-- Table container with fixed height and scroll -->
+                                <div class="max-h-96 overflow-y-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                        <!-- Sticky Header -->
+                                        <thead class="bg-gray-50 dark:bg-gray-800 sticky top-0 z-50">
                                             <tr>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ index + 1 }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <img :src="element.image" alt="Component image"
-                                                        class="h-10 w-10 object-contain" />
-                                                </td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.description }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.serial_number }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.height }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.weight }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.pressure_rating }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.shear_ram_dist_from_bottom }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.owner }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                    <button @click="removeComponent(index, element)"
-                                                        :disabled="element.isRemoving"
-                                                        class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-red-600 hover:text-red-900 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
-                                                        <div v-if="element.isRemoving" class="spinner mr-2"></div>
-                                                        <svg v-else class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                        </svg>
-                                                        {{ element.isRemoving ? 'Removing...' : 'Remove' }}
-                                                    </button>
-                                                </td>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    No</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Image</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Description</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Serial Number</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Height</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Weight</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Pressure Rating</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Shear Ram Dist from Bottom</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    BHI or 3d Party</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    Actions</th>
                                             </tr>
-                                        </template>
+                                        </thead>
 
-                                        <!-- Empty state -->
-                                        <template #footer>
-                                            <tr v-if="componentList.length === 0">
-                                                <td colspan="7"
-                                                    class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                                    No components found
+                                        <!-- Loading Skeleton -->
+                                        <tbody v-if="componentListLoading"
+                                            class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                            <tr v-for="n in 3" :key="'loading-' + n">
+                                                <td colspan="10" class="px-6 py-4">
+                                                    <div
+                                                        class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full">
+                                                    </div>
                                                 </td>
                                             </tr>
-                                        </template>
-                                    </draggable>
-                                </table>
+                                        </tbody>
+
+                                        <!-- Draggable Items -->
+                                        <draggable v-else v-model="componentList" tag="tbody" item-key="component_id"
+                                            @end="updatePositions"
+                                            class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                            <template #item="{ element, index }">
+                                                <tr>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ index + 1 }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <img :src="element.image" alt="Component image"
+                                                            class="h-10 w-10 object-contain" />
+                                                    </td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.description }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.serial_number }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.height }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.weight }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.pressure_rating }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.shear_ram_dist_from_bottom }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.owner }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <button @click="removeComponent(index, element)"
+                                                            :disabled="element.isRemoving"
+                                                            class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-red-600 hover:text-red-900 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                                                            <div v-if="element.isRemoving" class="spinner mr-2"></div>
+                                                            <svg v-else class="w-4 h-4 mr-1" fill="none"
+                                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                            {{ element.isRemoving ? 'Removing...' : 'Remove' }}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+
+                                            <!-- Empty state -->
+                                            <template #footer>
+                                                <tr v-if="componentList.length === 0">
+                                                    <td colspan="10"
+                                                        class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                                        No components found
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </draggable>
+                                    </table>
+                                </div>
                             </div>
                         </DialogPanel>
                     </TransitionChild>
@@ -1213,6 +1237,8 @@ const tableLoadingState = computed(() =>
         id: index, no: '', name: '', created_at: '', updated_at: '', created_by: ''
     }))
 );
+const baseUrl = document.querySelector('meta[name="base-url"]').content;
+
 const types = ref([]);
 const items = ref([]);
 const itemDimensions = ref([]);

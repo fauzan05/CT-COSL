@@ -481,7 +481,7 @@
                 <td class="col-n"></td>
             </tr>
             <tr class="totals-section">
-                <td class="col-a">2023-10-25</td>
+                <td class="col-a"></td>
                 <td class="col-b"></td>
                 <td class="col-c">Min PSI:</td>
                 <td class="col-d"></td>

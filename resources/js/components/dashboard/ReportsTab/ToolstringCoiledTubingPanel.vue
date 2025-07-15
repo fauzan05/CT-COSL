@@ -127,7 +127,7 @@
                         enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100"
                         leave-to="opacity-0 scale-95">
                         <DialogPanel
-                            class="relative w-full max-w-8xl h-screen transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
+                            class="relative w-full max-w-8xl h-auto transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
                             <!-- Close Button -->
                             <button @click="closeModal"
                                 class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -457,7 +457,7 @@
                                 </div>
                             </div>
                             <!-- Table Component -->
-                            <div class="bg-white dark:bg-slate-800 mt-5 rounded-xl shadow-md overflow-hidden">
+                            <div class="bg-white dark:bg-slate-800 my-5 rounded-xl shadow-md overflow-hidden">
                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead class="bg-gray-50  dark:bg-gray-800">
                                         <tr>
