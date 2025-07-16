@@ -397,7 +397,7 @@
 
                     <!-- Mobile: Grid for Refresh button -->
                     <div class="block sm:hidden">
-                        <button @click="fetchCategories" :disabled="loading"
+                        <button @click="fetchThreads(pagination.current_page)" :disabled="loading"
                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             <span v-if="!loading" class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -423,7 +423,7 @@
                     <!-- Desktop: Horizontal layout -->
                     <div class="hidden sm:flex sm:items-center sm:justify-between sm:space-x-4">
                         <!-- Refresh Button -->
-                        <button @click="fetchAllItems" :disabled="loading"
+                        <button @click="fetchThreads(pagination.current_page)" :disabled="loading"
                             class="inline-flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             <span v-if="!loading" class="flex items-center gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -446,46 +446,6 @@
                         </button>
 
                         <div class="flex items-center space-x-3">
-                            <!-- Status Filter -->
-                            <div class="w-32">
-                                <Listbox v-model="selectedStatusFilter">
-                                    <div class="relative">
-                                        <ListboxButton
-                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
-                                            <span class="block truncate text-gray-900 dark:text-white">{{
-                                                selectedStatusFilter.name }}</span>
-                                            <span
-                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                            </span>
-                                        </ListboxButton>
-
-                                        <transition leave-active-class="transition duration-100 ease-in"
-                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                            <ListboxOptions
-                                                class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                                                <ListboxOption v-slot="{ active, selected }"
-                                                    v-for="statusItem in statusItems" :key="statusItem.name"
-                                                    :value="statusItem" as="template">
-                                                    <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
-                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
-                                                    ]">
-                                                        <span
-                                                            :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
-                                                                statusItem.name }}</span>
-                                                        <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                        </span>
-                                                    </li>
-                                                </ListboxOption>
-                                            </ListboxOptions>
-                                        </transition>
-                                    </div>
-                                </Listbox>
-                            </div>
-
                             <!-- Sort By Filter -->
                             <div class="w-40">
                                 <Listbox v-model="selectedSortByFilter">
@@ -544,48 +504,6 @@
                     <div class="grid grid-cols-1 gap-4 sm:hidden">
                         <!-- Row 1: Status and Sort By -->
                         <div class="grid grid-cols-2 gap-3">
-                            <!-- Status Filter -->
-                            <div>
-                                <label
-                                    class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-                                <Listbox v-model="selectedStatusFilter">
-                                    <div class="relative">
-                                        <ListboxButton
-                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
-                                            <span class="block truncate text-gray-900 dark:text-white">{{
-                                                selectedStatusFilter.name }}</span>
-                                            <span
-                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronUpDownIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
-                                            </span>
-                                        </ListboxButton>
-
-                                        <transition leave-active-class="transition duration-100 ease-in"
-                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                            <ListboxOptions
-                                                class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                                                <ListboxOption v-slot="{ active, selected }"
-                                                    v-for="statusItem in statusItems" :key="statusItem.name"
-                                                    :value="statusItem" as="template">
-                                                    <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
-                                                        'relative cursor-default select-none py-2 pl-10 pr-4',
-                                                    ]">
-                                                        <span
-                                                            :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
-                                                                statusItem.name }}</span>
-                                                        <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
-                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                        </span>
-                                                    </li>
-                                                </ListboxOption>
-                                            </ListboxOptions>
-                                        </transition>
-                                    </div>
-                                </Listbox>
-                            </div>
-
                             <!-- Sort By Filter -->
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Sort
@@ -627,10 +545,6 @@
                                     </div>
                                 </Listbox>
                             </div>
-                        </div>
-
-                        <!-- Row 2: Page Size and Sort Direction -->
-                        <div class="grid grid-cols-2 gap-3">
                             <!-- Sort Direction Toggle -->
                             <div>
                                 <label
@@ -756,7 +670,7 @@
                         <Listbox v-model="perPage" @update:modelValue="changePerPage">
                             <div class="relative">
                                 <ListboxButton
-                                    class="relative w-20 cursor-default rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 py-1.5 pl-3 pr-8 text-left text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    class="relative w-20 cursor-default rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 py-1.5 pl-3 pr-8 text-left text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     {{ perPage }}
                                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -803,7 +717,7 @@
   
 <script setup>
 /* ------------------------------- IMPORTS ------------------------------- */
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useCurrentUserStore } from '@/stores/CurrentUser';
 
@@ -836,17 +750,13 @@ const loading = ref(false);
 const loadingAllSizes = ref(false);
 const isDeleteModalOpen = ref(false);
 const isDeleting = ref(false);
+const showMobileFilters = ref(false);
 
-const statusItems = ref([
-    { name: 'All', value: '' },
-    { name: 'Active', value: 'active' },
-    { name: 'Inactive', value: 'inactive' },
-]);
-
-const selectedStatusFilter = ref(statusItems.value[0]);
 const sortByItems = ref([
     { name: 'Type', value: 'type' },
     { name: 'Updated At', value: 'updated_at' },
+    { name: 'Updated By', value: 'updated_by_name' },
+    { name: 'Total Size', value: 'total_sizes' },
 ]);
 
 const selectedSortByFilter = ref(sortByItems.value[0]);
@@ -858,7 +768,7 @@ const currentUserStore = useCurrentUserStore();
 
 const perPageOptions = [10, 25, 100];
 const perPage = ref(10);
-
+const search = ref('');
 /* ------------------------------ UTILITIES ------------------------------ */
 const formatDate = (utcDateString) => {
     const date = new Date(utcDateString);
@@ -945,7 +855,7 @@ function deleteThreadSize(index) {
 async function fetchThreads(page = 1) {
     try {
         isLoading.value = true;
-        const response = await axios.get(`/api/threads?page=${page}&per_page=${perPage.value}`);
+        const response = await axios.get(`/api/threads?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}`);
         listThreads.value = response.data.data;
         pagination.value = {
             current_page: response.data.current_page,
@@ -1058,6 +968,11 @@ function changePerPage(newPerPage) {
     pagination.value.current_page = 1;
     fetchThreads(1);
 }
+
+/* ------------------------------ FILTERS ------------------------------ */
+watch([selectedSortByFilter, perPage, search, isDesc], () => {
+    fetchThreads(pagination.value.current_page || 1);
+});
 
 /* ------------------------------ ON MOUNT ------------------------------ */
 onMounted(async () => {
