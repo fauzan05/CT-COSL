@@ -215,46 +215,29 @@
                                         read</button>
                                 </div>
                                 <div class="max-h-96 overflow-y-auto">
-                                    <div
-                                        class="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer border-b border-gray-50 dark:border-gray-700">
-                                        <div class="flex items-start space-x-3">
+                                    <ul v-if="notifications.length > 0" class="divide-y divide-gray-100 dark:divide-gray-700">
+                                        <li v-for="notification in notifications" :key="notification.id"
+                                            class="px-4 py-3 flex items-start space-x-3">
                                             <div class="flex-shrink-0">
-                                                <div
-                                                    class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                </div>
+                                                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
                                             </div>
                                             <div class="flex-1">
-                                                <p class="text-sm text-gray-800 dark:text-white">Your order has been
-                                                    confirmed
+                                                <p class="text-sm text-gray-800 dark:text-white">{{ notification.message }}
                                                 </p>
-                                                <p class="text-xs text-gray-500 mt-1 dark:text-gray-500">2 minutes ago</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ notification.time
+                                                    }}</p>
                                             </div>
-                                            <div class="flex-shrink-0">
-                                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer">
-                                        <div class="flex items-start space-x-3">
-                                            <div class="flex-shrink-0"><img
-                                                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jane"
-                                                    class="w-10 h-10 rounded-full" alt="User"></div>
-                                            <div class="flex-1">
-                                                <p class="text-sm text-gray-800 dark:text-white"><span
-                                                        class="font-medium">Jane
-                                                        Cooper</span>
-                                                    mentioned you in a comment</p>
-                                                <p class="text-xs text-gray-500 mt-1 dark:text-gray-500">1 hour ago</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        </li>
+                                    </ul>
+                                    <p v-if="notifications.length === 0"
+                                        class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">No new
+                                        notifications
+                                    </p>
                                 </div>
                                 <div class="px-4 py-3 bg-gray-50 dark:bg-slate-700 text-center rounded-b-xl">
                                     <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View all
@@ -319,12 +302,6 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>Settings</a>
-                                    <a href="#"
-                                        class="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white hover:bg-gray-50 hover:text-blue-600 transition-colors"><svg
-                                            class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M8.228 11.685h.774a2 2 0 001.94-1.515L12 5.5h0l1.058 4.67a2 2 0 001.94 1.515h.774m-7.544 0H5a2 2 0 00-2 2v5a2 2 0 002 2h14a2 2 0 002-2v-5a2 2 0 00-2-2h-3.228M10 17v-6m4 6v-6" />
-                                        </svg>Billing</a>
                                 </div>
                                 <div class="border-t border-gray-100"></div>
                                 <div class="py-2">
@@ -393,6 +370,8 @@ const isMobileSidebarOpen = ref(false);
 const isNotificationDropdownOpen = ref(false);
 const isProfileDropdownOpen = ref(false);
 const showNotification = ref(false);
+const notifications = ref([
+]);
 
 const dropdownOpen = ref({});
 

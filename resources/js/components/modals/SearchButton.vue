@@ -13,13 +13,13 @@
 
         <!-- Search Bar Desktop -->
         <button @click="openSearchModal" class="md:flex hidden items-center text-left space-x-3 px-4 h-10 
-                   bg-white dark:bg-slate-800/50 
-                   ring-1 ring-slate-900/10 dark:ring-slate-700/50 
-                   hover:ring-slate-300 dark:hover:ring-slate-500 
-                   focus:outline-none focus:ring-2 focus:ring-blue-500 
-                   shadow-sm dark:shadow-slate-800/30 
-                   rounded-lg text-slate-400 dark:text-slate-300 
-                   backdrop-blur-sm transition-all duration-200">
+    bg-white dark:bg-slate-800/50 
+    ring-1 ring-slate-900/10 dark:ring-slate-700/50 
+    hover:ring-slate-300 dark:hover:ring-slate-500 
+    focus:outline-none focus:ring-2 focus:ring-blue-500 
+    shadow-sm dark:shadow-slate-800/30 
+    rounded-lg text-slate-400 dark:text-slate-300 
+    backdrop-blur-sm transition-all duration-200">
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" class="flex-none text-slate-300 dark:text-slate-400" aria-hidden="true">
                 <path d="m19 19-3.5-3.5" />
@@ -27,7 +27,12 @@
             </svg>
             <span class="flex-auto dark:text-slate-400">Quick search...</span>
             <kbd class="font-sans font-semibold dark:text-slate-500">
-                <abbr title="Command" class="no-underline text-slate-300 dark:text-slate-500">⌘</abbr> K
+                <template v-if="isMac">
+                    <abbr title="Command" class="no-underline text-slate-300 dark:text-slate-500">⌘</abbr> K
+                </template>
+                <template v-else>
+                    <abbr title="Control" class="no-underline text-slate-300 dark:text-slate-500">Ctrl</abbr> K
+                </template>
             </kbd>
         </button>
 
@@ -105,7 +110,7 @@
 </template>
   
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 
 const isOpen = ref(false)
 const searchQuery = ref('')
@@ -151,6 +156,11 @@ const handleClickOutside = (event) => {
         closeSearchModal()
     }
 }
+
+// Detect OS untuk menampilkan shortcut yang sesuai
+const isMac = computed(() => {
+  return navigator.platform.toUpperCase().indexOf('MAC') >= 0
+})
 
 onMounted(() => {
     document.addEventListener('mousedown', handleClickOutside)
