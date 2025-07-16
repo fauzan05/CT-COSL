@@ -160,7 +160,7 @@ class ToolstringController extends Controller
                 'bottom_connection' => $item->threadSize->bottom_connection,
             ] : null;
             $item->dimension_sets = ToolstringItemDimensionModel::where('toolstring_item_id', $item->id)
-                ->get()
+            ->get()
                 ->map(function ($dimension) {
                     return [
                         'id' => $dimension->id,

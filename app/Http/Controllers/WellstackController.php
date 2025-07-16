@@ -701,6 +701,7 @@ class WellstackController extends Controller
             'default_font_size' => 10,
             'default_font' => 'sans-serif',
             'format' => [210, $heightPDF], // A4 size in mm, height can be adjusted
+            'tempDir' => sys_get_temp_dir(),
         ];
 
         // Inisialisasi mPDF
