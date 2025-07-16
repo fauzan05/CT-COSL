@@ -57,7 +57,7 @@
                     <!-- Navigation -->
                     <nav class="space-y-2 flex-1 overflow-y-auto pb-20">
                         <div v-for="(item, index) in sidebarItems" :key="index">
-                            <RouterLink v-if="item.name !== 'Toolstring Coiled Tubing' && item.name !== 'Wellstack'"
+                            <RouterLink v-if="item.name !== 'Toolstring Coiled Tubing' && item.name !== 'Wellstack'" @click="isMobileSidebarOpen = false"
                                 :to="item.path" class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
     hover:bg-blue-500 hover:text-white
     dark:hover:bg-white/10 dark:hover:text-blue-500
