@@ -849,7 +849,7 @@ const confirmDeleteModal = (user) => {
 async function fetchUsers(page = 1) {
     try {
         isLoading.value = true;
-        const response = await axios.get(`/api/users?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}`);
+        const response = await axios.get(`${baseUrl}/api/users?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}`);
         listUsers.value = response.data.data;
         pagination.value = {
             current_page: response.data.current_page,
@@ -873,13 +873,13 @@ const saveUser = async () => {
         if (selectedUser.value) {
             // Update existing user
             data.id = selectedUser.value.id;
-            const response = await axios.put(`/api/users/${selectedUser.value.id}`, data);
+            const response = await axios.put(`${baseUrl}/api/users/${selectedUser.value.id}`, data);
             if (response.status === 200) {
                 toast.success('User updated successfully!');
             }
         } else {
             // Add new user
-            const response = await axios.post('/api/users', data);
+            const response = await axios.post(`${baseUrl}/api/users`, data);
             if (response.status === 201) {
                 toast.success('User saved successfully!');
             }
@@ -901,7 +901,7 @@ function handleDeleteUser() {
     const toast = useToast();
 
     let ids = [selectedUser.value.id];
-    axios.delete(`/api/users`, {
+    axios.delete(`${baseUrl}/api/users`, {
         data: { ids }
     })
         .then(response => {
@@ -1031,7 +1031,7 @@ async function checkUsernameAvailability(username, showStatus = true) {
     }
 
     try {
-        const response = await axios.post('/api/check-username', { username });
+        const response = await axios.post(`${baseUrl}/api/check-username`, { username });
         const isAvailable = response.data.available;
 
         if (showStatus) {
@@ -1073,7 +1073,7 @@ async function checkEmailAvailability(email, showStatus = true) {
     }
 
     try {
-        const response = await axios.post('/api/check-email', { email });
+        const response = await axios.post(`${baseUrl}/api/check-email`, { email });
         const isAvailable = response.data.available;
 
         if (showStatus) {

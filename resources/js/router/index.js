@@ -39,6 +39,6 @@ const routes = [
 ];
 
 export default createRouter({
-    history: createWebHistory("/ct-cosl/"),
+    history: createWebHistory("/ct-cosl/public/"),
     routes,
 });

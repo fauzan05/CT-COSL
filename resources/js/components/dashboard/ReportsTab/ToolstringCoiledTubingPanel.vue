@@ -1283,7 +1283,7 @@ const fetchAllTemplates = async () => {
     loading.value = true;
     isLoadingData.value = true;
     try {
-        const response = await axios.get('/api/toolstring-reporting-histories', {
+        const response = await axios.get(baseUrl + '/api/toolstring-reporting-histories', {
             params: {
                 search: search.value,
                 status: selectedStatusFilter.value?.value,
@@ -1304,7 +1304,7 @@ const fetchAllTemplates = async () => {
 const fetchAllToolstringTypes = async () => {
     loading.value = true;
     try {
-        const response = await axios.get('/api/toolstring-types-search', {
+        const response = await axios.get(baseUrl + '/api/toolstring-types-search', {
             params: { search: queryTypes.value }
         });
         types.value = response.data;
@@ -1322,12 +1322,12 @@ const fetchAllToolstringTypes = async () => {
 const fetchAllToolstringItems = async (typeId) => {
     loading.value = true;
     try {
-        const response = await axios.get('/api/toolstring-items-search', {
+        const response = await axios.get(baseUrl + '/api/toolstring-items-search', {
             params: { toolstring_type_id: typeId }
         });
         items.value = response.data;
         items.value.forEach(item => {
-            item.image_url = item.image_url || 'default-image-url.jpg';
+            item.image_url = baseUrl + item.image_url || 'default-image-url.jpg';
         });
         selectedItemDimension.value = null;
     } catch (error) {
@@ -1340,7 +1340,7 @@ const fetchAllToolstringItems = async (typeId) => {
 const fetchAllComponentDimensions = async (itemId) => {
     loading.value = true;
     try {
-        const response = await axios.get(`/api/toolstring-item-dimensions/${itemId}`);
+        const response = await axios.get(`${baseUrl}/api/toolstring-item-dimensions/${itemId}`);
         itemDimensions.value = response.data;
     } catch (error) {
         console.error('Error fetching item dimensions:', error);
@@ -1352,10 +1352,10 @@ const fetchAllComponentDimensions = async (itemId) => {
 const fetchAllToolstringReportingDetails = async (templateId) => {
     loading.value = true;
     try {
-        const response = await axios.get(`/api/toolstring-reporting-history-details/${templateId}`);
+        const response = await axios.get(`${baseUrl}/api/toolstring-reporting-history-details/${templateId}`);
         componentList.value = response.data.map((detail, index) => ({
             component_id: detail.id,
-            image: detail.image_url || 'default-image-url.jpg',
+            image: baseUrl + detail.image_url || 'default-image-url.jpg',
             description: detail.description,
             od: `${detail.dimension?.outer_diameter.value} ${detail.dimension?.outer_diameter.unit}` || 'N/A',
             id: `${detail.dimension?.inner_diameter.value} ${detail.dimension?.inner_diameter.unit}` || 'N/A',
@@ -1425,10 +1425,10 @@ const saveTemplate = async () => {
     try {
         loading.value = true;
         if (isCreateNewItem.value) {
-            await axios.post('/api/toolstring-reporting-histories', templateToolstringForm.value);
+            await axios.post(baseUrl + '/api/toolstring-reporting-histories', templateToolstringForm.value);
             useToast().success('Template created successfully');
         } else {
-            await axios.put(`/api/toolstring-reporting-histories/${templateToolstringForm.value.id}`, templateToolstringForm.value);
+            await axios.put(`${baseUrl}/api/toolstring-reporting-histories/${templateToolstringForm.value.id}`, templateToolstringForm.value);
             useToast().success('Template updated successfully');
         }
         fetchAllTemplates();
@@ -1452,7 +1452,7 @@ const handleAddComponent = async () => {
 
     const newComponent = {
         component_id: selectedItem.value.id,
-        image: selectedItem.value.image_url || 'default-image-url.jpg',
+        image: baseUrl + selectedItem.value.image_url || 'default-image-url.jpg',
         description: selectedItem.value.description,
         od: `${selectedItemDimension.value.outer_diameter.value} ${selectedItemDimension.value.outer_diameter.unit}`,
         id: `${selectedItemDimension.value.inner_diameter.value} ${selectedItemDimension.value.inner_diameter.unit}`,
@@ -1461,7 +1461,7 @@ const handleAddComponent = async () => {
     };
 
     try {
-        await axios.post('/api/toolstring-reporting-history-details', {
+        await axios.post(baseUrl + '/api/toolstring-reporting-history-details', {
             toolstring_reporting_history_id: templateToolstringForm.value.id,
             toolstring_type_id: selectedType.value.id,
             toolstring_item_id: selectedItem.value.id,
@@ -1488,7 +1488,7 @@ const removeComponent = async (index, component) => {
     };
 
     try {
-        await axios.delete(`/api/toolstring-reporting-history-details`, {
+        await axios.delete(`${baseUrl}/api/toolstring-reporting-history-details`, {
             data: data
         });
 
@@ -1511,7 +1511,7 @@ const handleUpdatePosition = async (event) => {
         console.log(component)
     });
 
-    await axios.put(`/api/toolstring-reporting-history-details/update-positions`, {
+    await axios.put(`${baseUrl}/api/toolstring-reporting-history-details/update-positions`, {
         components: componentList.value.map((component, index) => ({
             id: component.component_id,
             position: index + 1
@@ -1527,7 +1527,7 @@ const handleDeleteTemplate = async () => {
 
     try {
         let ids = [selectedTemplate.value.id];
-        await axios.delete(`/api/toolstring-reporting-histories`, {
+        await axios.delete(`${baseUrl}/api/toolstring-reporting-histories`, {
             data: { ids }
         });
         useToast().success('Template deleted successfully');

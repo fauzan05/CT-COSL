@@ -1407,7 +1407,7 @@ const resetForm = () => {
 const fetchAllWellstackTypes = async () => {
     loading.value = true;
     try {
-        const response = await axios.get('/api/wellstack-types-search', {
+        const response = await axios.get(baseUrl + '/api/wellstack-types-search', {
             params: { search: queryTypes.value }
         });
         types.value = response.data;
@@ -1425,7 +1425,7 @@ const fetchAllTemplates = async () => {
     loading.value = true;
     isLoadingData.value = true;
     try {
-        const response = await axios.get('/api/wellstack-reporting-histories', {
+        const response = await axios.get(baseUrl + '/api/wellstack-reporting-histories', {
             params: {
                 search: search.value,
                 status: selectedStatusFilter.value?.value,
@@ -1446,7 +1446,7 @@ const fetchAllTemplates = async () => {
 const fetchAllWellstackItems = async (typeId) => {
     loading.value = true;
     try {
-        const response = await axios.get('/api/wellstack-items-search', {
+        const response = await axios.get(baseUrl + '/api/wellstack-items-search', {
             params: { wellstack_type_id: typeId }
         });
         items.value = response.data;
@@ -1463,7 +1463,7 @@ const fetchAllWellstackItems = async (typeId) => {
 const fetchAllWellstackReportingDetails = async (templateId) => {
     loading.value = true;
     try {
-        const response = await axios.get(`/api/wellstack-reporting-history-details/${templateId}`);
+        const response = await axios.get(`${baseUrl}/api/wellstack-reporting-history-details/${templateId}`);
         componentList.value = response.data.map((detail, index) => ({
             component_id: detail.id,
             image: detail.image_url || 'default-image-url.jpg',
@@ -1537,7 +1537,7 @@ const handleAddComponent = async () => {
     };
 
     try {
-        await axios.post('/api/wellstack-reporting-history-details', {
+        await axios.post(baseUrl + '/api/wellstack-reporting-history-details', {
             wellstack_reporting_history_id: templateForm.value.id,
             wellstack_type_id: selectedType.value.id,
             wellstack_item_id: selectedItem.value.id,
@@ -1562,7 +1562,7 @@ const removeComponent = async (index, component) => {
     };
 
     try {
-        await axios.delete(`/api/wellstack-reporting-history-details`, {
+        await axios.delete(`${baseUrl}/api/wellstack-reporting-history-details`, {
             data: data
         });
 
@@ -1582,7 +1582,7 @@ const removeComponent = async (index, component) => {
 const handleUpdatePosition = async (event) => {
     updatePositionLoading.value = true;
 
-    await axios.put(`/api/wellstack-reporting-history-details/update-positions`, {
+    await axios.put(`${baseUrl}/api/wellstack-reporting-history-details/update-positions`, {
         components: componentList.value.map((component, index) => ({
             id: component.component_id,
             position: index + 1
@@ -1597,7 +1597,7 @@ const handleDeleteTemplate = async () => {
     isDeleting.value = true;
     try {
         let ids = [selectedTemplate.value.id];
-        await axios.delete(`/api/wellstack-reporting-histories`, {
+        await axios.delete(`${baseUrl}/api/wellstack-reporting-histories`, {
             data: { ids }
         });
         useToast().success('Template deleted successfully');
@@ -1673,10 +1673,10 @@ const saveTemplate = async () => {
     loading.value = true;
     try {
         if (isCreateNewItem.value) {
-            await axios.post('/api/wellstack-reporting-histories', templateForm.value);
+            await axios.post(`${baseUrl}/api/wellstack-reporting-histories`, templateForm.value);
             useToast().success('Template created successfully!');
         } else {
-            await axios.put(`/api/wellstack-reporting-histories/${templateForm.value.id}`, templateForm.value);
+            await axios.put(`${baseUrl}/api/wellstack-reporting-histories/${templateForm.value.id}`, templateForm.value);
             useToast().success('Template updated successfully!');
         }
         fetchAllTemplates();

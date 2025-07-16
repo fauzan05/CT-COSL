@@ -897,7 +897,7 @@ function deleteThreadSize(index) {
 async function fetchThreads(page = 1) {
     try {
         isLoading.value = true;
-        const response = await axios.get(`/api/threads?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}`);
+        const response = await axios.get(`${baseUrl}/api/threads?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}`);
         listThreads.value = response.data.data;
         pagination.value = {
             current_page: response.data.current_page,
@@ -913,7 +913,7 @@ async function fetchThreads(page = 1) {
 async function fetchThreadSizes(threadId) {
     try {
         loadingAllSizes.value = true;
-        const response = await axios.get(`/api/threads/${threadId}/sizes`);
+        const response = await axios.get(`${baseUrl}/api/threads/${threadId}/sizes`);
         listThreadSizes.value = response.data.data;
     } catch (error) {
         console.error(error);
@@ -935,13 +935,13 @@ const saveThread = async () => {
         if (selectedThread.value) {
             // Update existing thread
             data.id = selectedThread.value.id;
-            const response = await axios.put(`/api/threads/${selectedThread.value.id}`, data);
+            const response = await axios.put(`${baseUrl}/api/threads/${selectedThread.value.id}`, data);
             if (response.status === 200) {
                 toast.success('Thread updated successfully!');
             }
         } else {
             // Add new thread
-            const response = await axios.post('/api/threads', data);
+            const response = await axios.post(`${baseUrl}/api/threads`, data);
             if (response.status === 201) {
                 toast.success('Thread saved successfully!');
             }
@@ -963,7 +963,7 @@ function handleDeleteThread() {
     const toast = useToast();
 
     let ids = [selectedThread.value.id];
-    axios.delete(`/api/threads`, {
+    axios.delete(`${baseUrl}/api/threads`, {
         data: { ids }
     })
         .then(response => {

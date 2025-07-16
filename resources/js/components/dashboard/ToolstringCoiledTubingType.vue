@@ -1308,7 +1308,8 @@ function openModal(selectedItem = null) {
             }
         ];
         itemForm.value.image = selectedItem.image || null;
-        itemImage.value = selectedItem.image_url || null;
+        itemImage.value = baseUrl + selectedItem.image_url || null;
+        console.log(itemImage.value)
         titleModal.value = 'Edit Item';
         titleModalButton.value = 'Update Item';
         isCreateNewItem.value = false;
