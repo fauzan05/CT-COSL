@@ -418,7 +418,7 @@ const sidebarItems = computed(() => [
     { name: 'Coiled Tubing', path: '/coiled-tubing', icon: 'fa-circle' },
     { name: 'Reporting', path: '/reporting', icon: 'fa-file-lines' },
     { name: 'Users', path: '/users', icon: 'fa-user' },
-    { name: 'Settings', path: '/settings', icon: 'fa-gear' },
+    { name: 'Settings', path: '/setting', icon: 'fa-gear' },
 ]);
 
 

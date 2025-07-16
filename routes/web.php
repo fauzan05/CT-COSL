@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ToolstringController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WellstackController;
 use App\Http\Middleware\AuthMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -97,6 +98,12 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::put('/api/wellstack-reporting-history-details/{id}', [WellstackController::class, 'updateReportingHistoryDetail'])->name('updateWellstackReportingHistoryDetail');
     Route::delete('/api/wellstack-reporting-history-details', [WellstackController::class, 'deleteReportingHistoryDetail'])->name('deleteWellstackReportingHistoryDetail');
 
+    // Users
+    Route::get('/api/users', [UserController::class, 'getUsers'])->name('getUsers');
+    Route::get('/api/users/{id}', [UserController::class, 'getUser'])->name('getUser');
+    Route::put('/api/users/{id}', [UserController::class, 'updateUser'])->name('updateUser');
+    Route::delete('/api/users', [UserController::class, 'deleteUser'])->name('deleteUser');
+    Route::post('/api/users', [UserController::class, 'storeUser'])->name('storeUser');
 });
 
 // Storage files should not be routed to SPA

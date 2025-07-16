@@ -5,6 +5,7 @@ import ToolstringCoiledTubingType from "../components/dashboard/ToolstringCoiled
 import Reporting from "../components/dashboard/Reporting.vue";
 import Thread from "../components/dashboard/Thread.vue";
 import Wellstack from "../components/dashboard/WellstackType.vue";
+import Users from "../components/dashboard/Users.vue";
 
 const routes = [
     {
@@ -30,6 +31,10 @@ const routes = [
     {
         path: "/wellstack/:slug/:wellstackTypeId",
         component: Wellstack,
+    },
+    {
+        path: "/users",
+        component: Users,
     }
 ];
 
