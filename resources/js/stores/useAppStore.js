@@ -31,7 +31,6 @@ export const useAppStore = defineStore("app", {
                     `${baseUrl}/api/wellstack-types`
                 );
                 this.wellstackTypes = res.data;
-                console.log("Wellstack Types:", this.wellstackTypes);
             } catch (error) {
                 console.error(error);
                 throw error;
