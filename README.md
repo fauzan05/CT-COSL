@@ -5,15 +5,16 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## 📋 Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Development](#development)
-- [Folder Structure](#folder-structure)
-- [Screenshots](#screenshots)
-- [Contributing](#contributing)
+## 📋 Table of Contents
+- [Overview](#-overview)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Prerequisites](#-prerequisites)
+- [Installation](#-installation)
+- [Development Commands](#-development-commands)
+- [Project Structure](#-project-structure)
+- [Troubleshooting](#️-troubleshooting)
+- [Default Credentials](#-default-credentials)
 - [License](#license)
 - [Contact](#contact)
 
