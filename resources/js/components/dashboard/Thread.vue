@@ -662,11 +662,9 @@
 
                 <!-- Improved Pagination with Per-Page Selector -->
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between mt-6 space-y-3 md:space-y-0 px-4">
-
                     <!-- Per Page Selector -->
                     <div class="flex items-center space-x-2">
                         <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
-
                         <Listbox v-model="perPage" @update:modelValue="changePerPage">
                             <div class="relative">
                                 <ListboxButton
@@ -677,7 +675,7 @@
                                     </span>
                                 </ListboxButton>
                                 <ListboxOptions
-                                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-sm shadow-lgring-opacity-5 focus:outline-none">
+                                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-sm shadow-lg ring-opacity-5 focus:outline-none">
                                     <ListboxOption v-for="option in perPageOptions" :key="option" :value="option"
                                         class="cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-indigo-50 dark:hover:bg-indigo-900/40">
                                         {{ option }}
@@ -685,27 +683,57 @@
                                 </ListboxOptions>
                             </div>
                         </Listbox>
-
                         <span class="text-sm text-gray-500 dark:text-gray-400">entries</span>
                     </div>
 
-                    <!-- Pagination Info & Buttons -->
+                    <!-- Pagination Controls -->
                     <div class="flex items-center space-x-4">
                         <span class="text-sm text-gray-500 dark:text-gray-400">
                             Showing page {{ pagination.current_page }} of {{ pagination.last_page }}
                         </span>
 
-                        <div class="flex space-x-2">
-                            <button
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                                :disabled="pagination.current_page === 1" @click="goToPage(pagination.current_page - 1)">
-                                Previous
+                        <div class="flex items-center space-x-1">
+                            <!-- First Page -->
+                            <button @click="goToPage(1)"
+                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                :disabled="pagination.current_page === 1">
+                                <ChevronDoubleLeftIcon class="h-4 w-4" />
                             </button>
-                            <button
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                                :disabled="pagination.current_page === pagination.last_page"
-                                @click="goToPage(pagination.current_page + 1)">
-                                Next
+
+                            <!-- Previous -->
+                            <button @click="goToPage(pagination.current_page - 1)"
+                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                :disabled="pagination.current_page === 1">
+                                <ChevronLeftIcon class="h-4 w-4" />
+                            </button>
+
+                            <!-- Page Numbers -->
+                            <div class="flex space-x-1">
+                                <template v-for="pageNumber in displayedPages" :key="pageNumber">
+                                    <button v-if="pageNumber !== '...'" @click="goToPage(pageNumber)" :class="[
+                                        'px-3 py-1 rounded-md text-sm font-medium',
+                                        pagination.current_page === pageNumber
+                                            ? 'bg-blue-500 text-white'
+                                            : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                                    ]">
+                                        {{ pageNumber }}
+                                    </button>
+                                    <span v-else class="px-2 py-1 text-gray-500">...</span>
+                                </template>
+                            </div>
+
+                            <!-- Next -->
+                            <button @click="goToPage(pagination.current_page + 1)"
+                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                :disabled="pagination.current_page === pagination.last_page">
+                                <ChevronRightIcon class="h-4 w-4" />
+                            </button>
+
+                            <!-- Last Page -->
+                            <button @click="goToPage(pagination.last_page)"
+                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                :disabled="pagination.current_page === pagination.last_page">
+                                <ChevronDoubleRightIcon class="h-4 w-4" />
                             </button>
                         </div>
                     </div>
@@ -717,7 +745,7 @@
   
 <script setup>
 /* ------------------------------- IMPORTS ------------------------------- */
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useCurrentUserStore } from '@/stores/CurrentUser';
 
@@ -729,7 +757,7 @@ import {
     SwitchLabel,
 } from '@headlessui/vue';
 
-import { ChevronUpDownIcon } from '@heroicons/vue/20/solid';
+import { ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
 
 /* ----------------------------- STATE & STORES ----------------------------- */
 const listThreads = ref([]);
@@ -968,6 +996,31 @@ function changePerPage(newPerPage) {
     pagination.value.current_page = 1;
     fetchThreads(1);
 }
+
+const displayedPages = computed(() => {
+    if (!pagination.value?.current_page || !pagination.value?.last_page) {
+        return []
+    }
+
+    const current = pagination.value.current_page
+    const last = pagination.value.last_page
+    const delta = 2
+    const range = []
+
+    for (let i = 1; i <= last; i++) {
+        if (
+            i === 1 ||
+            i === last ||
+            (i >= current - delta && i <= current + delta)
+        ) {
+            range.push(i)
+        } else if (range[range.length - 1] !== '...') {
+            range.push('...')
+        }
+    }
+
+    return range
+})
 
 /* ------------------------------ FILTERS ------------------------------ */
 watch([selectedSortByFilter, perPage, search, isDesc], () => {
