@@ -17,11 +17,11 @@
                         enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100"
                         leave-to="opacity-0 scale-95">
                         <DialogPanel
-                            class="relative w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
+                            class="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
                             <!-- Header Section -->
                             <div class="flex justify-between items-center mb-6">
                                 <DialogTitle as="h3" class="text-xl font-semibold text-gray-900 dark:text-white">
-                                    {{ titleModal }}
+                                    Create New User
                                 </DialogTitle>
                                 <button @click="closeModal"
                                     class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-200">
@@ -33,212 +33,187 @@
                                 </button>
                             </div>
 
-                            <form @submit.prevent="saveUser" class="space-y-6">
-                                <!-- Input Section -->
-                                <div
-                                    class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                            <form @submit.prevent="createUser" class="space-y-6">
+                                <!-- User Information Section -->
+                                <div class="space-y-4">
+                                    <!-- Full Name -->
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                                            Type
+                                            Full Name <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="text" v-model="userForm.type"
+                                        <input type="text" v-model="userForm.fullname" placeholder="Enter full name"
                                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             required>
                                     </div>
+
+                                    <!-- Username -->
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                                            Top Connection
+                                            Username <span class="text-red-500">*</span>
                                         </label>
-                                        <input type="text" v-model="userFormSize.top_connection"
-                                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                                            Bottom Connection
-                                        </label>
-                                        <input type="text" v-model="userFormSize.bottom_connection"
-                                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                    </div>
-                                    <div class="flex items-end">
-                                        <button type="button" @click="addSize"
-                                            class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
-                                            :disabled="addSizeLoading">
-                                            <span v-if="!addSizeLoading">
-                                                {{ editingSizeIndex !== null ? 'Update Size' : 'Add Size' }}
-                                            </span>
-                                            <span v-else class="flex items-center justify-center">
-                                                <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                                        <div class="flex space-x-2">
+                                            <input type="text" v-model="userForm.username" placeholder="Enter username"
+                                                class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                required>
+                                            <button type="button" @click="generateUsername()"
+                                                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 flex items-center"
+                                                :disabled="generatingUsername">
+                                                <svg v-if="!generatingUsername" class="w-4 h-4 mr-2" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                </svg>
+                                                <svg v-else class="animate-spin w-4 h-4 mr-2" fill="none"
+                                                    viewBox="0 0 24 24">
                                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                                         stroke-width="4" />
                                                     <path class="opacity-75" fill="currentColor"
                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                                 </svg>
-                                                Processing...
+                                                {{ generatingUsername ? 'Generating...' : 'Generate' }}
+                                            </button>
+                                        </div>
+
+                                        <!-- Username Recommendations -->
+                                        <div v-if="usernameRecommendations.length > 0"
+                                            class="mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                                Username Recommendations:
+                                            </h4>
+                                            <div class="flex flex-wrap gap-2">
+                                                <button v-for="(recommendation, index) in usernameRecommendations"
+                                                    :key="index" type="button"
+                                                    @click="selectUsername(recommendation.username)"
+                                                    class="inline-flex items-center px-3 py-1.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-md text-sm transition-colors duration-200 group">
+                                                    <span class="mr-2">{{ recommendation.username }}</span>
+                                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                                Click on any recommendation to use it
+                                            </div>
+                                        </div>
+
+                                        <!-- Username Availability Status -->
+                                        <div v-if="usernameStatus" class="mt-2 flex items-center text-sm">
+                                            <svg v-if="usernameStatus === 'available'" class="w-4 h-4 mr-1 text-green-500"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            <svg v-else-if="usernameStatus === 'taken'" class="w-4 h-4 mr-1 text-red-500"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            <svg v-else class="animate-spin w-4 h-4 mr-1 text-gray-500" fill="none"
+                                                viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4" />
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                            </svg>
+                                            <span :class="{
+                                                'text-green-600 dark:text-green-400': usernameStatus === 'available',
+                                                'text-red-600 dark:text-red-400': usernameStatus === 'taken',
+                                                'text-gray-500 dark:text-gray-400': usernameStatus === 'checking'
+                                            }">
+                                                {{ usernameStatusMessage }}
                                             </span>
-                                        </button>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- Table Section -->
-                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
-                                    <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white">List Sizes</h4>
+                                    <!-- Email -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                            Email <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="email" v-model="userForm.email" placeholder="Enter email address"
+                                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            required>
+                                        <!-- Username Availability Status -->
+                                        <div v-if="emailStatus" class="mt-2 flex items-center text-sm">
+                                            <svg v-if="emailStatus === 'available'" class="w-4 h-4 mr-1 text-green-500"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            <svg v-else-if="emailStatus === 'taken'" class="w-4 h-4 mr-1 text-red-500"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            <svg v-else class="animate-spin w-4 h-4 mr-1 text-gray-500" fill="none"
+                                                viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4" />
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                            </svg>
+                                            <span :class="{
+                                                'text-green-600 dark:text-green-400': emailStatus === 'available',
+                                                'text-red-600 dark:text-red-400': emailStatus === 'taken',
+                                                'text-gray-500 dark:text-gray-400': emailStatus === 'checking'
+                                            }">
+                                                {{ emailStatusMessage }}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                            <thead class="bg-gray-50 dark:bg-gray-700">
-                                                <tr>
-                                                    <th scope="col"
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                        No</th>
-                                                    <th scope="col"
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                        Top Connection</th>
-                                                    <th scope="col"
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                        Bottom Connection</th>
-                                                    <th scope="col"
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                        Updated At</th>
-                                                    <th scope="col"
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                        Updated By</th>
-                                                    <th scope="col"
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                        Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody v-if="loadingAllSizes"
-                                                class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                                <tr v-for="n in 3" :key="n">
-                                                    <td class="px-6 py-4">
-                                                        <div
-                                                            class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-8 animate-pulse">
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <div
-                                                            class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32 animate-pulse">
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <div
-                                                            class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32 animate-pulse">
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <div
-                                                            class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 animate-pulse">
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <div
-                                                            class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 animate-pulse">
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <div
-                                                            class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20 animate-pulse">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                            <tbody v-else
-                                                class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                                <tr v-for="(userSize, index) in listUserSizes" :key="userSize.id"
-                                                    class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">{{ index
-                                                        + 1 }}</td>
 
-                                                    <!-- Top Connection -->
-                                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
-                                                        <template v-if="editingRowIndex === index">
-                                                            <input type="text" v-model="listUserSizes[index].top_connection"
-                                                                class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" />
-                                                        </template>
-                                                        <template v-else>
-                                                            {{ userSize.top_connection }}
-                                                        </template>
-                                                    </td>
+                                    <!-- Password -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                            Password <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <input :type="showPassword ? 'text' : 'password'" v-model="userForm.password"
+                                                placeholder="Enter password"
+                                                class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                required>
+                                            <button type="button" @click="showPassword = !showPassword"
+                                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                                <svg v-if="!showPassword" class="w-5 h-5 text-gray-400" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                <svg v-else class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
 
-                                                    <!-- Bottom Connection -->
-                                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
-                                                        <template v-if="editingRowIndex === index">
-                                                            <input type="text"
-                                                                v-model="listUserSizes[index].bottom_connection"
-                                                                class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" />
-                                                        </template>
-                                                        <template v-else>
-                                                            {{ userSize.bottom_connection }}
-                                                        </template>
-                                                    </td>
-
-                                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">{{
-                                                        formatDate(userSize.updated_at) }}</td>
-                                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">{{
-                                                        userSize.updated_by_name }}</td>
-
-                                                    <!-- Action -->
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <div class="flex items-center space-x-2">
-                                                            <template v-if="editingRowIndex === index">
-                                                                <!-- Save Button -->
-                                                                <button @click="saveUserSize(index)"
-                                                                    class="inline-flex items-center px-2.5 py-1.5 bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/40 text-green-600 dark:text-green-400 rounded-lg transition-all duration-200 group">
-                                                                    <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110"
-                                                                        fill="none" stroke="currentColor"
-                                                                        viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                                            stroke-width="2" d="M5 13l4 4L19 7" />
-                                                                    </svg>
-                                                                    <span class="text-sm font-medium">Save</span>
-                                                                </button>
-                                                            </template>
-                                                            <template v-else>
-                                                                <!-- Edit Button -->
-                                                                <button @click="editUserSize(userSize, index)"
-                                                                    class="inline-flex items-center px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-lg transition-all duration-200 group">
-                                                                    <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110"
-                                                                        fill="none" stroke="currentColor"
-                                                                        viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                                            stroke-width="2"
-                                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                    </svg>
-                                                                    <span class="text-sm font-medium">Edit</span>
-                                                                </button>
-                                                            </template>
-
-                                                            <!-- Delete Button -->
-                                                            <button @click="deleteUserSize(index)"
-                                                                class="inline-flex items-center px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
-                                                                <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110"
-                                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="2"
-                                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                </svg>
-                                                                <span class="text-sm font-medium">Delete</span>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <!-- Download Access -->
+                                    <div class="flex items-center">
+                                        <input type="checkbox" v-model="userForm.download_access" id="download_access"
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="download_access"
+                                            class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            Download Access
+                                        </label>
                                     </div>
                                 </div>
 
                                 <!-- Footer Actions -->
                                 <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <button type="button"
-                                        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200"
                                         @click="closeModal">
                                         Cancel
                                     </button>
                                     <button type="submit"
-                                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
                                         :disabled="loading">
-                                        <span v-if="!loading">{{ titleModalButton }}</span>
+                                        <span v-if="!loading">Create User</span>
                                         <span v-else class="flex items-center">
                                             <svg class="animate-spin -ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24">
                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -246,7 +221,7 @@
                                                 <path class="opacity-75" fill="currentColor"
                                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                             </svg>
-                                            Processing...
+                                            Creating...
                                         </span>
                                     </button>
                                 </div>
@@ -770,10 +745,15 @@ import {
 /* ----------------------------- STATE & STORES ----------------------------- */
 const listUsers = ref([]);
 const pagination = ref({ current_page: 1, last_page: 1 });
+const toast = useToast();
 
-const userForm = ref({ type: '' });
-const userFormSize = ref({ top_connection: '', bottom_connection: '' });
-const listUserSizes = ref([]);
+const userForm = ref({
+    fullname: '',
+    username: '',
+    email: '',
+    password: '',
+    download_access: false,
+});
 
 const isLoading = ref(false);
 const isUserModalOpen = ref(false);
@@ -787,6 +767,15 @@ const loadingAllSizes = ref(false);
 const isDeleteModalOpen = ref(false);
 const isDeleting = ref(false);
 const showMobileFilters = ref(false);
+const showPassword = ref(false);
+const generatingUsername = ref(false);
+const usernameRecommendations = ref([]);
+const usernameStatus = ref(null); // 'available', 'taken', 'checking'
+const usernameStatusMessage = ref('');
+const emailStatus = ref(null); // 'available', 'taken', 'checking'
+const emailStatusMessage = ref('');
+let usernameCheckTimeout = null;
+let emailCheckTimeout = null;
 
 const sortByItems = ref([
     { name: 'Full Name', value: 'fullname' },
@@ -836,14 +825,6 @@ function closeModal() {
     resetForm();
 }
 
-function resetForm() {
-    userForm.value = { type: '' };
-    userFormSize.value = { top_connection: '', bottom_connection: '' };
-    listUserSizes.value = [];
-    editingSizeIndex.value = null;
-    editingRowIndex.value = null;
-}
-
 const openUserModal = async (user) => {
     if (user) {
         isUserModalOpen.value = true;
@@ -863,54 +844,6 @@ const confirmDeleteModal = (user) => {
     isDeleteModalOpen.value = true;
 };
 
-/* ----------------------------- SIZE HANDLERS ----------------------------- */
-function editUserSize(_, index) {
-    editingRowIndex.value = index;
-}
-
-function saveUserSize(index) {
-    editingRowIndex.value = null;
-}
-
-function addSize() {
-    if (!userFormSize.value.top_connection || !userFormSize.value.bottom_connection) return;
-
-    addSizeLoading.value = true;
-
-    setTimeout(() => {
-        const now = new Date().toISOString();
-        const userName = currentUserStore.user ? currentUserStore.user.fullname : 'Current User';
-
-        if (editingSizeIndex.value !== null) {
-            // Update existing size
-            listUserSizes.value[editingSizeIndex.value] = {
-                ...listUserSizes.value[editingSizeIndex.value],
-                top_connection: userFormSize.value.top_connection,
-                bottom_connection: userFormSize.value.bottom_connection,
-                updated_at: now,
-                updated_by_name: userName,
-            };
-        } else {
-            // Add new size
-            listUserSizes.value.push({
-                id: 0,
-                top_connection: userFormSize.value.top_connection,
-                bottom_connection: userFormSize.value.bottom_connection,
-                updated_at: now,
-                updated_by_name: userName,
-            });
-        }
-
-        // Clear input
-        userFormSize.value = { top_connection: '', bottom_connection: '' };
-        editingSizeIndex.value = null;
-        addSizeLoading.value = false;
-    }, 500);
-}
-
-function deleteUserSize(index) {
-    listUserSizes.value.splice(index, 1);
-}
 
 /* ----------------------------- API HANDLERS ----------------------------- */
 async function fetchUsers(page = 1) {
@@ -929,26 +862,12 @@ async function fetchUsers(page = 1) {
     }
 }
 
-async function fetchUserSizes(userId) {
-    try {
-        loadingAllSizes.value = true;
-        const response = await axios.get(`/api/users/${userId}/sizes`);
-        listUserSizes.value = response.data.data;
-    } catch (error) {
-        console.error(error);
-    } finally {
-        loadingAllSizes.value = false;
-    }
-}
-
 const saveUser = async () => {
     loading.value = true;
-    const toast = useToast();
 
     try {
         const data = {
             type: userForm.value.type,
-            sizes: listUserSizes.value,
         };
 
         if (selectedUser.value) {
@@ -1012,6 +931,226 @@ function changePerPage(newPerPage) {
     fetchUsers(1);
 }
 
+async function generateUsername() {
+    if (userForm.value.fullname.trim() == '') {
+        toast.error('Please enter full name first');
+        return;
+    }
+
+    generatingUsername.value = true;
+    usernameRecommendations.value = [];
+
+    try {
+        const candidates = generateUsernameCandidates(userForm.value.fullname);
+        const availableUsernames = [];
+
+        for (const candidate of candidates) {
+            const isAvailable = await checkUsernameAvailability(candidate, false);
+            if (isAvailable && availableUsernames.length < 3) {
+                availableUsernames.push({ username: candidate, available: true });
+            }
+        }
+
+        if (availableUsernames.length < 3) {
+            const baseUsername = generateBaseUsername(userForm.value.fullname);
+            let counter = 1;
+
+            while (availableUsernames.length < 3 && counter <= 99) {
+                const candidate = `${baseUsername}${counter}`;
+                const isAvailable = await checkUsernameAvailability(candidate, false);
+                if (isAvailable) {
+                    availableUsernames.push({ username: candidate, available: true });
+                }
+                counter++;
+            }
+        }
+
+        usernameRecommendations.value = availableUsernames;
+
+        if (availableUsernames.length === 0) {
+            toast.warning('No available username found. Please try a different name.');
+        }
+
+    } catch (error) {
+        console.error('Error generating username:', error);
+        toast.error('Failed to generate username recommendations');
+    } finally {
+        generatingUsername.value = false;
+    }
+}
+
+function generateUsernameCandidates(fullname) {
+    const name = fullname.toLowerCase().trim();
+    const nameParts = name.split(' ').filter(part => part.length > 0);
+    const candidates = [];
+
+    if (nameParts.length >= 2) {
+        const firstName = nameParts[0];
+        const lastName = nameParts[nameParts.length - 1];
+
+        candidates.push(`${firstName}.${lastName}`);
+        candidates.push(`${firstName}_${lastName}`);
+        candidates.push(`${firstName}${lastName}`);
+
+        if (firstName.length >= 3 && lastName.length >= 3) {
+            candidates.push(`${firstName.substring(0, 3)}${lastName.substring(0, 3)}`);
+        }
+
+        candidates.push(`${firstName}${lastName.charAt(0)}`);
+        candidates.push(`${firstName.charAt(0)}${lastName}`);
+    } else if (nameParts.length === 1) {
+        const singleName = nameParts[0];
+        candidates.push(singleName);
+        if (singleName.length > 4) {
+            candidates.push(singleName.substring(0, 6));
+        }
+    }
+
+    return candidates
+        .map(candidate => candidate.replace(/[^a-zA-Z0-9._]/g, '').toLowerCase())
+        .filter(candidate => candidate.length >= 3 && candidate.length <= 20);
+}
+
+function generateBaseUsername(fullname) {
+    const name = fullname.toLowerCase().trim();
+    const nameParts = name.split(' ').filter(part => part.length > 0);
+
+    if (nameParts.length >= 2) {
+        return `${nameParts[0]}${nameParts[nameParts.length - 1]}`;
+    }
+
+    return nameParts[0] || 'user';
+}
+
+async function checkUsernameAvailability(username, showStatus = true) {
+    if (!username || username.length < 3) return false;
+
+    if (showStatus) {
+        usernameStatus.value = 'checking';
+        usernameStatusMessage.value = 'Checking availability...';
+    }
+
+    try {
+        const response = await axios.post('/api/check-username', { username });
+        const isAvailable = response.data.available;
+
+        if (showStatus) {
+            usernameStatus.value = isAvailable ? 'available' : 'taken';
+            usernameStatusMessage.value = isAvailable
+                ? 'Username is available'
+                : 'Username is already taken';
+        }
+
+        return isAvailable;
+
+    } catch (error) {
+        console.error('Error checking username:', error);
+        if (showStatus) {
+            usernameStatus.value = 'error';
+            usernameStatusMessage.value = 'Error checking availability';
+        }
+        return false;
+    }
+}
+
+function isValidEmailFormat(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+async function checkEmailAvailability(email, showStatus = true) {
+    if (!email || email.length < 3 || !isValidEmailFormat(email)) {
+        if (showStatus) {
+            emailStatus.value = null;
+            emailStatusMessage.value = '';
+        }
+        return false;
+    }
+
+    if (showStatus) {
+        emailStatus.value = 'checking';
+        emailStatusMessage.value = 'Checking availability...';
+    }
+
+    try {
+        const response = await axios.post('/api/check-email', { email });
+        const isAvailable = response.data.available;
+
+        if (showStatus) {
+            emailStatus.value = isAvailable ? 'available' : 'taken';
+            emailStatusMessage.value = isAvailable
+                ? 'Email is available'
+                : 'Email is already taken';
+        }
+
+        return isAvailable;
+
+    } catch (error) {
+        console.error('Error checking email:', error);
+        if (showStatus) {
+            emailStatus.value = 'error';
+            emailStatusMessage.value = 'Error checking availability';
+        }
+        return false;
+    }
+}
+
+function generateStrongPassword() {
+    let length = 8;
+
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    // Ambil setidaknya satu dari masing-masing
+    const getRandom = (chars) => chars[Math.floor(Math.random() * chars.length)];
+
+    let password = [
+        getRandom(lowercase),
+        getRandom(uppercase),
+        getRandom(numbers),
+        getRandom(symbols),
+    ];
+
+    const allChars = lowercase + uppercase + numbers + symbols;
+
+    for (let i = password.length; i < length; i++) {
+        password.push(getRandom(allChars));
+    }
+
+    // Shuffle hasilnya supaya acak
+    password = password.sort(() => Math.random() - 0.5);
+
+    return password.join('');
+}
+
+function selectUsername(username) {
+    userForm.value.username = username;
+    usernameRecommendations.value = [];
+    checkUsernameAvailability(username);
+}
+
+async function createUser() {
+    console.log('userForm.value', userForm.value);
+}
+
+function resetForm() {
+    userForm.value = {
+        fullname: '',
+        username: '',
+        email: '',
+        password: '',
+        download_access: false,
+    };
+    usernameRecommendations.value = [];
+    usernameStatus.value = null;
+    emailStatus.value = null;
+    usernameStatusMessage.value = '';
+    emailStatusMessage.value = '';
+    showPassword.value = false;
+}
+
 const displayedPages = computed(() => {
     if (!pagination.value?.current_page || !pagination.value?.last_page) {
         return [];
@@ -1036,6 +1175,33 @@ const displayedPages = computed(() => {
 watch([selectedSortByFilter, perPage, search, isDesc], () => {
     fetchUsers(pagination.value.current_page || 1);
 });
+
+watch(() => userForm.value.username, (newUsername) => {
+    if (usernameCheckTimeout) clearTimeout(usernameCheckTimeout);
+
+    if (newUsername && newUsername.length > 2) {
+        usernameCheckTimeout = setTimeout(() => {
+            checkUsernameAvailability(newUsername);
+        }, 500);
+    } else {
+        usernameStatus.value = null;
+        usernameStatusMessage.value = '';
+    }
+});
+
+watch(() => userForm.value.email, (newEmail) => {
+    if (emailCheckTimeout) clearTimeout(emailCheckTimeout);
+
+    if (newEmail && newEmail.length > 2) {
+        emailCheckTimeout = setTimeout(() => {
+            checkEmailAvailability(newEmail);
+        }, 500);
+    } else {
+        emailStatus.value = null;
+        emailStatusMessage.value = '';
+    }
+});
+
 
 /* ------------------------------ ON MOUNT ------------------------------ */
 onMounted(async () => {

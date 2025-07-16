@@ -18,10 +18,10 @@ class UserController extends Controller
 
         $query = User::query();
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('fullname', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('username', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%");
             });
         }
         $query->where('is_admin', false);
@@ -42,5 +42,41 @@ class UserController extends Controller
         });
 
         return response()->json($users);
+    }
+
+    public function checkUsername(Request $request)
+    {
+        $username = $request->input('username');
+        if (!$username) {
+            return response()->json(['message' => 'Username is required'], 400);
+        }
+
+        $exists = User::where('username', $username)->exists();
+
+        // Check against reserved usernames (optional)
+        $reservedUsernames = ['admin', 'root', 'system', 'api', 'www', 'mail', 'test'];
+        $isReserved = in_array(strtolower($username), $reservedUsernames);
+
+        $available = !$exists && !$isReserved;
+
+        return response()->json([
+            'available' => $available,
+            'message' => $available ? 'Username is available' : 'Username is not available'
+        ]);
+    }
+
+    public function checkEmail(Request $request)
+    {
+        $email = $request->input('email');
+        if (!$email) {
+            return response()->json(['message' => 'Email is required'], 400);
+        }
+
+        $exists = User::where('email', $email)->exists();
+
+        return response()->json([
+            'available' => !$exists,
+            'message' => $exists ? 'Email is already in use' : 'Email is available'
+        ]);
     }
 }

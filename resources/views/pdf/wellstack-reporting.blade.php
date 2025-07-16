@@ -416,7 +416,7 @@
                     </div>
                     <div class="info-row">
                       <span class="info-label">Date Drawn:</span>
-                      <span class="info-value">{{ $reportingHistory->date_drawn->toDateString() }}</span>
+                      <span class="info-value">{{ $reportingHistory->date_drawn->toDateString() ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Drawn By:</span>
