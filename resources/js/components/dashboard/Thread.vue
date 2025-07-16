@@ -748,16 +748,15 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useCurrentUserStore } from '@/stores/CurrentUser';
-
 import {
     TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle,
     Listbox, ListboxButton, ListboxOptions, ListboxOption,
-    Switch,
-    SwitchGroup,
-    SwitchLabel,
+    Switch, SwitchGroup, SwitchLabel,
 } from '@headlessui/vue';
-
-import { ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
+import {
+    ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
+    ChevronDoubleLeftIcon, ChevronDoubleRightIcon 
+} from '@heroicons/vue/20/solid';
 
 /* ----------------------------- STATE & STORES ----------------------------- */
 const listThreads = ref([]);
@@ -786,9 +785,7 @@ const sortByItems = ref([
     { name: 'Updated By', value: 'updated_by_name' },
     { name: 'Total Size', value: 'total_sizes' },
 ]);
-
 const selectedSortByFilter = ref(sortByItems.value[0]);
-
 const isDesc = ref(false);
 
 const selectedThread = ref(null);
@@ -797,7 +794,8 @@ const currentUserStore = useCurrentUserStore();
 const perPageOptions = [10, 25, 100];
 const perPage = ref(10);
 const search = ref('');
-/* ------------------------------ UTILITIES ------------------------------ */
+
+/* ------------------------------- UTILITIES ------------------------------- */
 const formatDate = (utcDateString) => {
     const date = new Date(utcDateString);
     const options = {
@@ -809,10 +807,7 @@ const formatDate = (utcDateString) => {
         hour12: false,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
-    return date
-        .toLocaleString('en-US', options)
-        .replace(',', '')
-        .replace(',', ' at');
+    return date.toLocaleString('en-US', options).replace(',', '').replace(',', ' at');
 };
 
 /* ------------------------------ MODAL HANDLERS ------------------------------ */
@@ -829,6 +824,25 @@ function resetForm() {
     editingSizeIndex.value = null;
     editingRowIndex.value = null;
 }
+
+const openThreadModal = async (thread) => {
+    if (thread) {
+        isThreadModalOpen.value = true;
+        titleModal.value = 'Edit Thread';
+        titleModalButton.value = 'Update Thread';
+        selectedThread.value = thread;
+        threadForm.value.type = thread.type;
+        fetchThreadSizes(thread.id);
+    } else {
+        isThreadModalOpen.value = true;
+        titleModal.value = 'Add Thread';
+    }
+};
+
+const confirmDeleteModal = (thread) => {
+    selectedThread.value = thread;
+    isDeleteModalOpen.value = true;
+};
 
 /* ----------------------------- SIZE HANDLERS ----------------------------- */
 function editThreadSize(_, index) {
@@ -849,7 +863,7 @@ function addSize() {
         const userName = currentUserStore.user ? currentUserStore.user.fullname : 'Current User';
 
         if (editingSizeIndex.value !== null) {
-            // UPDATE MODE
+            // Update existing size
             listThreadSizes.value[editingSizeIndex.value] = {
                 ...listThreadSizes.value[editingSizeIndex.value],
                 top_connection: threadFormSize.value.top_connection,
@@ -858,7 +872,7 @@ function addSize() {
                 updated_by_name: userName,
             };
         } else {
-            // ADD MODE
+            // Add new size
             listThreadSizes.value.push({
                 id: 0,
                 top_connection: threadFormSize.value.top_connection,
@@ -908,25 +922,6 @@ async function fetchThreadSizes(threadId) {
     }
 }
 
-const openThreadModal = async (thread) => {
-    if (thread) {
-        isThreadModalOpen.value = true;
-        titleModal.value = 'Edit Thread';
-        titleModalButton.value = 'Update Thread';
-        selectedThread.value = thread;
-        threadForm.value.type = thread.type;
-        fetchThreadSizes(thread.id);
-    } else {
-        isThreadModalOpen.value = true;
-        titleModal.value = 'Add Thread';
-    }
-};
-
-const confirmDeleteModal = (thread) => {
-    selectedThread.value = thread;
-    isDeleteModalOpen.value = true
-}
-
 const saveThread = async () => {
     loading.value = true;
     const toast = useToast();
@@ -945,6 +940,7 @@ const saveThread = async () => {
                 toast.success('Thread updated successfully!');
             }
         } else {
+            // Add new thread
             const response = await axios.post('/api/threads', data);
             if (response.status === 201) {
                 toast.success('Thread saved successfully!');
@@ -999,28 +995,23 @@ function changePerPage(newPerPage) {
 
 const displayedPages = computed(() => {
     if (!pagination.value?.current_page || !pagination.value?.last_page) {
-        return []
+        return [];
     }
-
-    const current = pagination.value.current_page
-    const last = pagination.value.last_page
-    const delta = 2
-    const range = []
+    const current = pagination.value.current_page;
+    const last = pagination.value.last_page;
+    const delta = 2;
+    const range = [];
 
     for (let i = 1; i <= last; i++) {
-        if (
-            i === 1 ||
-            i === last ||
-            (i >= current - delta && i <= current + delta)
-        ) {
-            range.push(i)
+        if (i === 1 || i === last || (i >= current - delta && i <= current + delta)) {
+            range.push(i);
         } else if (range[range.length - 1] !== '...') {
-            range.push('...')
+            range.push('...');
         }
     }
 
-    return range
-})
+    return range;
+});
 
 /* ------------------------------ FILTERS ------------------------------ */
 watch([selectedSortByFilter, perPage, search, isDesc], () => {
@@ -1035,5 +1026,3 @@ onMounted(async () => {
     fetchThreads();
 });
 </script>
-
-  
