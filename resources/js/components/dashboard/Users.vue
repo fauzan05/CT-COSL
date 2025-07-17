@@ -165,40 +165,25 @@
                                     </div>
 
                                     <!-- Password -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                                            Password <span class="text-red-500">*</span>
-                                        </label>
-                                        <div class="relative">
-                                            <input :type="showPassword ? 'text' : 'password'" v-model="userForm.password"
-                                                placeholder="Enter password"
-                                                class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                required>
-                                            <button type="button" @click="showPassword = !showPassword"
-                                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                                <svg v-if="!showPassword" class="w-5 h-5 text-gray-400" fill="none"
-                                                    stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                </svg>
-                                                <svg v-else class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
+                                    <PasswordInput v-model="userForm.password" />
 
                                     <!-- Download Access -->
-                                    <div class="flex items-center">
-                                        <input type="checkbox" v-model="userForm.download_access" id="download_access"
-                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="download_access"
-                                            class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                            Download Access
+                                    <div class="flex items-center mt-7">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" v-model="userForm.download_access" id="download_access"
+                                                class="sr-only peer">
+                                            <div
+                                                class="relative w-5 h-5 border border-gray-300 rounded transition-all dark:border-gray-600 peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                                <!-- Checkmark icon -->
+                                                <svg class="absolute w-3.5 h-3.5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 stroke-white"
+                                                    :class="userForm.download_access ? 'opacity-100' : 'opacity-0'"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                        d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                            <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-200">Download
+                                                Access</span>
                                         </label>
                                     </div>
                                 </div>
@@ -729,7 +714,7 @@
   
 <script setup>
 /* ------------------------------- IMPORTS ------------------------------- */
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch, computed, reactive } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useCurrentUserStore } from '@/stores/CurrentUser';
 import {
@@ -741,13 +726,15 @@ import {
     ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
     ChevronDoubleLeftIcon, ChevronDoubleRightIcon
 } from '@heroicons/vue/20/solid';
+import PasswordInput from '@/components/inputs/PasswordInput.vue';
 
 /* ----------------------------- STATE & STORES ----------------------------- */
 const listUsers = ref([]);
 const pagination = ref({ current_page: 1, last_page: 1 });
 const toast = useToast();
+const baseUrl = import.meta.env.VITE_API_URL;
 
-const userForm = ref({
+const userForm = reactive({
     fullname: '',
     username: '',
     email: '',
@@ -759,11 +746,7 @@ const isLoading = ref(false);
 const isUserModalOpen = ref(false);
 const titleModal = ref('Add User');
 const titleModalButton = ref('Save User');
-const addSizeLoading = ref(false);
-const editingSizeIndex = ref(null);
-const editingRowIndex = ref(null);
 const loading = ref(false);
-const loadingAllSizes = ref(false);
 const isDeleteModalOpen = ref(false);
 const isDeleting = ref(false);
 const showMobileFilters = ref(false);
@@ -831,7 +814,7 @@ const openUserModal = async (user) => {
         titleModal.value = 'Edit User';
         titleModalButton.value = 'Update User';
         selectedUser.value = user;
-        userForm.value.type = user.type;
+        userForm.type = user.type;
         fetchUserSizes(user.id);
     } else {
         isUserModalOpen.value = true;
@@ -867,7 +850,7 @@ const saveUser = async () => {
 
     try {
         const data = {
-            type: userForm.value.type,
+            type: userForm.type,
         };
 
         if (selectedUser.value) {
@@ -932,7 +915,7 @@ function changePerPage(newPerPage) {
 }
 
 async function generateUsername() {
-    if (userForm.value.fullname.trim() == '') {
+    if (userForm.fullname.trim() == '') {
         toast.error('Please enter full name first');
         return;
     }
@@ -941,7 +924,7 @@ async function generateUsername() {
     usernameRecommendations.value = [];
 
     try {
-        const candidates = generateUsernameCandidates(userForm.value.fullname);
+        const candidates = generateUsernameCandidates(userForm.fullname);
         const availableUsernames = [];
 
         for (const candidate of candidates) {
@@ -952,7 +935,7 @@ async function generateUsername() {
         }
 
         if (availableUsernames.length < 3) {
-            const baseUsername = generateBaseUsername(userForm.value.fullname);
+            const baseUsername = generateBaseUsername(userForm.fullname);
             let counter = 1;
 
             while (availableUsernames.length < 3 && counter <= 99) {
@@ -1126,17 +1109,17 @@ function generateStrongPassword() {
 }
 
 function selectUsername(username) {
-    userForm.value.username = username;
+    userForm.username = username;
     usernameRecommendations.value = [];
     checkUsernameAvailability(username);
 }
 
 async function createUser() {
-    console.log('userForm.value', userForm.value);
+    console.log('userForm', userForm);
 }
 
 function resetForm() {
-    userForm.value = {
+    userForm = {
         fullname: '',
         username: '',
         email: '',
@@ -1176,7 +1159,7 @@ watch([selectedSortByFilter, perPage, search, isDesc], () => {
     fetchUsers(pagination.value.current_page || 1);
 });
 
-watch(() => userForm.value.username, (newUsername) => {
+watch(() => userForm.username, (newUsername) => {
     if (usernameCheckTimeout) clearTimeout(usernameCheckTimeout);
 
     if (newUsername && newUsername.length > 2) {
@@ -1189,7 +1172,7 @@ watch(() => userForm.value.username, (newUsername) => {
     }
 });
 
-watch(() => userForm.value.email, (newEmail) => {
+watch(() => userForm.email, (newEmail) => {
     if (emailCheckTimeout) clearTimeout(emailCheckTimeout);
 
     if (newEmail && newEmail.length > 2) {
