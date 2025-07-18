@@ -3,10 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Helpers\ImageHelper;
+use App\Mail\UserMail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
@@ -27,6 +31,10 @@ class User extends Authenticatable
         'is_admin',
         'download_access',
         'profile_image',
+        'created_at',
+        'updated_at',
+        'created_by',
+        'updated_by',
     ];
 
     /**
@@ -65,5 +73,27 @@ class User extends Authenticatable
     public function getProfileImageUrl()
     {
         return $this->profile_image ? Storage::url('assets/images/profile_photos/' . $this->profile_image) : '';
+    }
+
+    // send email
+    public function sendEmailCreateUserNotification($password = '', $attachment_paths = [], $view = 'emails.user_created', $subject = 'User Created')
+    {
+        $logoPath = 'assets/images/company/company-logo.png';
+        $logoBase64 = ImageHelper::getImageAsBase64($logoPath);
+
+        $data = [
+            'fullname' => $this->fullname,
+            'username' => $this->username,
+            'email' => $this->email,
+            'password' => $password,
+            'logoBase64' => $logoBase64,
+        ];
+
+        Mail::to($this->email)->send(new UserMail(
+            $data,
+            $view,
+            $subject,
+            $attachment_paths
+        ));
     }
 }

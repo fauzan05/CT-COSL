@@ -165,7 +165,8 @@
                                     </div>
 
                                     <!-- Password -->
-                                    <PasswordInput v-model="userForm.password" />
+                                    <PasswordInput v-model="userForm.password"
+                                        @passwordValidityChange="handlePasswordValidityChange" />
 
                                     <!-- Download Access -->
                                     <div class="flex items-center mt-7">
@@ -186,6 +187,13 @@
                                                 Access</span>
                                         </label>
                                     </div>
+                                    <!-- Info to user if created an user, it will be send an authentication via email -->
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                        <p>
+                                            Note: If you click the "Create User" button, the user will receive an email with
+                                            their credentials and a link to login.
+                                        </p>
+                                    </div>
                                 </div>
 
                                 <!-- Footer Actions -->
@@ -197,8 +205,8 @@
                                     </button>
                                     <button type="submit"
                                         class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
-                                        :disabled="loading">
-                                        <span v-if="!loading">Create User</span>
+                                        :disabled="createUserloading">
+                                        <span v-if="!createUserloading">Create User</span>
                                         <span v-else class="flex items-center">
                                             <svg class="animate-spin -ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24">
                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -759,6 +767,7 @@ const emailStatus = ref(null); // 'available', 'taken', 'checking'
 const emailStatusMessage = ref('');
 let usernameCheckTimeout = null;
 let emailCheckTimeout = null;
+const isPasswordValid = ref(false)
 
 const sortByItems = ref([
     { name: 'Full Name', value: 'fullname' },
@@ -772,7 +781,7 @@ const isDesc = ref(false);
 
 const selectedUser = ref(null);
 const currentUserStore = useCurrentUserStore();
-
+const createUserloading = ref(false);
 const perPageOptions = [10, 25, 100];
 const perPage = ref(10);
 const search = ref('');
@@ -800,6 +809,10 @@ const formatDate = (utcDateString) => {
     };
     return date.toLocaleString('en-US', options).replace(',', '').replace(',', ' at');
 };
+
+const handlePasswordValidityChange = (validity) => {
+    isPasswordValid.value = validity
+}
 
 /* ------------------------------ MODAL HANDLERS ------------------------------ */
 function closeModal() {
@@ -844,40 +857,6 @@ async function fetchUsers(page = 1) {
         isLoading.value = false;
     }
 }
-
-const saveUser = async () => {
-    loading.value = true;
-
-    try {
-        const data = {
-            type: userForm.type,
-        };
-
-        if (selectedUser.value) {
-            // Update existing user
-            data.id = selectedUser.value.id;
-            const response = await axios.put(`${baseUrl}/api/users/${selectedUser.value.id}`, data);
-            if (response.status === 200) {
-                toast.success('User updated successfully!');
-            }
-        } else {
-            // Add new user
-            const response = await axios.post(`${baseUrl}/api/users`, data);
-            if (response.status === 201) {
-                toast.success('User saved successfully!');
-            }
-        }
-
-        resetForm();
-        fetchUsers(pagination.value.current_page);
-        closeModal();
-    } catch (error) {
-        console.error(error);
-        toast.error('Failed to save user.');
-    } finally {
-        loading.value = false;
-    }
-};
 
 function handleDeleteUser() {
     isDeleting.value = true;
@@ -1078,36 +1057,6 @@ async function checkEmailAvailability(email, showStatus = true) {
     }
 }
 
-function generateStrongPassword() {
-    let length = 8;
-
-    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numbers = '0123456789';
-    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-
-    // Ambil setidaknya satu dari masing-masing
-    const getRandom = (chars) => chars[Math.floor(Math.random() * chars.length)];
-
-    let password = [
-        getRandom(lowercase),
-        getRandom(uppercase),
-        getRandom(numbers),
-        getRandom(symbols),
-    ];
-
-    const allChars = lowercase + uppercase + numbers + symbols;
-
-    for (let i = password.length; i < length; i++) {
-        password.push(getRandom(allChars));
-    }
-
-    // Shuffle hasilnya supaya acak
-    password = password.sort(() => Math.random() - 0.5);
-
-    return password.join('');
-}
-
 function selectUsername(username) {
     userForm.username = username;
     usernameRecommendations.value = [];
@@ -1115,7 +1064,71 @@ function selectUsername(username) {
 }
 
 async function createUser() {
-    console.log('userForm', userForm);
+    createUserloading.value = true;
+    if (!userForm.fullname || !userForm.username || !userForm.email || !userForm.password) {
+        toast.error('Please fill in all required fields');
+        createUserloading.value = false;
+        return;
+    }
+
+    if (usernameStatus.value !== 'available') {
+        toast.error('Username is not available');
+        createUserloading.value = false;
+        return;
+    }
+
+    if (emailStatus.value !== 'available') {
+        toast.error('Email is not available');
+        createUserloading.value = false;
+        return;
+    }
+
+    if (userForm.username.length < 3) {
+        toast.error('Username must be at least 3 characters long');
+        createUserloading.value = false;
+        return;
+    }
+
+    // validate username again
+    if (!(await checkUsernameAvailability(userForm.username))) {
+        toast.error('Username is not available');
+        createUserloading.value = false;
+        return;
+    }
+
+    // validate email again
+    if (!(await checkEmailAvailability(userForm.email))) {
+        toast.error('Email is not available');
+        createUserloading.value = false;
+        return;
+    }
+
+    if (!isValidEmailFormat(userForm.email)) {
+        toast.error('Invalid email format');
+        createUserloading.value = false;
+        return;
+    }
+
+    if (!isPasswordValid.value) {
+        toast.error('Password does not meet the requirements');
+        createUserloading.value = false;
+        return;
+    }
+
+    try {
+        const response = await axios.post(`${baseUrl}/api/users`, userForm);
+        if (response.status === 201) {
+            toast.success('User created successfully!');
+            fetchUsers(pagination.value.current_page);
+            closeModal();
+            resetForm();
+        }
+    } catch (error) {
+        console.error(error);
+        toast.error('Failed to create user. Please try again.');
+    } finally {
+        createUserloading.value = false;
+    }
 }
 
 function resetForm() {

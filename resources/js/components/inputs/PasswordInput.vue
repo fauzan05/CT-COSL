@@ -24,7 +24,7 @@
                     </svg>
                 </button>
             </div>
-            <button @click="generatePassword"
+            <button @click="generatePassword" type="button"
                 class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                 Generate Password
             </button>
@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
     modelValue: {
@@ -58,7 +58,7 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'passwordValidityChange'])
 const showPassword = ref(false)
 
 const passwordChecks = computed(() => [
@@ -111,4 +111,14 @@ const generatePassword = () => {
 
     emit('update:modelValue', shuffledPassword)
 }
+
+// Computed property untuk mengecek apakah semua persyaratan terpenuhi
+const isPasswordValid = computed(() => {
+    return passwordChecks.value.every(check => check.passed)
+})
+
+// Watch perubahan validitas password dan emit ke parent
+watch(isPasswordValid, (newValue) => {
+    emit('passwordValidityChange', newValue)
+})
 </script>

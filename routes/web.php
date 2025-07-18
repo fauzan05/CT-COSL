@@ -36,6 +36,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
 
     // User management
     Route::post('/api/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/api/users', [UserController::class, 'storeUser'])->name('storeUser');
 
     // Toolstring reporting history
     Route::post('/api/toolstring-reporting-histories', [ToolstringController::class, 'storeReportingHistory'])->name('storeReportingHistory');

@@ -21,7 +21,9 @@ return new class extends Migration
             $table->boolean('download_access')->default(false);
             $table->string('profile_image')->nullable();
             $table->timestamp('created_at')->useCurrent();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->softDeletes();
         });
 
