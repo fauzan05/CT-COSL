@@ -47,14 +47,14 @@
                                     </div>
 
                                     <!-- Username -->
-                                    <div>
+                                    <div v-if="userForm.id == 0">
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                                             Username <span class="text-red-500">*</span>
                                         </label>
                                         <div class="flex space-x-2">
                                             <input type="text" v-model="userForm.username" placeholder="Enter username"
                                                 class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                required>
+                                                :required="userForm.id == 0">
                                             <button type="button" @click="generateUsername()"
                                                 class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 flex items-center"
                                                 :disabled="generatingUsername">
@@ -164,8 +164,26 @@
                                         </div>
                                     </div>
 
+                                    <!-- Update Password Access -->
+                                    <div v-if="selectedUser" class="flex items-center mt-7">
+                                        <Switch v-model="userForm.is_update_password" :class="[
+                                            userForm.is_update_password ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700',
+                                            'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                                        ]">
+                                            <span class="sr-only">Update Password Access</span>
+                                            <span :class="[
+                                                userForm.is_update_password ? 'translate-x-6' : 'translate-x-1',
+                                                'inline-block h-4 w-4 transform rounded-full bg-white transition-transform'
+                                            ]" />
+                                        </Switch>
+                                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            Update Password
+                                        </span>
+                                    </div>
+
                                     <!-- Password -->
-                                    <PasswordInput v-model="userForm.password"
+                                    <PasswordInput v-if="!selectedUser || userForm.is_update_password"
+                                        v-model="userForm.password"
                                         @passwordValidityChange="handlePasswordValidityChange" />
 
                                     <!-- Download Access -->
@@ -759,6 +777,7 @@ const userForm = reactive({
     email: '',
     password: '',
     download_access: false,
+    is_update_password: false,
 });
 
 const isLoading = ref(false);
@@ -838,11 +857,17 @@ const openUserModal = async (user) => {
         titleModal.value = 'Edit User';
         titleModalButton.value = 'Update User';
         selectedUser.value = user;
-        userForm.type = user.type;
-        fetchUserSizes(user.id);
+        userForm.id = user.id;
+        userForm.fullname = user.fullname;
+        userForm.email = user.email;
+        userForm.download_access = user.download_access === 1;
+        userForm.password = ''; // Reset password field
+        userForm.is_update_password = false;
     } else {
         isUserModalOpen.value = true;
         titleModal.value = 'Add User';
+        selectedUser.value = null;
+        userForm.is_update_password = true
     }
 };
 
@@ -1040,31 +1065,42 @@ async function checkEmailAvailability(email, showStatus = true) {
         return false;
     }
 
-    if (showStatus) {
-        emailStatus.value = 'checking';
-        emailStatusMessage.value = 'Checking availability...';
-    }
-
-    try {
-        const response = await axios.post(`${baseUrl}/api/check-email`, { email });
-        const isAvailable = response.data.available;
-
+    if (!selectedUser.value && selectedUser.value?.email !== email) {
         if (showStatus) {
-            emailStatus.value = isAvailable ? 'available' : 'taken';
-            emailStatusMessage.value = isAvailable
-                ? 'Email is available'
-                : 'Email is already taken';
+            emailStatus.value = 'checking';
+            emailStatusMessage.value = 'Checking availability...';
         }
 
-        return isAvailable;
+        try {
+            let data = {
+                email: email,
+                is_update: selectedUser.value ? true : false,
+            };
 
-    } catch (error) {
-        console.error('Error checking email:', error);
-        if (showStatus) {
-            emailStatus.value = 'error';
-            emailStatusMessage.value = 'Error checking availability';
+            if (selectedUser.value) {
+                data.selected_current_user_email = userForm.email; // Include user ID for update check
+            }
+
+            const response = await axios.post(`${baseUrl}/api/check-email`, data);
+            const isAvailable = response.data.available;
+
+            if (showStatus) {
+                emailStatus.value = isAvailable ? 'available' : 'taken';
+                emailStatusMessage.value = isAvailable
+                    ? 'Email is available'
+                    : 'Email is already taken';
+            }
+
+            return isAvailable;
+
+        } catch (error) {
+            console.error('Error checking email:', error);
+            if (showStatus) {
+                emailStatus.value = 'error';
+                emailStatusMessage.value = 'Error checking availability';
+            }
+            return false;
         }
-        return false;
     }
 }
 
@@ -1076,63 +1112,87 @@ function selectUsername(username) {
 
 async function createUser() {
     createUserloading.value = true;
-    if (!userForm.fullname || !userForm.username || !userForm.email || !userForm.password) {
+    if (!userForm.fullname || !userForm.email) {
         toast.error('Please fill in all required fields');
         createUserloading.value = false;
         return;
     }
 
-    if (usernameStatus.value !== 'available') {
-        toast.error('Username is not available');
-        createUserloading.value = false;
-        return;
+    if (!selectedUser.value) {
+        if (!userForm.username) {
+            toast.error('Please fill in all required fields');
+            createUserloading.value = false;
+            return;
+        }
+
+        if (usernameStatus.value !== 'available') {
+            toast.error('Username is not available');
+            createUserloading.value = false;
+            return;
+        }
+
+        if (userForm.username.length < 3) {
+            toast.error('Username must be at least 3 characters long');
+            createUserloading.value = false;
+            return;
+        }
+
+        // validate username again
+        if (!(await checkUsernameAvailability(userForm.username))) {
+            toast.error('Username is not available');
+            createUserloading.value = false;
+            return;
+        }
     }
 
-    if (emailStatus.value !== 'available') {
-        toast.error('Email is not available');
-        createUserloading.value = false;
-        return;
+    if (selectedUser.value && userForm.email !== selectedUser.value.email) {
+        if (emailStatus.value !== 'available') {
+            toast.error('Email is not available');
+            createUserloading.value = false;
+            return;
+        }
+
+        // validate email again
+        if (!(await checkEmailAvailability(userForm.email))) {
+            toast.error('Email is not available');
+            createUserloading.value = false;
+            return;
+        }
+
+        if (!isValidEmailFormat(userForm.email)) {
+            toast.error('Invalid email format');
+            createUserloading.value = false;
+            return;
+        }
     }
 
-    if (userForm.username.length < 3) {
-        toast.error('Username must be at least 3 characters long');
-        createUserloading.value = false;
-        return;
-    }
-
-    // validate username again
-    if (!(await checkUsernameAvailability(userForm.username))) {
-        toast.error('Username is not available');
-        createUserloading.value = false;
-        return;
-    }
-
-    // validate email again
-    if (!(await checkEmailAvailability(userForm.email))) {
-        toast.error('Email is not available');
-        createUserloading.value = false;
-        return;
-    }
-
-    if (!isValidEmailFormat(userForm.email)) {
-        toast.error('Invalid email format');
-        createUserloading.value = false;
-        return;
-    }
-
-    if (!isPasswordValid.value) {
+    if (userForm.is_update_password && !isPasswordValid.value) {
         toast.error('Password does not meet the requirements');
         createUserloading.value = false;
         return;
     }
 
     try {
-        const response = await axios.post(`${baseUrl}/api/users`, userForm);
-        if (response.status === 201) {
-            toast.success('User created successfully!');
-            fetchUsers(pagination.value.current_page);
-            closeModal();
-            resetForm();
+        if (selectedUser.value) {
+            // Update existing user
+            const response = await axios.put(`${baseUrl}/api/users/${userForm.id}`, userForm);
+            if (response.status === 200) {
+                toast.success('User updated successfully!');
+                fetchUsers(pagination.value.current_page);
+                closeModal();
+                resetForm();
+                selectedUser.value = null;
+            }
+        } else {
+            // Create new user
+            const response = await axios.post(`${baseUrl}/api/users`, userForm);
+            if (response.status === 201) {
+                toast.success('User created successfully!');
+                fetchUsers(pagination.value.current_page);
+                closeModal();
+                resetForm();
+                selectedUser.value = null;
+            }
         }
     } catch (error) {
         console.error(error);
@@ -1168,6 +1228,7 @@ function resetForm() {
     userForm.username = '';
     userForm.email = '';
     userForm.password = '';
+    userForm.is_update_password = false;
     userForm.download_access = false;
     usernameRecommendations.value = [];
     usernameStatus.value = null;

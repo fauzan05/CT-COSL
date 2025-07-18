@@ -96,4 +96,36 @@ class User extends Authenticatable
             $attachment_paths
         ));
     }
+
+    public function sendEmailUpdateUserNotification(
+        $password = '',
+        $attachment_paths = [],
+        $old_email = '',
+        $new_email = '',
+        $old_fullname = '',
+        $new_fullname = '',
+        $view = 'emails.user_updated',
+        $subject = 'User Updated'
+    ) {
+        $logoPath = 'assets/images/company/company-logo.png';
+        $logoBase64 = ImageHelper::getImageAsBase64($logoPath);
+
+        $data = [
+            'old_fullname' => $old_fullname,
+            'new_fullname' => $new_fullname,
+            'old_email' => $old_email,
+            'new_email' => $new_email,
+            'username' => $this->username,
+            'email' => $this->email,
+            'password' => $password,
+            'logoBase64' => $logoBase64,
+        ];
+
+        Mail::to($this->email)->send(new UserMail(
+            $data,
+            $view,
+            $subject,
+            $attachment_paths
+        ));
+    }
 }

@@ -458,93 +458,96 @@
                             </div>
                             <!-- Table Component -->
                             <div class="bg-white dark:bg-slate-800 my-5 rounded-xl shadow-md overflow-hidden">
-                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                    <thead class="bg-gray-50  dark:bg-gray-800">
-                                        <tr>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                No</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Image</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Description</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">OD</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">ID</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Top Connection</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Bottom Connection</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Length</th>
-                                            <th class="px-6 py-3 dark:text-gray-300">Actions</th>
-                                        </tr>
-                                    </thead>
-
-                                    <!-- Loading Skeleton -->
-                                    <tbody v-if="componentListLoading"
-                                        class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                        <tr v-for="n in 3" :key="'loading-' + n">
-                                            <td colspan="9" class="px-6 py-4">
-                                                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full">
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-
-                                    <!-- Draggable Items -->
-                                    <draggable v-else v-model="componentList" tag="tbody" item-key="component_id"
-                                        @end="updatePositions"
-                                        class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                        <template #item="{ element, index }">
+                                <div class="max-h-96 overflow-y-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                        <thead class="bg-gray-50  dark:bg-gray-800">
                                             <tr>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ index + 1 }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <img :src="element.image" alt="Component image"
-                                                        class="h-10 w-10 object-contain" />
-                                                </td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.description }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.od }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.id }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.top_connection }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.bottom_connection }}</td>
-                                                <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                    {{ element.length }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                    <button @click="removeComponent(index, element)"
-                                                        :disabled="element.isRemoving"
-                                                        class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-red-600 hover:text-red-900 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
-                                                        <div v-if="element.isRemoving" class="spinner mr-2"></div>
-                                                        <svg v-else class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                        </svg>
-                                                        {{ element.isRemoving ? 'Removing...' : 'Remove' }}
-                                                    </button>
-                                                </td>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    No</th>
+                                                <th class="px-6 py-3 dark:text-gray-300">Image</th>
+                                                <th class="px-6 py-3 dark:text-gray-300">Description</th>
+                                                <th class="px-6 py-3 dark:text-gray-300">OD</th>
+                                                <th class="px-6 py-3 dark:text-gray-300">ID</th>
+                                                <th class="px-6 py-3 dark:text-gray-300">Top Connection</th>
+                                                <th class="px-6 py-3 dark:text-gray-300">Bottom Connection</th>
+                                                <th class="px-6 py-3 dark:text-gray-300">Length</th>
+                                                <th class="px-6 py-3 dark:text-gray-300">Actions</th>
                                             </tr>
-                                        </template>
+                                        </thead>
 
-                                        <!-- Empty state -->
-                                        <template #footer>
-                                            <tr v-if="componentList.length === 0">
-                                                <td colspan="7"
-                                                    class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                                    No components found
+                                        <!-- Loading Skeleton -->
+                                        <tbody v-if="componentListLoading"
+                                            class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                            <tr v-for="n in 3" :key="'loading-' + n">
+                                                <td colspan="9" class="px-6 py-4">
+                                                    <div
+                                                        class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full">
+                                                    </div>
                                                 </td>
                                             </tr>
-                                        </template>
-                                    </draggable>
-                                </table>
+                                        </tbody>
+
+                                        <!-- Draggable Items -->
+                                        <draggable v-else v-model="componentList" tag="tbody" item-key="component_id"
+                                            @end="updatePositions"
+                                            class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                            <template #item="{ element, index }">
+                                                <tr>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ index + 1 }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <img :src="element.image" alt="Component image"
+                                                            class="h-10 w-10 object-contain" />
+                                                    </td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.description }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.od }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.id }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.top_connection }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.bottom_connection }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                        {{ element.length }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <button @click="removeComponent(index, element)"
+                                                            :disabled="element.isRemoving"
+                                                            class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-red-600 hover:text-red-900 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                                                            <div v-if="element.isRemoving" class="spinner mr-2"></div>
+                                                            <svg v-else class="w-4 h-4 mr-1" fill="none"
+                                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                            {{ element.isRemoving ? 'Removing...' : 'Remove' }}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+
+                                            <!-- Empty state -->
+                                            <template #footer>
+                                                <tr v-if="componentList.length === 0">
+                                                    <td colspan="7"
+                                                        class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                                        No components found
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </draggable>
+                                    </table>
+                                </div>
                             </div>
                         </DialogPanel>
                     </TransitionChild>

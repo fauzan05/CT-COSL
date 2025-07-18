@@ -38,6 +38,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/api/users', [UserController::class, 'storeUser'])->name('storeUser');
     Route::post('/api/users/{userId}/update-download-permission', [UserController::class, 'updateDownloadPermission'])->name('updateDownloadPermission');
+    Route::put('/api/users/{id}', [UserController::class, 'updateUser'])->name('updateUser');
 
     // Toolstring reporting history
     Route::post('/api/toolstring-reporting-histories', [ToolstringController::class, 'storeReportingHistory'])->name('storeReportingHistory');

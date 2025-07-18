@@ -759,6 +759,8 @@ import {
 } from '@heroicons/vue/20/solid';
 
 /* ----------------------------- STATE & STORES ----------------------------- */
+const baseUrl = import.meta.env.VITE_API_URL;
+
 const listThreads = ref([]);
 const pagination = ref({ current_page: 1, last_page: 1 });
 

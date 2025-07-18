@@ -71,11 +71,16 @@ class UserController extends Controller
     public function checkEmail(Request $request)
     {
         $email = $request->input('email');
+        $currentEmailUser = $request->input('selected_current_user_email', null);
+
         if (!$email) {
             return response()->json(['message' => 'Email is required'], 400);
         }
 
-        $exists = User::where('email', $email)->exists();
+        $exists = User::where('email', $email)->when($currentEmailUser, function ($query) use ($currentEmailUser) {
+            return $query->where('email', '!=', $currentEmailUser);
+        })
+            ->exists();
 
         return response()->json([
             'available' => !$exists,
@@ -155,5 +160,68 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(['message' => 'Download access updated successfully']);
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $response = DB::transaction(function () use ($request, $id) {
+            // Find the user by ID
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+
+            $is_update_password = $request->is_update_password;
+
+            // Validate the request
+            $validated = $request->validate([
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'fullname' => 'required|string|max:255',
+                'download_access' => 'boolean',
+            ]);
+            
+            $old_email = $user->email;
+            $new_email = '';
+            $old_fullname = $user->fullname;
+            $new_fullname = '';
+
+            // Update the user
+            $user->email = $validated['email'];
+            if ($user->email != $validated['email']) {
+                $new_email = $validated['email'];
+            }
+            $user->fullname = $validated['fullname'];
+            if ($user->fullname != $validated['fullname']) {
+                $new_fullname = $validated['fullname'];
+            }
+            if ($is_update_password) {
+                $request->validate(['password' => 'required|string|min:8']);
+                $user->password = bcrypt($request->input('password'));
+            }
+            $user->download_access = $validated['download_access'] ?? false;
+            $user->updated_at = now();
+            $user->updated_by = $request->user()->id; // Assuming the user is authenticated
+            $user->save();
+
+            // send email
+            try {
+                $user->sendEmailUpdateUserNotification(
+                    $is_update_password ? $request->input('password') : null,
+                    [],
+                    $old_email,
+                    $new_email,
+                    $old_fullname,
+                    $new_fullname,
+                    'emails.user_updated',
+                    'Account Updated – Here Are Your Account Details'
+                );
+            } catch (\Throwable $e) {
+                Log::error('Email failed: ' . $e->getMessage());
+            }
+
+            return response()->json(['message' => 'User updated successfully']);
+        });
+
+        return $response;
     }
 }
