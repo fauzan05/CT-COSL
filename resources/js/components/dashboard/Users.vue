@@ -602,7 +602,17 @@
                                     {{ user.email }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                    {{ user.is_download }}
+                                    <Switch v-model="user.download_access"
+                                        @update:modelValue="handleDownloadToggle(user, $event)" :class="[
+                                            user.download_access == 1 ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700',
+                                            'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                                        ]">
+                                        <span class="sr-only">Enable download</span>
+                                        <span :class="[
+                                            user.download_access == 1 ? 'translate-x-6' : 'translate-x-1',
+                                            'inline-block h-4 w-4 transform rounded-full bg-white transition-transform'
+                                        ]" />
+                                    </Switch>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {{ formatDate(user.updated_at) }}
@@ -743,6 +753,7 @@ const toast = useToast();
 const baseUrl = import.meta.env.VITE_API_URL;
 
 const userForm = reactive({
+    id: 0,
     fullname: '',
     username: '',
     email: '',
@@ -1131,14 +1142,33 @@ async function createUser() {
     }
 }
 
+
+const handleDownloadToggle = async (user, newValue) => {
+    try {
+        // Disini anda bisa menambahkan API call untuk update status
+        await axios.post(`${baseUrl}/api/users/${user.id}/update-download-permission`, {
+            download_access: newValue
+        })
+
+        // Optional: Tampilkan notifikasi sukses
+        toast.success('Download permission updated successfully')
+    } catch (error) {
+        // Jika gagal, kembalikan nilai ke state sebelumnya
+        user.download_access = !newValue
+
+        // Tampilkan error
+        toast.error('Failed to update download permission')
+        console.error('Error updating download status:', error)
+    }
+}
+
 function resetForm() {
-    userForm = {
-        fullname: '',
-        username: '',
-        email: '',
-        password: '',
-        download_access: false,
-    };
+    userForm.id = 0;
+    userForm.fullname = '';
+    userForm.username = '';
+    userForm.email = '';
+    userForm.password = '';
+    userForm.download_access = false;
     usernameRecommendations.value = [];
     usernameStatus.value = null;
     emailStatus.value = null;

@@ -129,4 +129,31 @@ class UserController extends Controller
         // return ke frontend
         return $response;
     }
+
+    public function updateDownloadPermission(Request $request, $id)
+    {
+        // Find the user by ID
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Check if the authenticated user is allowed to update this user's download access
+        if (!$request->user()->is_admin) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Validate the request
+        $validated = $request->validate([
+            'download_access' => 'required|boolean',
+        ]);
+
+        // Update the user's download access
+        $user->download_access = $validated['download_access'];
+        $user->updated_at = now();
+        $user->updated_by = $request->user()->id; // Assuming the user is authenticated
+        $user->save();
+
+        return response()->json(['message' => 'Download access updated successfully']);
+    }
 }
