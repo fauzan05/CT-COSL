@@ -6,13 +6,14 @@ use App\Http\Controllers\ToolstringController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WellstackController;
 use App\Http\Middleware\AuthMiddleware;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::get('/login', function () {
     return view('auth');
-})->name('auth');
+})->name('auth')->middleware(RedirectIfAuthenticated::class);
 
 Route::post('/api/login', [AuthController::class, 'postLogin'])->name('login');
 Route::get('/api/current-user', [AuthController::class, 'currentUser'])->name('currentUser');

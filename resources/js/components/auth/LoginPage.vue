@@ -7,7 +7,7 @@
             <div class="absolute inset-0 bg-black/30 backdrop-blur-[1px]"></div>
         </div>
         <!-- Card Container dengan fixed height -->
-        <div class="w-full max-w-md relative z-10">
+        <div class="w-full max-w-sm sm:max-w-md px-4 sm:px-0 relative z-10">
             <!-- Glass Card Container dengan fixed height -->
             <div class="h-auto backdrop-blur-md bg-white/30 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
                 <!-- Header with Logo -->
@@ -193,4 +193,5 @@ const login = async () => {
 
 .fade-in {
     animation: fadeIn 1s ease-in;
-}</style>
+}
+</style>
