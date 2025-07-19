@@ -10,7 +10,7 @@ class ThreadSizeModel extends Model
     use SoftDeletes;
 
     protected $table = 'thread_sizes';
-
+    public $timestamps = false;
     protected $fillable = [
         'thread_id',
         'top_connection',

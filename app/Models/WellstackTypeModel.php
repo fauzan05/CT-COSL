@@ -10,7 +10,7 @@ class WellstackTypeModel extends Model
     use SoftDeletes;
 
     protected $table = 'wellstack_types';
-
+    public $timestamps = false;
     protected $fillable = [
         'name',
         'slug',

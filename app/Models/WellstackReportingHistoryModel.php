@@ -10,7 +10,7 @@ class WellstackReportingHistoryModel extends Model
     use SoftDeletes;
 
     protected $table = 'wellstack_reporting_histories';
-
+    public $timestamps = false;
     protected $fillable = [
         'name',
         'client',

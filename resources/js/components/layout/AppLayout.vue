@@ -551,6 +551,7 @@ function handleDeleteType() {
 /* ==================== LOGOUT ==================== */
 async function logout() {
     try {
+        loading.value = true;
         if (isLoggingOut.value) return;
         isLoggingOut.value = true;
 
@@ -562,10 +563,12 @@ async function logout() {
         toast.success('Logged out successfully!');
         window.location.href = `${baseUrl}/login`;
     } catch (err) {
+        loading.value = false;
         console.error('Logout error:', err);
         toast.error('Failed to log out. Please try again.');
     } finally {
         isLoggingOut.value = false;
+        loading.value = false;
     }
 }
 </script>

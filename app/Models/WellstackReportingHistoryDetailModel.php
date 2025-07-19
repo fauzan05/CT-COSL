@@ -10,6 +10,7 @@ class WellstackReportingHistoryDetailModel extends Model
     use SoftDeletes;
 
     protected $table = 'wellstack_reporting_history_details';
+    public $timestamps = false;
     protected $fillable = [
         'wellstack_reporting_history_id',
         'wellstack_type_id',

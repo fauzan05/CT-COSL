@@ -372,27 +372,27 @@
                   <td valign="top" style="padding: 15px 20px; border-right: 1px solid #e5e7eb; width: 50%;">
                     <div class="info-row">
                       <span class="info-label">Client:</span>
-                      <span class="info-value">{{ $reportingHistory->client }}</span>
+                      <span class="info-value">{{ $reportingHistory->client ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Field:</span>
-                      <span class="info-value">{{ $reportingHistory->field }}</span>
+                      <span class="info-value">{{ $reportingHistory->field ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Well Name & No:</span>
-                      <span class="info-value">{{ $reportingHistory->well_name_number }}</span>
+                      <span class="info-value">{{ $reportingHistory->well_name_number ?? '-'}}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Min. Restriction:</span>
-                      <span class="info-value">{{ $reportingHistory->min_restriction }}</span>
+                      <span class="info-value">{{ $reportingHistory->min_restriction ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">KOP:</span>
-                      <span class="info-value">{{ $reportingHistory->kop }}</span>
+                      <span class="info-value">{{ $reportingHistory->kop ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Category:</span>
-                      <span class="info-value">{{ $reportingHistory->category }}</span>
+                      <span class="info-value">{{ $reportingHistory->category ?? '-' }}</span>
                     </div>
                   </td>
               
@@ -400,27 +400,27 @@
                   <td valign="top" style="padding: 15px 20px; width: 50%;">
                     <div class="info-row">
                       <span class="info-label">BHP:</span>
-                      <span class="info-value">{{ $reportingHistory->bhp }}</span>
+                      <span class="info-value">{{ $reportingHistory->bhp ?? '-'}}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">BHST:</span>
-                      <span class="info-value">{{ $reportingHistory->bhst }}</span>
+                      <span class="info-value">{{ $reportingHistory->bhst ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">S/O:</span>
-                      <span class="info-value">{{ $reportingHistory->so }}</span>
+                      <span class="info-value">{{ $reportingHistory->so ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Supplier:</span>
-                      <span class="info-value">{{ $reportingHistory->supplier }}</span>
+                      <span class="info-value">{{ $reportingHistory->supplier ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Date Drawn:</span>
-                      <span class="info-value">{{ $reportingHistory->date_drawn->toDateString() ?? '-' }}</span>
+                      <span class="info-value">{{ $reportingHistory->date_drawn ? $reportingHistory->date_drawn->toDateString() : '-' }}</span>
                     </div>
                     <div class="info-row">
                       <span class="info-label">Drawn By:</span>
-                      <span class="info-value">{{ $reportingHistory->drawn_by }}</span>
+                      <span class="info-value">{{ $reportingHistory->drawn_by ?? '-' }}</span>
                     </div>
                   </td>
                 </tr>
@@ -443,12 +443,12 @@
             @foreach ($components as $component)
                 <tr class="data-row">
                     <td class="col-a">{{ $loop->iteration }}</td>
-                    <td class="col-b">{{ $component['description'] }}</td>
-                    <td class="col-c">{{ $component['serial_number'] }}</td>
-                    <td class="col-d">{{ $component['height'] }}</td>
-                    <td class="col-e">{{ $component['weight'] }}</td>
-                    <td class="col-f">{{ $component['pressure_rating'] }}</td>
-                    <td class="col-g">{{ $component['owner'] }}</td>
+                    <td class="col-b">{{ $component['description'] ?? '-' }}</td>
+                    <td class="col-c">{{ $component['serial_number'] ?? '-' }}</td>
+                    <td class="col-d">{{ $component['height'] ?? 0 }}</td>
+                    <td class="col-e">{{ $component['weight'] ?? 0 }}</td>
+                    <td class="col-f">{{ $component['pressure_rating'] ?? 0 }}</td>
+                    <td class="col-g">{{ $component['owner'] ?? '-' }}</td>
                     <td class="col-n">
                         @if (!empty($component['image_base64']))
                             <img src="{{ $component['image_base64'] }}"

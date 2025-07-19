@@ -10,7 +10,7 @@ class ToolstringItemDimensionModel extends Model
     use SoftDeletes;
 
     protected $table = 'toolstring_item_dimensions';
-
+    public $timestamps = false;
     protected $fillable = [
         'toolstring_item_id',
         'outer_diameter',

@@ -6,6 +6,7 @@ use App\Http\Controllers\ToolstringController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WellstackController;
 use App\Http\Middleware\AuthMiddleware;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -112,9 +113,21 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/check-email', [UserController::class, 'checkEmail'])->name('checkEmail');
 });
 
-// Storage files should not be routed to SPA
+// Storage files routes - HARUS SEBELUM catch-all route
+// Route untuk file gambar dengan struktur folder
+Route::get('/storage/assets/images/{category}/{filename}', function ($category, $filename) {
+    $path = storage_path('app/public/assets/images/' . $category . '/' . $filename);
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path);
+})->where('category', '.*')->where('filename', '.*');
+
+// Route alternatif untuk backward compatibility
 Route::get('/image/{filename}', function ($filename) {
-    $path = base_path('storage/app/private/assets/images/' . $filename);
+    $path = storage_path('app/public/assets/images/' . $filename);
 
     if (!file_exists($path)) {
         abort(404);
@@ -123,9 +136,18 @@ Route::get('/image/{filename}', function ($filename) {
     return response()->file($path);
 });
 
+// Route untuk semua file storage lainnya jika diperlukan
+Route::get('/storage/{path}', function ($path) {
+    $fullPath = storage_path('app/public/' . $path);
 
-// Catch-all for frontend SPA (protected)
+    if (!file_exists($fullPath)) {
+        abort(404);
+    }
+
+    return response()->file($fullPath);
+})->where('path', '.*');
+
+// Catch-all for frontend SPA (protected) - HARUS DI AKHIR
 Route::get('/{any}', function () {
     return view('app');
 })->where('any', '.*')->middleware([AuthMiddleware::class]);
-

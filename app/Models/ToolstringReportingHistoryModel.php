@@ -9,6 +9,7 @@ class ToolstringReportingHistoryModel extends Model
 {
     use SoftDeletes;
     protected $table = 'toolstring_reporting_histories';
+    public $timestamps = false;
     protected $fillable = [
         'name',
         'title',

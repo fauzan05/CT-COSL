@@ -10,7 +10,7 @@ class ThreadModel extends Model
     use SoftDeletes;
 
     protected $table = 'threads';
-
+    public $timestamps = false;
     protected $fillable = [
         'type',
         'created_by',

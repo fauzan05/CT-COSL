@@ -410,7 +410,7 @@ class WellstackController extends Controller
             'bhst' => $request->bhst ?? null,
             'so' => $request->so ?? null,
             'supplier' => $request->supplier ?? null,
-            'date_drawn' => $request->date ? Carbon::parse($request->date) : null,
+            'date_drawn' => $request->date_drawn ? Carbon::parse($request->date_drawn) : null,
             'drawn_by' => $request->drawn_by ?? null,
             'created_at' => now(),
             'updated_at' => now(),

@@ -10,7 +10,7 @@ class ToolstringItemModel extends Model
     use SoftDeletes;
 
     protected $table = 'toolstring_items';
-
+    public $timestamps = false;
     protected $fillable = [
         'toolstring_type_id',
         'name',
