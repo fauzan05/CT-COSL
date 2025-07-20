@@ -69,13 +69,27 @@ class ThreadController extends Controller
         return response()->json(['message' => 'Thread updated successfully'], 200);
     }
 
-    public function getThreads()
+    public function getThreads(Request $request)
     {
-        // make paginate
-        $threads = ThreadModel::with('sizes')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10); // Adjust the number of items per page as needed
+        $perPage = $request->input('per_page', 10); // Default to 10 items per page
 
+        // Query builder
+        $query = ThreadModel::with(['sizes']);
+
+        // Apply filters if any
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('type', 'like', '%' . $search . '%');
+        }
+
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('is_desc', 'desc') === 'true' ? 'desc' : 'asc';
+
+        // Apply sorting
+        $query->orderBy($sortBy, $sortOrder);
+
+        // Paginate the results
+        $threads = $query->paginate($perPage);
         // transform items in the paginator
         $threads->getCollection()->transform(function ($thread) {
             return [

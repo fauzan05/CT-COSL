@@ -1250,9 +1250,9 @@ const queryThreadSize = ref('')
 
 // ========== FILTER OPTIONS ==========
 const sortByItems = [
-    { name: 'Name', value: 'name' },
     { name: 'Created Date', value: 'created_at' },
     { name: 'Updated Date', value: 'updated_at' },
+    { name: 'Name', value: 'name' },
 ];
 
 const statusItems = [
@@ -1269,7 +1269,7 @@ const pageSizeItems = [
 ];
 
 const selectedStatusFilter = ref(statusItems[0]);
-const selectedSortByFilter = ref(sortByItems[1]);
+const selectedSortByFilter = ref(sortByItems[0]);
 const selectedPageSizeFilter = ref(pageSizeItems[0]);
 
 // ========== UNITS ==========

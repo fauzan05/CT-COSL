@@ -769,7 +769,7 @@ import {
 } from '@headlessui/vue';
 import {
     ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
-    ChevronDoubleLeftIcon, ChevronDoubleRightIcon
+    ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CheckIcon
 } from '@heroicons/vue/20/solid';
 
 /* ----------------------------- STATE & STORES ----------------------------- */
@@ -796,13 +796,13 @@ const isDeleting = ref(false);
 const showMobileFilters = ref(false);
 
 const sortByItems = ref([
-    { name: 'Type', value: 'type' },
     { name: 'Updated At', value: 'updated_at' },
     { name: 'Updated By', value: 'updated_by_name' },
-    { name: 'Total Size', value: 'total_sizes' },
+    { name: 'Type', value: 'type' },
 ]);
+
 const selectedSortByFilter = ref(sortByItems.value[0]);
-const isDesc = ref(false);
+const isDesc = ref(true);
 
 const selectedThread = ref(null);
 const currentUserStore = useCurrentUserStore();
