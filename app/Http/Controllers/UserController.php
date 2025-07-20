@@ -16,7 +16,7 @@ class UserController extends Controller
         $page = $request->input('page', 1);
         $search = $request->input('search', '');
         $sortBy = $request->input('sort_by', 'id');
-        $sortDirection = $request->input('sort_direction', 'asc');
+        $sortDirection = $request->input('is_desc', 'desc') === 'true' ? 'desc' : 'asc';
 
         $query = User::query();
         if ($search) {

@@ -774,7 +774,7 @@ import {
 } from '@headlessui/vue';
 import {
     ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
-    ChevronDoubleLeftIcon, ChevronDoubleRightIcon
+    ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CheckIcon
 } from '@heroicons/vue/20/solid';
 import PasswordInput from '@/components/inputs/PasswordInput.vue';
 
