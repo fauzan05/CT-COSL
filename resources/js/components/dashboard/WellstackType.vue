@@ -643,14 +643,14 @@
                                                     v-for="statusItem in statusItems" :key="statusItem.name"
                                                     :value="statusItem" as="template">
                                                     <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
                                                         'relative cursor-default select-none py-2 pl-10 pr-4',
                                                     ]">
                                                         <span
                                                             :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
                                                                 statusItem.name }}</span>
                                                         <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
                                                             <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
@@ -683,14 +683,14 @@
                                                     v-for="sortByItem in sortByItems" :key="sortByItem.name"
                                                     :value="sortByItem" as="template">
                                                     <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
                                                         'relative cursor-default select-none py-2 pl-10 pr-4',
                                                     ]">
                                                         <span
                                                             :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
                                                                 sortByItem.name }}</span>
                                                         <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
                                                             <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
@@ -723,14 +723,14 @@
                                                     v-for="pageSizeItem in pageSizeItems" :key="pageSizeItem.name"
                                                     :value="pageSizeItem" as="template">
                                                     <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
                                                         'relative cursor-default select-none py-2 pl-10 pr-4',
                                                     ]">
                                                         <span
                                                             :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
                                                                 pageSizeItem.name }}</span>
                                                         <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
                                                             <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
@@ -783,14 +783,14 @@
                                                     v-for="statusItem in statusItems" :key="statusItem.name"
                                                     :value="statusItem" as="template">
                                                     <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
                                                         'relative cursor-default select-none py-2 pl-10 pr-4',
                                                     ]">
                                                         <span
                                                             :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
                                                                 statusItem.name }}</span>
                                                         <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
                                                             <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
@@ -825,14 +825,14 @@
                                                     v-for="sortByItem in sortByItems" :key="sortByItem.name"
                                                     :value="sortByItem" as="template">
                                                     <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
                                                         'relative cursor-default select-none py-2 pl-10 pr-4',
                                                     ]">
                                                         <span
                                                             :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
                                                                 sortByItem.name }}</span>
                                                         <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
                                                             <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
@@ -869,14 +869,14 @@
                                                     v-for="pageSizeItem in pageSizeItems" :key="pageSizeItem.name"
                                                     :value="pageSizeItem" as="template">
                                                     <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
                                                         'relative cursor-default select-none py-2 pl-10 pr-4',
                                                     ]">
                                                         <span
                                                             :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
                                                                 pageSizeItem.name }}</span>
                                                         <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
                                                             <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>

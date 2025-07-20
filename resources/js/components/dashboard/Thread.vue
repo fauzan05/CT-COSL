@@ -198,7 +198,7 @@
                                                             <template v-else>
                                                                 <!-- Edit Button -->
                                                                 <button @click="editThreadSize(threadSize, index)"
-                                                                    class="inline-flex items-center px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-lg transition-all duration-200 group">
+                                                                    class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg transition-all duration-200 group">
                                                                     <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110"
                                                                         fill="none" stroke="currentColor"
                                                                         viewBox="0 0 24 24">
@@ -451,7 +451,7 @@
                                 <Listbox v-model="selectedSortByFilter">
                                     <div class="relative">
                                         <ListboxButton
-                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
+                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
                                             <span class="block truncate text-gray-900 dark:text-white">{{
                                                 selectedSortByFilter.name }}</span>
                                             <span
@@ -468,14 +468,14 @@
                                                     v-for="sortByItem in sortByItems" :key="sortByItem.name"
                                                     :value="sortByItem" as="template">
                                                     <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
                                                         'relative cursor-default select-none py-2 pl-10 pr-4',
                                                     ]">
                                                         <span
                                                             :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
                                                                 sortByItem.name }}</span>
                                                         <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
                                                             <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
@@ -511,7 +511,7 @@
                                 <Listbox v-model="selectedSortByFilter">
                                     <div class="relative">
                                         <ListboxButton
-                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
+                                            class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
                                             <span class="block truncate text-gray-900 dark:text-white">{{
                                                 selectedSortByFilter.name }}</span>
                                             <span
@@ -528,14 +528,14 @@
                                                     v-for="sortByItem in sortByItems" :key="sortByItem.name"
                                                     :value="sortByItem" as="template">
                                                     <li :class="[
-                                                        active ? 'bg-amber-100 text-amber-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
+                                                        active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
                                                         'relative cursor-default select-none py-2 pl-10 pr-4',
                                                     ]">
                                                         <span
                                                             :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
                                                                 sortByItem.name }}</span>
                                                         <span v-if="selected"
-                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-white">
+                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
                                                             <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
@@ -636,7 +636,7 @@
                                 <td class="px-6 py-4 text-sm">
                                     <!-- Edit -->
                                     <button @click="openThreadModal(thread)"
-                                        class="inline-flex items-center px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors duration-150">
+                                        class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
                                         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -646,7 +646,7 @@
 
                                     <!-- Delete -->
                                     <button @click="confirmDeleteModal(thread)"
-                                        class="inline-flex items-center px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
+                                        class="inline-flex items-center ms-2 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
                                         <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -674,11 +674,25 @@
                                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
                                     </span>
                                 </ListboxButton>
+
                                 <ListboxOptions
-                                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-sm shadow-lg ring-opacity-5 focus:outline-none">
+                                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-sm shadow-lg ring-opacity-5 focus:outline-none z-50">
+
                                     <ListboxOption v-for="option in perPageOptions" :key="option" :value="option"
-                                        class="cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-indigo-50 dark:hover:bg-indigo-900/40">
-                                        {{ option }}
+                                        v-slot="{ active, selected }">
+
+                                        <li :class="[
+                                            'cursor-default select-none relative py-2 pl-3 pr-9',
+                                            active ? 'bg-blue-50 dark:bg-blue-900/40' : '',
+                                            selected ? 'font-semibold text-blue-600 dark:text-blue-300' : 'text-gray-900 dark:text-gray-200'
+                                        ]">
+                                            {{ option }}
+                                            <span v-if="selected"
+                                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 dark:text-blue-300">
+                                                ✓
+                                            </span>
+                                        </li>
+
                                     </ListboxOption>
                                 </ListboxOptions>
                             </div>
@@ -755,7 +769,7 @@ import {
 } from '@headlessui/vue';
 import {
     ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
-    ChevronDoubleLeftIcon, ChevronDoubleRightIcon 
+    ChevronDoubleLeftIcon, ChevronDoubleRightIcon
 } from '@heroicons/vue/20/solid';
 
 /* ----------------------------- STATE & STORES ----------------------------- */
@@ -794,7 +808,7 @@ const selectedThread = ref(null);
 const currentUserStore = useCurrentUserStore();
 
 const perPageOptions = [10, 25, 100];
-const perPage = ref(10);
+const perPage = ref(perPageOptions[0]);
 const search = ref('');
 
 /* ------------------------------- UTILITIES ------------------------------- */

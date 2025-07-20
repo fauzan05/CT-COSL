@@ -4,7 +4,7 @@
     </head>
     <div class="p-6 bg-gray-50 dark:bg-slate-900/50 dark:text-gray-100 rounded-xl transition-colors duration-200">
         <div class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-amber-50">Welcome back, {{ currentUserStore?.user?.fullname }}!</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-blue-50">Welcome back, {{ currentUserStore?.user?.fullname }}!</h1>
             <p class="text-gray-600 dark:text-gray-400">Oil & Gas Operations Overview</p>
         </div>
 
@@ -14,7 +14,7 @@
             <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 dark:bg-slate-800/50 dark:shadow-slate-900/50 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-amber-50">Daily Production</p>
+                        <p class="text-sm text-gray-500 dark:text-blue-50">Daily Production</p>
                         <h3 class="text-2xl font-bold text-gray-700 dark:text-white">85,234 BBL</h3>
                     </div>
                     <div class="p-3 bg-blue-100 rounded-full">
@@ -32,7 +32,7 @@
             <div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-slate-900/50 p-6 border border-gray-50 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-amber-50">Active Wells</p>
+                        <p class="text-sm text-gray-500 dark:text-blue-50">Active Wells</p>
                         <h3 class="text-2xl font-bold text-gray-700 dark:text-white">142/156</h3>
                     </div>
                     <div class="p-3 bg-green-100 rounded-full">
@@ -50,7 +50,7 @@
             <div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-slate-900/50 p-6 border border-gray-100 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-amber-50">Equipment Status</p>
+                        <p class="text-sm text-gray-500 dark:text-blue-50">Equipment Status</p>
                         <h3 class="text-2xl font-bold text-gray-700 dark:text-white">98.5%</h3>
                     </div>
                     <div class="p-3 bg-yellow-100 rounded-full">
@@ -68,7 +68,7 @@
             <div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-slate-900/50 p-6 border border-gray-100 dark:border-slate-700/50 backdrop-blur-xl transition-all duration-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-amber-50">Days Without Incident</p>
+                        <p class="text-sm text-gray-500 dark:text-blue-50">Days Without Incident</p>
                         <h3 class="text-2xl font-bold text-gray-700 dark:text-white">365</h3>
                     </div>
                     <div class="p-3 bg-purple-100 rounded-full">
