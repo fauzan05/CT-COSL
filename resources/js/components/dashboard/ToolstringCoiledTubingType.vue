@@ -1072,7 +1072,6 @@
             <template v-else-if="items.data.length > 0">
                 <div v-for="item in items.data" :key="item.id"
                     class="group bg-white dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300">
-
                     <!-- Image Section -->
                     <div class="relative overflow-hidden">
                         <img :src="baseUrl + item.image_url || '/placeholder-item.jpg'" :alt="item.name"
@@ -1101,9 +1100,17 @@
                         </h3>
 
                         <!-- Description -->
-                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">
-                            {{ item.description }}
-                        </p>
+                        <div @click="toggleDescription(item.id)" class="mb-4 overflow-hidden transition-all duration-300 
+                        group-hover:max-h-none max-h-12 
+                        cursor-pointer 
+                        md:hover:max-h-none 
+                        md:pointer-events-none md:cursor-default
+                        max-md:pointer-events-auto" :class="showDesc[item.id] ? 'max-h-none' : ''">
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed 
+                         group-hover:line-clamp-none line-clamp-2">
+                                {{ item.description }}
+                            </p>
+                        </div>
 
                         <!-- Updated Info -->
                         <div
@@ -1286,6 +1293,7 @@ const itemForm = ref({
 });
 
 const threadTypes = ref([])
+const showDesc = ref({})
 
 // ========== COMPUTED ==========
 const direction = computed(() => (isDesc.value ? 'desc' : 'asc'));
@@ -1541,6 +1549,10 @@ const formatDate = (utcDateString) => {
     return date.toLocaleString('en-US', options).replace(',', '').replace(',', ' at');
 };
 
+const toggleDescription = (itemId) => {
+    showDesc.value[itemId] = !showDesc.value[itemId]
+}
+
 function handleDecimalInput(event, setIndex, fieldName) {
     const value = event.target.value;
     // Allow only numbers and decimal point
@@ -1657,7 +1669,8 @@ watch(
 onMounted(() => {
 });
 
-onUnmounted(() => { });
+onUnmounted(() => {
+});
 </script>
 
 <style>

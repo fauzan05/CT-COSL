@@ -996,9 +996,17 @@
                         </h3>
 
                         <!-- Description -->
-                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">
-                            {{ item.description }}
-                        </p>
+                        <div @click="toggleDescription(item.id)" class="mb-4 overflow-hidden transition-all duration-300 
+                        group-hover:max-h-none max-h-12 
+                        cursor-pointer 
+                        md:hover:max-h-none 
+                        md:pointer-events-none md:cursor-default
+                        max-md:pointer-events-auto" :class="showDesc[item.id] ? 'max-h-none' : ''">
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed 
+                         group-hover:line-clamp-none line-clamp-2">
+                                {{ item.description }}
+                            </p>
+                        </div>
 
                         <!-- Updated Info -->
                         <div
@@ -1126,6 +1134,7 @@ const totalPages = ref(1);
 const itemImage = ref(null);
 const uploadedItemImageFile = ref(null);
 const dragover = ref(false);
+const showDesc = ref({})
 
 // ========== FILTER OPTIONS ==========
 const sortByItems = [
@@ -1428,6 +1437,10 @@ const formatDate = (utcDateString) => {
     return date.toLocaleString('en-US', options).replace(',', '').replace(',', ' at');
 };
 
+const toggleDescription = () => {
+    showDesc.value[itemId] = !showDesc.value[itemId]
+}
+
 // ========== WATCHERS ==========
 watch([selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, search, isDesc], () => {
     fetchAllItems(items.value.current_page || 1);
@@ -1435,7 +1448,7 @@ watch([selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, searc
 
 watch(selectedCategories, (newVal) => {
     showButtonDeleteSelectedItems.value = newVal.length > 0;
-}, { immediate:true });
+}, { immediate: true });
 
 watch(
     () => route.params.wellstackTypeId,
