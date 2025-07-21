@@ -129,14 +129,13 @@ class ToolstringController extends Controller
         }
 
         // Optional status filter (active = not soft-deleted, inactive = soft-deleted)
-        if ($request->filled('status')) {
-            if ((bool)$request->input('status') === 'active') {
-                $query->whereNull('deleted_at');
-            } elseif ($request->input('status') === 'inactive') {
-                $query->onlyTrashed();
-            } elseif ($request->input('status') === 'all') {
-                $query->withTrashed();
-            }
+        $status = $request->input('status');
+        if ($status === 'active') {
+            $query->whereNull('deleted_at');
+        } elseif ($status === 'inactive') {
+            $query->onlyTrashed();
+        } elseif ($status === 'all') {
+            $query->withTrashed();
         }
 
         // Optional sorting

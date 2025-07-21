@@ -366,66 +366,68 @@
             </table>
 
             <!-- Technical Info Grid -->
-            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; width: 100%; height: 100%;">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0"
+                style="border-collapse: collapse; width: 100%; height: 100%;">
                 <tr>
-                  <!-- Kolom Kiri -->
-                  <td valign="top" style="padding: 15px 20px; border-right: 1px solid #e5e7eb; width: 50%;">
-                    <div class="info-row">
-                      <span class="info-label">Client:</span>
-                      <span class="info-value">{{ $reportingHistory->client ?? '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">Field:</span>
-                      <span class="info-value">{{ $reportingHistory->field ?? '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">Well Name & No:</span>
-                      <span class="info-value">{{ $reportingHistory->well_name_number ?? '-'}}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">Min. Restriction:</span>
-                      <span class="info-value">{{ $reportingHistory->min_restriction ?? '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">KOP:</span>
-                      <span class="info-value">{{ $reportingHistory->kop ?? '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">Category:</span>
-                      <span class="info-value">{{ $reportingHistory->category ?? '-' }}</span>
-                    </div>
-                  </td>
-              
-                  <!-- Kolom Kanan -->
-                  <td valign="top" style="padding: 15px 20px; width: 50%;">
-                    <div class="info-row">
-                      <span class="info-label">BHP:</span>
-                      <span class="info-value">{{ $reportingHistory->bhp ?? '-'}}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">BHST:</span>
-                      <span class="info-value">{{ $reportingHistory->bhst ?? '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">S/O:</span>
-                      <span class="info-value">{{ $reportingHistory->so ?? '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">Supplier:</span>
-                      <span class="info-value">{{ $reportingHistory->supplier ?? '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">Date Drawn:</span>
-                      <span class="info-value">{{ $reportingHistory->date_drawn ? $reportingHistory->date_drawn->toDateString() : '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                      <span class="info-label">Drawn By:</span>
-                      <span class="info-value">{{ $reportingHistory->drawn_by ?? '-' }}</span>
-                    </div>
-                  </td>
+                    <!-- Kolom Kiri -->
+                    <td valign="top" style="padding: 15px 20px; border-right: 1px solid #e5e7eb; width: 50%;">
+                        <div class="info-row">
+                            <span class="info-label">Client:</span>
+                            <span class="info-value">{{ $reportingHistory->client ?? '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Field:</span>
+                            <span class="info-value">{{ $reportingHistory->field ?? '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Well Name & No:</span>
+                            <span class="info-value">{{ $reportingHistory->well_name_number ?? '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Min. Restriction:</span>
+                            <span class="info-value">{{ $reportingHistory->min_restriction ?? '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">KOP:</span>
+                            <span class="info-value">{{ $reportingHistory->kop ?? '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Category:</span>
+                            <span class="info-value">{{ $reportingHistory->category ?? '-' }}</span>
+                        </div>
+                    </td>
+
+                    <!-- Kolom Kanan -->
+                    <td valign="top" style="padding: 15px 20px; width: 50%;">
+                        <div class="info-row">
+                            <span class="info-label">BHP:</span>
+                            <span class="info-value">{{ $reportingHistory->bhp ?? '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">BHST:</span>
+                            <span class="info-value">{{ $reportingHistory->bhst ?? '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">S/O:</span>
+                            <span class="info-value">{{ $reportingHistory->so ?? '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Supplier:</span>
+                            <span class="info-value">{{ $reportingHistory->supplier ?? '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Date Drawn:</span>
+                            <span
+                                class="info-value">{{ $reportingHistory->date_drawn ? $reportingHistory->date_drawn->toDateString() : '-' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Drawn By:</span>
+                            <span class="info-value">{{ $reportingHistory->drawn_by ?? '-' }}</span>
+                        </div>
+                    </td>
                 </tr>
-              </table>
-              
+            </table>
+
         </div>
         <table>
             <!-- Table Header -->
@@ -443,7 +445,7 @@
             @foreach ($components as $component)
                 <tr class="data-row">
                     <td class="col-a">{{ $loop->iteration }}</td>
-                    <td class="col-b">{{ $component['description'] ?? '-' }}</td>
+                    <td class="col-b">{{ $component['item_name'] ?? '-' }}</td>
                     <td class="col-c">{{ $component['serial_number'] ?? '-' }}</td>
                     <td class="col-d">{{ $component['height'] ?? 0 }}</td>
                     <td class="col-e">{{ $component['weight'] ?? 0 }}</td>
@@ -462,21 +464,21 @@
             <!-- Calculation rows -->
             <tr class="totals-section">
                 <td class="col-a">Distance from Lower Shear</td>
-                <td class="col-b">{{ $distance_from_lower_shear }}</td>
+                <td class="col-b">{{ $distance_from_lower_shear }} {{ $selected_shear_ram_unit }}</td>
                 <td class="col-c">Total Height:</td>
                 <td class="col-d">{{ $total_height }}</td>
-                <td class="col-e">ft</td>
+                <td class="col-e">{{ $selected_height_unit }}</td>
                 <td class="col-f"></td>
                 <td class="col-g"></td>
                 <td class="col-n"></td>
             </tr>
             <tr class="totals-section">
                 <td class="col-a">Distance from Upper Shear</td>
-                <td class="col-b">{{ $distance_from_upper_shear }}</td>
+                <td class="col-b">{{ $distance_from_upper_shear }} {{ $selected_shear_ram_unit }}</td>
                 <td class="col-c">Total Weight:</td>
                 <td class="col-d"></td>
                 <td class="col-e">{{ $total_weight }}</td>
-                <td class="col-f">TonUS</td>
+                <td class="col-f">{{ $selected_weight_unit }}</td>
                 <td class="col-g"></td>
                 <td class="col-n"></td>
             </tr>
@@ -487,7 +489,7 @@
                 <td class="col-d"></td>
                 <td class="col-e"></td>
                 <td class="col-f">{{ $min_psi }}</td>
-                <td class="col-g">psi</td>
+                <td class="col-g">{{ $selected_pressure_unit }}</td>
                 <td class="col-n"></td>
             </tr>
             <tr class="totals-section">

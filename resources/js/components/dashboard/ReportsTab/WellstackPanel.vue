@@ -1558,13 +1558,6 @@ const loading = ref(false);
 const isDesc = ref(true);
 const isLoadingData = ref(false);
 const componentList = ref([]);
-const lengthUnits = ref([
-    { name: 'Selected Convertion', value: 'selected_convertion' },
-    { name: 'Inch', value: 'inch' },
-    { name: 'Foot', value: 'ft' },
-    { name: 'Meter', value: 'm' },
-]);
-
 const weightUnits = ref([
     { name: 'Selected Convertion', value: 'selected_convertion' },
     { name: 'Pound', value: 'lbs' },
@@ -1591,7 +1584,6 @@ const shearRamDistFromBottomUnits = ref([
     { name: 'Meter', value: 'm' },
 ]);
 
-const selected_lengthUnit = ref(lengthUnits.value[0]);
 const selected_weightUnit = ref(weightUnits.value[0]);
 const selected_heightUnit = ref(heightUnits.value[0]);
 const selected_pressureRatingUnit = ref(pressureRatingUnits.value[0]);
@@ -2012,11 +2004,18 @@ const handleDeleteTemplate = async () => {
 };
 
 const handleExportPDF = () => {
-    const url = baseUrl + '/backend/wellstack-reporting-histories/export-pdf/' + templateForm.value.id + '?height=' + height_pdf.value +
-        '&length_unit=' + length_unit.value + '&weight_unit=' + weight_unit.value +
-        '&pressure_rating_unit=' + pressure_rating_unit.value +
-        '&shear_ram_dist_from_bottom_unit=' + shear_ram_dist_from_bottom_unit.value +
-        '&height_unit=' + height_unit.value;
+    if (selected_weightUnit.value.value === 'selected_convertion' ||
+        selected_heightUnit.value.value === 'selected_convertion' ||
+        selected_pressureRatingUnit.value.value === 'selected_convertion' ||
+        selected_shearRamDistFromBottomUnit.value.value === 'selected_convertion') {
+        useToast().error('Please select a valid unit for conversion');
+        return;
+    }
+    const url = baseUrl + '/backend/wellstack-reporting-histories/export-pdf/' + templateForm.value.id + '?height_pdf=' + height_pdf.value +
+        '&height_unit=' + selected_heightUnit.value.value +
+        '&weight_unit=' + selected_weightUnit.value.value +
+        '&pressure_rating_unit=' + selected_pressureRatingUnit.value.value +
+        '&shear_ram_dist_from_bottom_unit=' + selected_shearRamDistFromBottomUnit.value.value;
     window.open(url, '_blank');
 }
 

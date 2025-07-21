@@ -223,19 +223,13 @@ class WellstackController extends Controller
         }
 
         // Status filter optimization
-        if ($request->filled('status')) {
-            $status = $request->input('status');
-            switch ($status) {
-                case 'active':
-                    $query->whereNull('deleted_at');
-                    break;
-                case 'inactive':
-                    $query->onlyTrashed();
-                    break;
-                case 'all':
-                    $query->withTrashed();
-                    break;
-            }
+        $status = $request->input('status');
+        if ($status === 'active') {
+            $query->whereNull('deleted_at');
+        } elseif ($status === 'inactive') {
+            $query->onlyTrashed();
+        } elseif ($status === 'all') {
+            $query->withTrashed();
         }
 
         // Sorting
@@ -703,9 +697,13 @@ class WellstackController extends Controller
             } else if (count($component_has_shear) === 2) {
                 $lower_shear_component = $component_has_shear->sortBy('shear_ram_dist_from_bottom')->first();
                 $upper_shear_component = $component_has_shear->sortByDesc('shear_ram_dist_from_bottom')->first();
-
-                $distance_from_lower_shear = $lower_shear_component['shear_ram_dist_from_bottom'];
-                $distance_from_upper_shear = $upper_shear_component['shear_ram_dist_from_bottom'];
+                if ($lower_shear_component['shear_ram_dist_from_bottom'] === $upper_shear_component['shear_ram_dist_from_bottom']) {
+                    $distance_from_lower_shear = $lower_shear_component['shear_ram_dist_from_bottom'] + $upper_shear_component['shear_ram_dist_from_bottom'];
+                    $distance_from_upper_shear = 0;
+                } else {
+                    $distance_from_lower_shear = $lower_shear_component['shear_ram_dist_from_bottom'];
+                    $distance_from_upper_shear = $upper_shear_component['shear_ram_dist_from_bottom'];
+                }
             } else {
                 $sum_without_max_shear = $component_has_shear->pluck('shear_ram_dist_from_bottom')->filter(function ($value) {
                     return !is_null($value);
@@ -752,12 +750,7 @@ class WellstackController extends Controller
             'default_font' => 'sans-serif',
             'format' => [210, $heightPDF],
             'tempDir' => sys_get_temp_dir(),
-
-            // Tambahan untuk large content
-            'max_memory_usage' => 128,
-            'simpleTables' => true,
-            'useKerning' => false,
-            'restrictColorSpace' => 3,
+            'simpleTables' => false,
         ];
 
         // Inisialisasi mPDF
