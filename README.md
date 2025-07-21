@@ -75,7 +75,7 @@ MySQL/MariaDB
 ### Prerequisites
 - PHP 8.1 or higher
 - Composer
-- Node.js 16.x or higher
+- Node.js 22.x or higher
 - MySQL 8.0 or higher
 - Git
 
