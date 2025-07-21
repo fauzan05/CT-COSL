@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
+Route::get('/', function() {
+    return view('auth');
+})->name('auth')->middleware(RedirectIfAuthenticated::class);
 Route::get('/login', function () {
     return view('auth');
 })->name('auth')->middleware(RedirectIfAuthenticated::class);
-
 Route::post('/api/login', [AuthController::class, 'postLogin'])->name('login');
 Route::get('/api/current-user', [AuthController::class, 'currentUser'])->name('currentUser');
 

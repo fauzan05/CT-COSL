@@ -72,6 +72,10 @@
                                             </p>
                                         </div>
                                     </div>
+                                    <!-- Image Required Note -->
+                                    <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                        <span class="text-red-500">*</span> Image is required
+                                    </div>
                                 </div>
                                 <!-- Form Details - Full width on mobile, right column on desktop -->
                                 <div class="w-full md:w-1/2 flex flex-col justify-between">
@@ -80,10 +84,10 @@
                                         <div class="mb-4">
                                             <label for="name"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Name
+                                                Name <span class="text-red-500">*</span>
                                             </label>
                                             <input type="text" id="name" v-model="itemForm.name"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                 required>
                                         </div>
                                         <!-- Description -->
@@ -93,26 +97,26 @@
                                                 Description
                                             </label>
                                             <textarea id="description" v-model="itemForm.description" rows="4"
-                                                class="w-full px-3 py-2 dark:text-white border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                                class="w-full px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                                         </div>
                                         <!-- Serial Number -->
                                         <div class="mb-4">
-                                            <label for="name"
+                                            <label for="serialNumber"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Serial Number
+                                                Serial Number <span class="text-red-500">*</span>
                                             </label>
-                                            <input type="text" id="name" v-model="itemForm.serialNumber"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                            <input type="text" id="serialNumber" v-model="itemForm.serialNumber"
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                 required>
                                         </div>
                                         <!-- Owner -->
                                         <div class="mb-4">
-                                            <label for="name"
+                                            <label for="owner"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
                                                 Owner
                                             </label>
-                                            <input type="text" id="name" v-model="itemForm.owner"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                            <input type="text" id="owner" v-model="itemForm.owner"
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                         </div>
                                     </div>
                                     <!-- Dimensions Card -->
@@ -125,11 +129,11 @@
                                             <div class="flex space-x-2">
                                                 <input type="text" :value="itemForm.height.value"
                                                     @input="handleDecimalInput($event, itemForm.height)"
-                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                                 <Listbox v-model="itemForm.height.unit">
                                                     <div class="relative w-32">
                                                         <ListboxButton
-                                                            class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                            class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.height.unit }}
                                                             <span
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -157,11 +161,11 @@
                                             <div class="flex space-x-2">
                                                 <input type="text" :value="itemForm.weight.value"
                                                     @input="handleDecimalInput($event, itemForm.weight)"
-                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                                 <Listbox v-model="itemForm.weight.unit">
                                                     <div class="relative w-32">
                                                         <ListboxButton
-                                                            class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                            class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.weight.unit }}
                                                             <span
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -170,7 +174,7 @@
                                                             </span>
                                                         </ListboxButton>
                                                         <ListboxOptions
-                                                            class="absolute mt-1 w-full bg-white dark:bg-slate-700 shadow-lg max-h-60 rounded-md py-1 text-basering-opacity-5 overflow-auto focus:outline-none sm:text-sm z-50">
+                                                            class="absolute mt-1 w-full bg-white dark:bg-slate-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-opacity-5 overflow-auto focus:outline-none sm:text-sm z-50">
                                                             <ListboxOption v-for="unit in imperialWeightUnits" :key="unit"
                                                                 :value="unit"
                                                                 class="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-100 dark:hover:bg-slate-600 dark:text-white">
@@ -190,11 +194,11 @@
                                             <div class="flex space-x-2">
                                                 <input type="text" :value="itemForm.pressureRating.value"
                                                     @input="handleDecimalInput($event, itemForm.pressureRating)"
-                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                                 <Listbox v-model="itemForm.pressureRating.unit">
                                                     <div class="relative w-32">
                                                         <ListboxButton
-                                                            class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                            class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.pressureRating.unit }}
                                                             <span
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -223,11 +227,11 @@
                                             <div class="flex space-x-2">
                                                 <input type="text" :value="itemForm.shearRamDistFromBottom.value"
                                                     @input="handleDecimalInput($event, itemForm.shearRamDistFromBottom)"
-                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                                 <Listbox v-model="itemForm.shearRamDistFromBottom.unit">
                                                     <div class="relative w-32">
                                                         <ListboxButton
-                                                            class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                                            class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.shearRamDistFromBottom.unit }}
                                                             <span
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -258,7 +262,7 @@
                                                 Cancel
                                             </button>
                                             <button type="submit" :disabled="loading"
-                                                class="inline-flex justify-center cursor-pointer rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
+                                                class="inline-flex justify-center cursor-pointer rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
                                                 <span v-if="!loading">{{ titleModalButton }}</span>
                                                 <span v-else class="flex items-center">
                                                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -1367,6 +1371,11 @@ const saveItem = async () => {
         formData.append('shear_ram_dist_from_bottom', itemForm.value.shearRamDistFromBottom.value);
         formData.append('shear_ram_dist_from_bottom_unit', itemForm.value.shearRamDistFromBottom.unit);
         formData.append('owner', itemForm.value.owner);
+
+        if (itemForm.value.id == 0 && !uploadedItemImageFile.value) {
+            toast.error('Please upload an image file.');
+            return;
+        }
 
         if (uploadedItemImageFile.value) {
             const response = await fetch(itemImage.value);

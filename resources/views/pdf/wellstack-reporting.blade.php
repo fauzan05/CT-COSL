@@ -433,9 +433,9 @@
                 <th class="col-a">Item</th>
                 <th class="col-b">Description</th>
                 <th class="col-c">Serial Number</th>
-                <th class="col-d">Height (ft)</th>
-                <th class="col-e">Weight (lbs)</th>
-                <th class="col-f">Pressure (psi)</th>
+                <th class="col-d">Height {{ $selected_height_unit }}</th>
+                <th class="col-e">Weight {{ $selected_weight_unit }}</th>
+                <th class="col-f">Pressure {{ $selected_pressure_unit }}</th>
                 <th class="col-g">BHI or 3rd Party</th>
                 <th class="col-n">Image</th>
             </tr>

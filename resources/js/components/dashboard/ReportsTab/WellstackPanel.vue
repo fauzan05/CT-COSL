@@ -33,10 +33,10 @@
                                         <div class="mb-4">
                                             <label for="name"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Name
+                                                Name <span class="text-red-500">*</span>
                                             </label>
                                             <input type="text" id="name" v-model="templateForm.name"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600"
                                                 required>
                                         </div>
                                         <!-- Client -->
@@ -46,7 +46,7 @@
                                                 Client
                                             </label>
                                             <input type="text" id="client" v-model="templateForm.client"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                         <!-- Field -->
                                         <div class="mb-4">
@@ -55,7 +55,7 @@
                                                 Field
                                             </label>
                                             <input type="text" id="field" v-model="templateForm.field"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                         <!-- Well Name Number -->
                                         <div class="mb-4">
@@ -64,7 +64,7 @@
                                                 Well Name & Number
                                             </label>
                                             <input type="text" id="well_name" v-model="templateForm.well_name_number"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                         <!-- Min Restriction -->
                                         <div class="mb-4">
@@ -73,7 +73,7 @@
                                                 Min Restriction
                                             </label>
                                             <input type="text" id="min_restriction" v-model="templateForm.min_restriction"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                         <!-- KOP -->
                                         <div class="mb-4">
@@ -82,7 +82,7 @@
                                                 KOP
                                             </label>
                                             <input type="text" id="kop" v-model="templateForm.kop"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                         <!-- Category -->
                                         <div class="mb-4">
@@ -91,7 +91,7 @@
                                                 Category
                                             </label>
                                             <input type="text" id="category" v-model="templateForm.category"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                     </div>
 
@@ -104,7 +104,7 @@
                                                 BHP
                                             </label>
                                             <input type="text" id="bhp" v-model="templateForm.bhp"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                         <!-- BHST -->
                                         <div class="mb-4">
@@ -113,7 +113,7 @@
                                                 BHST
                                             </label>
                                             <input type="text" id="bhst" v-model="templateForm.bhst"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                         <!-- SO -->
                                         <div class="mb-4">
@@ -122,7 +122,7 @@
                                                 S/O
                                             </label>
                                             <input type="text" id="so" v-model="templateForm.so"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                         <!-- Supplier -->
                                         <div class="mb-4">
@@ -131,13 +131,13 @@
                                                 Supplier
                                             </label>
                                             <input type="text" id="supplier" v-model="templateForm.supplier"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                         <!-- Date Drawn -->
                                         <div class="mb-4">
                                             <label for="date"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Date Drawn
+                                                Date Drawn <span class="text-red-500">*</span>
                                             </label>
                                             <input type="date" id="date" v-model="templateForm.date_drawn"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white"
@@ -150,7 +150,7 @@
                                                 Drawn By
                                             </label>
                                             <input type="text" id="drawn_by" v-model="templateForm.drawn_by"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600">
                                         </div>
                                     </div>
                                 </div>
@@ -163,7 +163,7 @@
                                         Cancel
                                     </button>
                                     <button type="submit" :disabled="loading"
-                                        class="inline-flex justify-center cursor-pointer rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
+                                        class="inline-flex justify-center cursor-pointer rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
                                         <span v-if="!loading">{{ titleModalButton }}</span>
                                         <span v-else class="flex items-center">
                                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -522,35 +522,226 @@
                                         <thead class="bg-gray-50 dark:bg-gray-800 sticky top-0">
                                             <tr>
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    No</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    No
+                                                </th>
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Image</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    Image
+                                                </th>
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Description</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    Description
+                                                </th>
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Serial Number</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    Serial Number
+                                                </th>
+
+                                                <!-- Height Column with Unit Dropdown -->
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Height</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span>Height</span>
+                                                        <Listbox v-model="selected_heightUnit">
+                                                            <div class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-40 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                                                                    <span class="block truncate">{{ selected_heightUnit.name
+                                                                    }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
+                                                                        <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 mt-1 max-h-32 w-40 overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-xs shadow-lg ring-opacity-5 focus:outline-none">
+                                                                        <ListboxOption v-slot="{ active, selected }"
+                                                                            v-for="unit in heightUnits" :key="unit.value"
+                                                                            :value="unit" as="template">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-gray-100',
+                                                                                'relative cursor-pointer select-none py-1 px-2'
+                                                                            ]">
+                                                                                <span v-if="selected"
+                                                                                    class="absolute inset-y-0 right-0 flex items-center pr-1 text-blue-600 dark:text-blue-400">
+                                                                                    <CheckIcon class="h-3 w-3"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                                <span
+                                                                                    :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit.name }}
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </div>
+                                                        </Listbox>
+                                                    </div>
+                                                </th>
+
+                                                <!-- Weight Column with Unit Dropdown -->
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Weight</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span>Weight</span>
+                                                        <Listbox v-model="selected_weightUnit">
+                                                            <div class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-40 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                                                                    <span class="block truncate">{{ selected_weightUnit.name
+                                                                    }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
+                                                                        <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 mt-1 max-h-32 w-40 overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-xs shadow-lg ring-opacity-5 focus:outline-none">
+                                                                        <ListboxOption v-slot="{ active, selected }"
+                                                                            v-for="unit in weightUnits" :key="unit.value"
+                                                                            :value="unit" as="template">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-gray-100',
+                                                                                'relative cursor-pointer select-none py-1 px-2'
+                                                                            ]">
+                                                                                <span v-if="selected"
+                                                                                    class="absolute inset-y-0 right-0 flex items-center pr-1 text-blue-600 dark:text-blue-400">
+                                                                                    <CheckIcon class="h-3 w-3"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                                <span
+                                                                                    :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit.name }}
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </div>
+                                                        </Listbox>
+                                                    </div>
+                                                </th>
+
+                                                <!-- Pressure Rating Column with Unit Dropdown -->
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Pressure Rating</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span>Pressure Rating</span>
+                                                        <Listbox v-model="selected_pressureRatingUnit">
+                                                            <div class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-40 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                                                                    <span class="block truncate">{{
+                                                                        selected_pressureRatingUnit.name }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
+                                                                        <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 mt-1 max-h-32 w-40 overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-xs shadow-lg ring-opacity-5 focus:outline-none">
+                                                                        <ListboxOption v-slot="{ active, selected }"
+                                                                            v-for="unit in pressureRatingUnits"
+                                                                            :key="unit.value" :value="unit" as="template">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-gray-100',
+                                                                                'relative cursor-pointer select-none py-1 px-2'
+                                                                            ]">
+                                                                                <span v-if="selected"
+                                                                                    class="absolute inset-y-0 right-0 flex items-center pr-1 text-blue-600 dark:text-blue-400">
+                                                                                    <CheckIcon class="h-3 w-3"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                                <span
+                                                                                    :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit.name }}
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </div>
+                                                        </Listbox>
+                                                    </div>
+                                                </th>
+
+                                                <!-- Shear Ram Dist from Bottom Column with Unit Dropdown -->
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Shear Ram Dist from Bottom</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span>Shear Ram Dist from Bottom</span>
+                                                        <Listbox v-model="selected_shearRamDistFromBottomUnit">
+                                                            <div class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-40 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                                                                    <span class="block truncate">{{
+                                                                        selected_shearRamDistFromBottomUnit.name }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
+                                                                        <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 mt-1 max-h-32 w-40 overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-xs shadow-lg ring-opacity-5 focus:outline-none">
+                                                                        <ListboxOption v-slot="{ active, selected }"
+                                                                            v-for="unit in shearRamDistFromBottomUnits"
+                                                                            :key="unit.value" :value="unit" as="template">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-gray-100',
+                                                                                'relative cursor-pointer select-none py-1 px-2'
+                                                                            ]">
+                                                                                <span v-if="selected"
+                                                                                    class="absolute inset-y-0 right-0 flex items-center pr-1 text-blue-600 dark:text-blue-400">
+                                                                                    <CheckIcon class="h-3 w-3"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                                <span
+                                                                                    :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit.name }}
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </div>
+                                                        </Listbox>
+                                                    </div>
+                                                </th>
+
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    BHI or 3d Party</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    BHI or 3d Party
+                                                </th>
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Actions</th>
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
+                                                    Actions
+                                                </th>
                                             </tr>
                                         </thead>
 
@@ -566,7 +757,7 @@
                                             </tr>
                                         </tbody>
 
-                                        <!-- Draggable Items -->
+                                        <!-- Draggable Items with Unit Conversion -->
                                         <draggable v-else v-model="componentList" tag="tbody" item-key="component_id"
                                             @end="updatePositions"
                                             class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
@@ -574,32 +765,40 @@
                                                 <tr>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ index + 1 }}</td>
+                                                        {{ index + 1 }}
+                                                    </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <img :src="element.image" alt="Component image"
                                                             class="h-10 w-10 object-contain" />
                                                     </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.description }}</td>
+                                                        {{ element.description }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.serial_number }}</td>
+                                                        {{ element.serial_number }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.height }}</td>
+                                                        {{ getConvertedComponent(element).displayHeight }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.weight }}</td>
+                                                        {{ getConvertedComponent(element).displayWeight }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.pressure_rating }}</td>
+                                                        {{ getConvertedComponent(element).displayPressureRating }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.shear_ram_dist_from_bottom }}</td>
+                                                        {{ getConvertedComponent(element).displayShearRamDistFromBottom }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.owner }}</td>
+                                                        {{ element.owner }}
+                                                    </td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                         <button @click="removeComponent(index, element)"
                                                             :disabled="element.isRemoving"
@@ -842,7 +1041,7 @@
                                     <Listbox v-model="selectedSortByFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedSortByFilter.name }}</span>
                                                 <span
@@ -882,7 +1081,7 @@
                                     <Listbox v-model="selectedPageSizeFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedPageSizeFilter.name }}</span>
                                                 <span
@@ -944,7 +1143,7 @@
                                     <Listbox v-model="selectedStatusFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedStatusFilter.name }}</span>
                                                 <span
@@ -986,7 +1185,7 @@
                                     <Listbox v-model="selectedSortByFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedSortByFilter.name }}</span>
                                                 <span
@@ -1031,7 +1230,7 @@
                                     <Listbox v-model="selectedPageSizeFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedPageSizeFilter.name }}</span>
                                                 <span
@@ -1238,8 +1437,6 @@
                                         {{ template.supplier }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         {{ formatDateWithoutTime(template.date_drawn) }}
-                                        <br>
-                                        {{template.date_drawn}}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         {{ template.drawn_by }}</td>
@@ -1250,7 +1447,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         <div class="flex justify-end gap-2">
                                             <button @click="openModal('update', template)"
-                                                class="inline-flex items-center px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors duration-150">
+                                                class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
                                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1289,7 +1486,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { useToast } from 'vue-toastification';
 import draggable from 'vuedraggable';
 
@@ -1361,6 +1558,44 @@ const loading = ref(false);
 const isDesc = ref(true);
 const isLoadingData = ref(false);
 const componentList = ref([]);
+const lengthUnits = ref([
+    { name: 'Selected Convertion', value: 'selected_convertion' },
+    { name: 'Inch', value: 'inch' },
+    { name: 'Foot', value: 'ft' },
+    { name: 'Meter', value: 'm' },
+]);
+
+const weightUnits = ref([
+    { name: 'Selected Convertion', value: 'selected_convertion' },
+    { name: 'Pound', value: 'lbs' },
+    { name: 'Kilogram', value: 'kg' },
+]);
+
+const heightUnits = ref([
+    { name: 'Selected Convertion', value: 'selected_convertion' },
+    { name: 'Inch', value: 'inch' },
+    { name: 'Foot', value: 'ft' },
+    { name: 'Meter', value: 'm' },
+]);
+
+const pressureRatingUnits = ref([
+    { name: 'Selected Convertion', value: 'selected_convertion' },
+    { name: 'Psi', value: 'psi' },
+    { name: 'Bar', value: 'bar' },
+]);
+
+const shearRamDistFromBottomUnits = ref([
+    { name: 'Selected Convertion', value: 'selected_convertion' },
+    { name: 'Inch', value: 'inch' },
+    { name: 'Foot', value: 'ft' },
+    { name: 'Meter', value: 'm' },
+]);
+
+const selected_lengthUnit = ref(lengthUnits.value[0]);
+const selected_weightUnit = ref(weightUnits.value[0]);
+const selected_heightUnit = ref(heightUnits.value[0]);
+const selected_pressureRatingUnit = ref(pressureRatingUnits.value[0]);
+const selected_shearRamDistFromBottomUnit = ref(shearRamDistFromBottomUnits.value[0]);
 
 /* ------------------------------ FILTER & SORT ------------------------------ */
 const search = ref('');
@@ -1463,6 +1698,163 @@ const fetchAllWellstackItems = async (typeId) => {
     }
 };
 
+// Unit conversion functions
+const parseValueAndUnit = (str) => {
+    if (!str || str === 'N/A' || str === '') return { value: 0, unit: 'ft' };
+
+    // Handle string format like "5.5 ft" or just number
+    if (typeof str === 'string' && str.includes(' ')) {
+        const parts = str.trim().split(' ');
+        return {
+            value: parseFloat(parts[0]) || 0,
+            unit: parts[1] || 'ft'
+        };
+    }
+
+    // Handle just number
+    return {
+        value: parseFloat(str) || 0,
+        unit: 'ft' // default unit
+    };
+};
+
+// Length conversion (inch, ft, m)
+const convertLengthUnit = (value, fromUnit, toUnit) => {
+    if (fromUnit === toUnit) return value;
+
+    // Convert to meters as base unit
+    let valueInMeters;
+    switch (fromUnit.toLowerCase()) {
+        case 'inch':
+            valueInMeters = value * 0.0254;
+            break;
+        case 'ft':
+            valueInMeters = value * 0.3048;
+            break;
+        case 'm':
+            valueInMeters = value;
+            break;
+        default:
+            valueInMeters = value;
+    }
+
+    // Convert from meters to target unit
+    switch (toUnit.toLowerCase()) {
+        case 'inch':
+            return parseFloat((valueInMeters / 0.0254).toFixed(2));
+        case 'ft':
+            return parseFloat((valueInMeters / 0.3048).toFixed(2));
+        case 'm':
+            return parseFloat(valueInMeters.toFixed(2));
+        default:
+            return value;
+    }
+};
+
+// Weight conversion (lbs, kg)
+const convertWeightUnit = (value, fromUnit, toUnit) => {
+    if (fromUnit === toUnit) return value;
+
+    // Convert to kg as base unit
+    let valueInKg;
+    switch (fromUnit.toLowerCase()) {
+        case 'lbs':
+            valueInKg = value * 0.453592;
+            break;
+        case 'kg':
+            valueInKg = value;
+            break;
+        default:
+            valueInKg = value;
+    }
+
+    // Convert from kg to target unit
+    switch (toUnit.toLowerCase()) {
+        case 'lbs':
+            return parseFloat((valueInKg / 0.453592).toFixed(2));
+        case 'kg':
+            return parseFloat(valueInKg.toFixed(2));
+        default:
+            return value;
+    }
+};
+
+// Pressure conversion (psi, bar)
+const convertPressureUnit = (value, fromUnit, toUnit) => {
+    if (fromUnit === toUnit) return value;
+
+    // Convert to bar as base unit
+    let valueInBar;
+    switch (fromUnit.toLowerCase()) {
+        case 'psi':
+            valueInBar = value * 0.0689476;
+            break;
+        case 'bar':
+            valueInBar = value;
+            break;
+        default:
+            valueInBar = value;
+    }
+
+    // Convert from bar to target unit
+    switch (toUnit.toLowerCase()) {
+        case 'psi':
+            return parseFloat((valueInBar / 0.0689476).toFixed(2));
+        case 'bar':
+            return parseFloat(valueInBar.toFixed(2));
+        default:
+            return value;
+    }
+};
+
+const formatValue = (value, unit) => {
+    if (value === 0) return 'N/A';
+    return `${value} ${unit}`;
+};
+
+const getConvertedComponent = (component) => {
+    const heightData = parseValueAndUnit(component.height);
+    const weightData = parseValueAndUnit(component.weight);
+    const pressureData = parseValueAndUnit(component.pressure_rating);
+    const shearRamData = parseValueAndUnit(component.shear_ram_dist_from_bottom);
+
+    const convertedHeight = selected_heightUnit.value.value === 'selected_convertion'
+        ? component.height + ' ' + (component.height_unit || heightData.unit)
+        : formatValue(
+            convertLengthUnit(heightData.value, component.height_unit || heightData.unit, selected_heightUnit.value.value),
+            selected_heightUnit.value.value
+        );
+
+    const convertedWeight = selected_weightUnit.value.value === 'selected_convertion'
+        ? component.weight + ' ' + (component.weight_unit || weightData.unit)
+        : formatValue(
+            convertWeightUnit(weightData.value, component.weight_unit || weightData.unit, selected_weightUnit.value.value),
+            selected_weightUnit.value.value
+        );
+
+    const convertedPressure = selected_pressureRatingUnit.value.value === 'selected_convertion'
+        ? component.pressure_rating + ' ' + (component.pressure_rating_unit || pressureData.unit)
+        : formatValue(
+            convertPressureUnit(pressureData.value, component.pressure_rating_unit || pressureData.unit, selected_pressureRatingUnit.value.value),
+            selected_pressureRatingUnit.value.value
+        );
+
+    const convertedShearRam = selected_shearRamDistFromBottomUnit.value.value === 'selected_convertion'
+        ? component.shear_ram_dist_from_bottom + ' ' + (component.shear_ram_dist_from_bottom_unit || shearRamData.unit)
+        : formatValue(
+            convertLengthUnit(shearRamData.value, component.shear_ram_dist_from_bottom_unit || shearRamData.unit, selected_shearRamDistFromBottomUnit.value.value),
+            selected_shearRamDistFromBottomUnit.value.value
+        );
+
+    return {
+        ...component,
+        displayHeight: convertedHeight,
+        displayWeight: convertedWeight,
+        displayPressureRating: convertedPressure,
+        displayShearRamDistFromBottom: convertedShearRam
+    };
+};
+
 const fetchAllWellstackReportingDetails = async (templateId) => {
     loading.value = true;
     try {
@@ -1472,21 +1864,17 @@ const fetchAllWellstackReportingDetails = async (templateId) => {
             image: detail.image_url || 'default-image-url.jpg',
             description: detail.item_name,
             serial_number: detail.serial_number || '',
-            height: detail.height || 0,
+            height: parseFloat(detail.height) || 0,
             height_unit: detail.height_unit || 'ft',
-            weight: detail.weight || 0,
+            weight: parseFloat(detail.weight) || 0,
             weight_unit: detail.weight_unit || 'lbs',
-            pressure_rating: detail.pressure_rating || 0,
+            pressure_rating: parseFloat(detail.pressure_rating) || 0,
             pressure_rating_unit: detail.pressure_rating_unit || 'psi',
-            shear_ram_dist_from_bottom: detail.shear_ram_dist_from_bottom || 0,
+            shear_ram_dist_from_bottom: parseFloat(detail.shear_ram_dist_from_bottom) || 0,
             shear_ram_dist_from_bottom_unit: detail.shear_ram_dist_from_bottom_unit || 'ft',
             owner: detail.owner || '',
-            position: index + 1
+            isRemoving: false
         }));
-
-        componentList.value.forEach((component, index) => {
-            console.log(component)
-        });
     } catch (error) {
         console.error('Error fetching wellstack reporting details:', error);
     } finally {
@@ -1527,16 +1915,17 @@ const handleAddComponent = async () => {
         image: selectedItem.value.image_url || 'default-image-url.jpg',
         description: selectedItem.value.name,
         serial_number: selectedItem.value.serial_number || '',
-        height: selectedItem.value.height || 0,
+        height: parseFloat(selectedItem.value.height) || 0,
         height_unit: selectedItem.value.height_unit || 'ft',
-        weight: selectedItem.value.weight || 0,
+        weight: parseFloat(selectedItem.value.weight) || 0,
         weight_unit: selectedItem.value.weight_unit || 'lbs',
-        pressure_rating: selectedItem.value.pressure_rating || 0,
+        pressure_rating: parseFloat(selectedItem.value.pressure_rating) || 0,
         pressure_rating_unit: selectedItem.value.pressure_rating_unit || 'psi',
-        shear_ram_dist_from_bottom: selectedItem.value.shear_ram_dist_from_bottom || 0,
+        shear_ram_dist_from_bottom: parseFloat(selectedItem.value.shear_ram_dist_from_bottom) || 0,
         shear_ram_dist_from_bottom_unit: selectedItem.value.shear_ram_dist_from_bottom_unit || 'ft',
         owner: selectedItem.value.owner || '',
-        position: componentList.value.length + 1
+        position: componentList.value.length + 1,
+        isRemoving: false
     };
 
     try {
@@ -1580,6 +1969,13 @@ const removeComponent = async (index, component) => {
         component.isRemoving = false;
         useToast().error('Failed to remove component');
     }
+};
+
+const updatePositions = () => {
+    // Update the original componentList with new positions from convertedComponentList
+    componentList.value.forEach((component, index) => {
+        component.position = index + 1;
+    });
 };
 
 const handleUpdatePosition = async (event) => {

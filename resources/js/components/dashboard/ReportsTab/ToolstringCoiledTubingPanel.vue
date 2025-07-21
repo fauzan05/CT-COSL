@@ -89,7 +89,7 @@
                                                 Cancel
                                             </button>
                                             <button type="submit" :disabled="loading"
-                                                class="inline-flex justify-center cursor-pointer rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
+                                                class="inline-flex justify-center cursor-pointer rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
                                                 <span v-if="!loading">{{ titleModalButton }}</span>
                                                 <span v-else class="flex items-center">
                                                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -460,18 +460,162 @@
                             <div class="bg-white dark:bg-slate-800 my-5 rounded-xl shadow-md overflow-hidden">
                                 <div class="max-h-96 overflow-y-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                        <thead class="bg-gray-50  dark:bg-gray-800">
+                                        <thead class="bg-gray-50 dark:bg-gray-800 sticky top-0">
                                             <tr>
                                                 <th
                                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    No</th>
+                                                    No
+                                                </th>
                                                 <th class="px-6 py-3 dark:text-gray-300">Image</th>
                                                 <th class="px-6 py-3 dark:text-gray-300">Description</th>
-                                                <th class="px-6 py-3 dark:text-gray-300">OD</th>
-                                                <th class="px-6 py-3 dark:text-gray-300">ID</th>
+
+                                                <!-- OD Column with Unit Dropdown -->
+                                                <th class="px-6 py-3 dark:text-gray-300">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span>OD</span>
+                                                        <Listbox v-model="selected_od_unit_convertion">
+                                                            <div class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-38 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                                                                    <span class="block truncate">{{
+                                                                        selected_od_unit_convertion }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
+                                                                        <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 mt-1 max-h-32 w-38 overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-xs shadow-lg ring-opacity-5 focus:outline-none">
+                                                                        <ListboxOption v-slot="{ active, selected }"
+                                                                            v-for="unit in units" :key="unit" :value="unit"
+                                                                            as="template">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-gray-100',
+                                                                                'relative cursor-pointer select-none py-1 px-2'
+                                                                            ]">
+                                                                                <span
+                                                                                    :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit }}
+                                                                                </span>
+                                                                                <span v-if="selected"
+                                                                                    class="absolute inset-y-0 right-0 flex items-center pr-1 text-blue-600 dark:text-blue-400">
+                                                                                    <CheckIcon class="h-3 w-3"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </div>
+                                                        </Listbox>
+                                                    </div>
+                                                </th>
+
+                                                <!-- ID Column with Unit Dropdown -->
+                                                <th class="px-6 py-3 dark:text-gray-300">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span>ID</span>
+                                                        <Listbox v-model="selected_id_unit_convertion">
+                                                            <div class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-38 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                                                                    <span class="block truncate">{{
+                                                                        selected_id_unit_convertion }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
+                                                                        <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 mt-1 max-h-32 w-38 overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-xs shadow-lg ring-opacity-5 focus:outline-none">
+                                                                        <ListboxOption v-slot="{ active, selected }"
+                                                                            v-for="unit in units" :key="unit" :value="unit"
+                                                                            as="template">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-gray-100',
+                                                                                'relative cursor-pointer select-none py-1 px-2'
+                                                                            ]">
+                                                                                <span
+                                                                                    :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit }}
+                                                                                </span>
+                                                                                <span v-if="selected"
+                                                                                    class="absolute inset-y-0 right-0 flex items-center pr-1 text-blue-600 dark:text-blue-400">
+                                                                                    <CheckIcon class="h-3 w-3"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </div>
+                                                        </Listbox>
+                                                    </div>
+                                                </th>
+
                                                 <th class="px-6 py-3 dark:text-gray-300">Top Connection</th>
                                                 <th class="px-6 py-3 dark:text-gray-300">Bottom Connection</th>
-                                                <th class="px-6 py-3 dark:text-gray-300">Length</th>
+
+                                                <!-- Length Column with Unit Dropdown -->
+                                                <th class="px-6 py-3 dark:text-gray-300">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span>Length</span>
+                                                        <Listbox v-model="selected_length_unit_convertion">
+                                                            <div class="relative">
+                                                                <ListboxButton
+                                                                    class="relative w-38 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                                                                    <span class="block truncate">{{
+                                                                        selected_length_unit_convertion }}</span>
+                                                                    <span
+                                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
+                                                                        <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
+                                                                            aria-hidden="true" />
+                                                                    </span>
+                                                                </ListboxButton>
+
+                                                                <transition
+                                                                    leave-active-class="transition duration-100 ease-in"
+                                                                    leave-from-class="opacity-100"
+                                                                    leave-to-class="opacity-0">
+                                                                    <ListboxOptions
+                                                                        class="absolute z-10 mt-1 max-h-32 w-38 overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-xs shadow-lg ring-opacity-5 focus:outline-none">
+                                                                        <ListboxOption v-slot="{ active, selected }"
+                                                                            v-for="unit in units" :key="unit" :value="unit"
+                                                                            as="template">
+                                                                            <li :class="[
+                                                                                active ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-gray-100',
+                                                                                'relative cursor-pointer select-none py-1 px-2'
+                                                                            ]">
+                                                                                <span
+                                                                                    :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
+                                                                                    {{ unit }}
+                                                                                </span>
+                                                                                <span v-if="selected"
+                                                                                    class="absolute inset-y-0 right-0 flex items-center pr-1 text-blue-600 dark:text-blue-400">
+                                                                                    <CheckIcon class="h-3 w-3"
+                                                                                        aria-hidden="true" />
+                                                                                </span>
+                                                                            </li>
+                                                                        </ListboxOption>
+                                                                    </ListboxOptions>
+                                                                </transition>
+                                                            </div>
+                                                        </Listbox>
+                                                    </div>
+                                                </th>
+
                                                 <th class="px-6 py-3 dark:text-gray-300">Actions</th>
                                             </tr>
                                         </thead>
@@ -496,29 +640,36 @@
                                                 <tr>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ index + 1 }}</td>
+                                                        {{ index + 1 }}
+                                                    </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <img :src="element.image" alt="Component image"
                                                             class="h-10 w-10 object-contain" />
                                                     </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.description }}</td>
+                                                        {{ element.description }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.od }}</td>
+                                                        {{ getConvertedToolstringComponent(element).displayOd }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.id }}</td>
+                                                        {{ getConvertedToolstringComponent(element).displayId }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.top_connection }}</td>
+                                                        {{ element.top_connection }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.bottom_connection }}</td>
+                                                        {{ element.bottom_connection }}
+                                                    </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                                        {{ element.length }}</td>
+                                                        {{ getConvertedToolstringComponent(element).displayLength }}
+                                                    </td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                         <button @click="removeComponent(index, element)"
                                                             :disabled="element.isRemoving"
@@ -539,7 +690,7 @@
                                             <!-- Empty state -->
                                             <template #footer>
                                                 <tr v-if="componentList.length === 0">
-                                                    <td colspan="7"
+                                                    <td colspan="9"
                                                         class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                                         No components found
                                                     </td>
@@ -761,7 +912,7 @@
                                     <Listbox v-model="selectedSortByFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedSortByFilter.name }}</span>
                                                 <span
@@ -801,7 +952,7 @@
                                     <Listbox v-model="selectedPageSizeFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedPageSizeFilter.name }}</span>
                                                 <span
@@ -863,7 +1014,7 @@
                                     <Listbox v-model="selectedStatusFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedStatusFilter.name }}</span>
                                                 <span
@@ -905,7 +1056,7 @@
                                     <Listbox v-model="selectedSortByFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedSortByFilter.name }}</span>
                                                 <span
@@ -950,7 +1101,7 @@
                                     <Listbox v-model="selectedPageSizeFilter">
                                         <div class="relative">
                                             <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
+                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
                                                 <span class="block truncate text-gray-900 dark:text-white">{{
                                                     selectedPageSizeFilter.name }}</span>
                                                 <span
@@ -1102,7 +1253,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         <div class="flex justify-end gap-2">
                                             <button @click="openModal('update', 'toolstring_coiled_tubing', template)"
-                                                class="inline-flex items-center px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors duration-150">
+                                                class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
                                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1142,7 +1293,7 @@
 
 <script setup>
 /* --------------------------------- IMPORTS --------------------------------- */
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import draggable from 'vuedraggable';
@@ -1202,6 +1353,13 @@ const pageSizeItems = [
     { name: '100', value: 100 },
 ];
 
+// Data Units
+const units = ref(['selected convertion', 'inch', 'mm', 'cm'])
+
+// Selected unit states
+const selected_od_unit_convertion = ref(units.value[0]);
+const selected_id_unit_convertion = ref(units.value[0]);
+const selected_length_unit_convertion = ref(units.value[0]);
 
 /* -------------------------- MODAL / FORM STATE ----------------------------- */
 const titleModal = ref('');
@@ -1250,10 +1408,6 @@ const queryItemDimensions = ref('');
 const componentListLoading = ref(false);
 const AddComponentLoading = ref(false);
 const updatePositionLoading = ref(false);
-
-const outer_diameter_unit = ref('inch');
-const inner_diameter_unit = ref('inch');
-const length_unit = ref('inch');
 const height_pdf = ref(1500);
 
 const isDeleteModalOpen = ref(false);
@@ -1280,6 +1434,96 @@ const formatDate = (utcDateString) => {
     return date.toLocaleString('en-US', options).replace(',', '').replace(',', ' at');
 };
 
+/* ------------------------------ CONVERSION ----------------------------------- */
+// Unit conversion functions
+const parseValueAndUnit = (str) => {
+    if (!str || str === 'N/A') return { value: 0, unit: 'inch' };
+    const parts = str.trim().split(' ');
+    return {
+        value: parseFloat(parts[0]) || 0,
+        unit: parts[1] || 'inch'
+    };
+};
+
+const convertUnit = (value, fromUnit, toUnit) => {
+    if (fromUnit === toUnit) return value;
+
+    // Convert to mm as base unit first
+    let valueInMm;
+    switch (fromUnit.toLowerCase()) {
+        case 'inch':
+            valueInMm = value * 25.4;
+            break;
+        case 'cm':
+            valueInMm = value * 10;
+            break;
+        case 'mm':
+            valueInMm = value;
+            break;
+        default:
+            valueInMm = value;
+    }
+
+    // Convert from mm to target unit
+    switch (toUnit.toLowerCase()) {
+        case 'inch':
+            return parseFloat((valueInMm / 25.4).toFixed(2));
+        case 'cm':
+            return parseFloat((valueInMm / 10).toFixed(2));
+        case 'mm':
+            return parseFloat(valueInMm.toFixed(2));
+        default:
+            return value;
+    }
+};
+
+const formatValue = (value, unit) => {
+    if (value === 0) return 'N/A';
+    return `${value} ${unit}`;
+};
+
+// Computed properties for converted values
+const getConvertedToolstringComponent = (component) => {
+    // Parse original values
+    const odData = parseValueAndUnit(component.od);
+    const idData = parseValueAndUnit(component.id);
+    const lengthData = parseValueAndUnit(component.length);
+
+    // Convert values based on selected units
+    const convertedOd = selected_od_unit_convertion.value === 'selected convertion'
+        ? component.od
+        : formatValue(
+            convertUnit(odData.value, odData.unit, selected_od_unit_convertion.value),
+            selected_od_unit_convertion.value
+        );
+
+    const convertedId = selected_id_unit_convertion.value === 'selected convertion'
+        ? component.id
+        : formatValue(
+            convertUnit(idData.value, idData.unit, selected_id_unit_convertion.value),
+            selected_id_unit_convertion.value
+        );
+
+    const convertedLength = selected_length_unit_convertion.value === 'selected convertion'
+        ? component.length
+        : formatValue(
+            convertUnit(lengthData.value, lengthData.unit, selected_length_unit_convertion.value),
+            selected_length_unit_convertion.value
+        );
+
+    return {
+        ...component,
+        displayOd: convertedOd,
+        displayId: convertedId,
+        displayLength: convertedLength
+    };
+};
+
+const updatePositions = () => {
+    componentList.value.forEach((component, index) => {
+        component.position = index + 1;
+    });
+}
 
 /* ------------------------------ API CALLS ---------------------------------- */
 const fetchAllTemplates = async () => {
@@ -1359,18 +1603,14 @@ const fetchAllToolstringReportingDetails = async (templateId) => {
         componentList.value = response.data.map((detail, index) => ({
             component_id: detail.id,
             image: baseUrl + detail.image_url || 'default-image-url.jpg',
-            description: detail.description,
-            od: `${detail.dimension?.outer_diameter.value} ${detail.dimension?.outer_diameter.unit}` || 'N/A',
-            id: `${detail.dimension?.inner_diameter.value} ${detail.dimension?.inner_diameter.unit}` || 'N/A',
+            description: detail.item_name,
+            od: `${ parseFloat(detail.dimension?.outer_diameter.value) } ${ detail.dimension?.outer_diameter.unit}` || 'N/A',
+            id: `${ parseFloat(detail.dimension?.inner_diameter.value) } ${detail.dimension?.inner_diameter.unit}` || 'N/A',
             top_connection: detail.thread_size?.top_connection || 'N/A',
             bottom_connection: detail.thread_size?.bottom_connection || 'N/A',
-            length: `${detail.dimension?.length.value} ${detail.dimension?.length.unit}` || 'N/A',
+            length: `${ parseFloat(detail.dimension?.length.value) } ${detail.dimension?.length.unit}` || 'N/A',
             position: index + 1
         }));
-
-        componentList.value.forEach((component, index) => {
-            console.log(component)
-        });
     } catch (error) {
         console.error('Error fetching toolstring reporting details:', error);
     } finally {
@@ -1457,9 +1697,11 @@ const handleAddComponent = async () => {
         component_id: selectedItem.value.id,
         image: baseUrl + selectedItem.value.image_url || 'default-image-url.jpg',
         description: selectedItem.value.description,
-        od: `${selectedItemDimension.value.outer_diameter.value} ${selectedItemDimension.value.outer_diameter.unit}`,
-        id: `${selectedItemDimension.value.inner_diameter.value} ${selectedItemDimension.value.inner_diameter.unit}`,
-        length: `${selectedItemDimension.value.length.value} ${selectedItemDimension.value.length.unit}`,
+        od: `${ parseFloat(selectedItemDimension?.value.outer_diameter.value) } ${selectedItemDimension.value.outer_diameter.unit}` || 'N/A',
+        id: `${ parseFloat(selectedItemDimension?.value.inner_diameter.value) } ${selectedItemDimension.value.inner_diameter.unit}` || 'N/A',
+        top_connection: selectedItemDimension.value.thread_size?.top_connection || 'N/A',
+        bottom_connection: selectedItemDimension.value.thread_size?.bottom_connection || 'N/A',
+        length: `${ parseFloat(selectedItemDimension?.value.length.value) } ${selectedItemDimension.value.length.unit}` || 'N/A',
         position: componentList.value.length + 1
     };
 
@@ -1547,7 +1789,13 @@ const handleDeleteTemplate = async () => {
 
 /* ------------------------------- EXPORT PDF COMPONENT -------------------------- */
 const handleExportPDF = () => {
-    const url = baseUrl + '/backend/toolstring-reporting-histories/export-pdf/' + templateToolstringForm.value.id + '?od_unit=' + outer_diameter_unit.value + '&id_unit=' + inner_diameter_unit.value + '&length_unit=' + length_unit.value + '&height_pdf=' + height_pdf.value;
+    if (selected_od_unit_convertion.value === 'selected convertion' ||
+        selected_id_unit_convertion.value === 'selected convertion' ||
+        selected_length_unit_convertion.value === 'selected convertion') {
+        useToast().error('Please select a valid unit conversion');
+        return;
+    }
+    const url = baseUrl + '/backend/toolstring-reporting-histories/export-pdf/' + templateToolstringForm.value.id + '?od_unit=' + selected_od_unit_convertion.value + '&id_unit=' + selected_id_unit_convertion.value + '&length_unit=' + selected_length_unit_convertion.value + '&height_pdf=' + height_pdf.value;
     window.open(url, '_blank');
 }
 

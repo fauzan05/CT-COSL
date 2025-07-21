@@ -10,10 +10,13 @@ use App\Models\ToolstringReportingHistoryDetailModel;
 use App\Models\ToolstringReportingHistoryModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 class ToolstringController extends Controller
@@ -160,7 +163,7 @@ class ToolstringController extends Controller
                 'bottom_connection' => $item->threadSize->bottom_connection,
             ] : null;
             $item->dimension_sets = ToolstringItemDimensionModel::where('toolstring_item_id', $item->id)
-            ->get()
+                ->get()
                 ->map(function ($dimension) {
                     return [
                         'id' => $dimension->id,
@@ -222,7 +225,7 @@ class ToolstringController extends Controller
             $validatedData['updated_by'] = $request->user()->id; // Assuming the user is authenticated
             $validatedData['thread_id'] = $validatedData['thread_id'] ?? null;
             $validatedData['thread_size_id'] = $validatedData['thread_size_id'] ?? null;
-            
+
             // Create
             $item = ToolstringItemModel::create($validatedData);
 
@@ -674,7 +677,11 @@ class ToolstringController extends Controller
             ->orderBy('position', 'asc')
             ->get();
 
-        $get_all_components = $get_all_components->map(function ($detail) {
+        $selected_od_unit_convertion = $request->query('od_unit', 'inch');
+        $selected_id_unit_convertion = $request->query('id_unit', 'inch');
+        $selected_length_unit_convertion = $request->query('length_unit', 'inch');
+
+        $get_all_components = $get_all_components->map(function ($detail) use ($selected_od_unit_convertion, $selected_id_unit_convertion, $selected_length_unit_convertion) {
             return [
                 'id' => $detail->id,
                 'position' => $detail->position,
@@ -689,16 +696,28 @@ class ToolstringController extends Controller
                     : null,
                 'dimension' => [
                     'outer_diameter' => [
-                        'value' => optional($detail->dimension)->outer_diameter,
-                        'unit' => optional($detail->dimension)->outer_diameter_unit,
+                        'value' => $this->convertDimensionValue(
+                            optional($detail->dimension)->outer_diameter,
+                            optional($detail->dimension)->outer_diameter_unit,
+                            $selected_od_unit_convertion
+                        ),
+                        'unit' => $selected_od_unit_convertion,
                     ],
                     'inner_diameter' => [
-                        'value' => optional($detail->dimension)->inner_diameter,
-                        'unit' => optional($detail->dimension)->inner_diameter_unit,
+                        'value' => $this->convertDimensionValue(
+                            optional($detail->dimension)->inner_diameter,
+                            optional($detail->dimension)->inner_diameter_unit,
+                            $selected_id_unit_convertion
+                        ),
+                        'unit' => $selected_id_unit_convertion,
                     ],
                     'length' => [
-                        'value' => optional($detail->dimension)->length,
-                        'unit' => optional($detail->dimension)->length_unit,
+                        'value' => $this->convertDimensionValue(
+                            optional($detail->dimension)->length,
+                            optional($detail->dimension)->length_unit,
+                            $selected_length_unit_convertion
+                        ),
+                        'unit' => $selected_length_unit_convertion,
                     ],
                 ],
                 'thread' => ThreadModel::find(optional($detail->item)->thread_id) ? [
@@ -713,9 +732,6 @@ class ToolstringController extends Controller
             ];
         });
 
-        $odUnit = $request->query('od_unit');
-        $idUnit = $request->query('id_unit');
-        $lengthUnit = $request->query('length_unit');
         $heightPDF = $request->query('height_pdf', 1500);
         $reportingHistory = ToolstringReportingHistoryModel::findOrFail($templateId);
         $formattedDate = \Carbon\Carbon::parse($reportingHistory->date)->format('j/n/Y');
@@ -725,14 +741,54 @@ class ToolstringController extends Controller
             'components' => $get_all_components,
             'reportingHistory' => ToolstringReportingHistoryModel::findOrFail($templateId),
             'formattedDate' => $formattedDate,
-            'odUnit' => $odUnit,
-            'idUnit' => $idUnit,
-            'lengthUnit' => $lengthUnit,
+            'odUnit' => $selected_od_unit_convertion,
+            'idUnit' => $selected_id_unit_convertion,
+            'lengthUnit' => $selected_length_unit_convertion,
             'company_logo' => $logoBase64,
         ])
             ->setPaper([0, 0, 595.28, $heightPDF], 'portrait');
 
-        return $pdf->stream('toolstring-reporting.pdf');
+        $timestamp = time();
+        return $pdf->stream("Toolstring_Reporting_$timestamp.pdf");
+    }
+
+    /**
+     * Convert dimension value from one unit to another
+     */
+    private function convertDimensionValue($value, $fromUnit, $toUnit)
+    {
+        // Return original value if no conversion needed or value is null
+        if (!$value || !$fromUnit || !$toUnit || $fromUnit === $toUnit) {
+            return floatval($value);
+        }
+
+        // Convert to mm as base unit first
+        $valueInMm = 0;
+        switch (strtolower($fromUnit)) {
+            case 'inch':
+                $valueInMm = $value * 25.4;
+                break;
+            case 'cm':
+                $valueInMm = $value * 10;
+                break;
+            case 'mm':
+                $valueInMm = $value;
+                break;
+            default:
+                return floatval($value); // Return original if unknown unit
+        }
+
+        // Convert from mm to target unit
+        switch (strtolower($toUnit)) {
+            case 'inch':
+                return round($valueInMm / 25.4, 2);
+            case 'cm':
+                return round($valueInMm / 10, 2);
+            case 'mm':
+                return round($valueInMm, 2);
+            default:
+                return floatval($value); // Return original if unknown unit
+        }
     }
 
     private function getImageAsBase64($path)

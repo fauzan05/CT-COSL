@@ -631,15 +631,29 @@ class WellstackController extends Controller
 
     public function exportReportingHistoryPdf(Request $request, $templateId)
     {
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', 300);
+        ini_set('pcre.backtrack_limit', 3000000);
+
         $get_all_components = WellstackReportingHistoryDetailModel::where('wellstack_reporting_history_id', $templateId)
             ->with(['item', 'type'])
             ->orderBy('position', 'asc')
             ->get();
 
+        $selected_height_unit = $request->query('height_unit', 'ft');
+        $selected_weight_unit = $request->query('weight_unit', 'lbs');
+        $selected_pressure_unit = $request->query('pressure_unit', 'psi');
+        $selected_shear_ram_unit = $request->query('shear_ram_unit', 'ft');
+
         $distance_from_lower_shear = 0;
         $distance_from_upper_shear = 0;
 
-        $get_all_components = $get_all_components->map(function ($component) {
+        $get_all_components = $get_all_components->map(function ($component) use (
+            $selected_height_unit,
+            $selected_weight_unit,
+            $selected_pressure_unit,
+            $selected_shear_ram_unit
+        ) {
             return [
                 'id' => $component->id,
                 'position' => $component->position,
@@ -653,15 +667,27 @@ class WellstackController extends Controller
                     ? $this->getImageAsBase64('assets/images/wellstack_items/' . $component->item->image)
                     : null,
                 'serial_number' => optional($component->item)->serial_number,
-                'height' => optional($component->item)->height,
-                'height_unit' => optional($component->item)->height_unit,
-                'weight' => optional($component->item)->weight,
-                'weight_unit' => optional($component->item)->weight_unit,
-                'pressure_rating' => optional($component->item)->pressure_rating,
-                'pressure_rating_unit' => optional($component->item)->pressure_rating_unit,
+                'height' => $this->convertLengthValue(
+                    optional($component->item)->height,
+                    optional($component->item)->height_unit,
+                    $selected_height_unit
+                ),
+                'weight' => $this->convertWeightValue(
+                    optional($component->item)->weight,
+                    optional($component->item)->weight_unit,
+                    $selected_weight_unit
+                ),
+                'pressure_rating' => $this->convertPressureValue(
+                    optional($component->item)->pressure_rating,
+                    optional($component->item)->pressure_rating_unit,
+                    $selected_pressure_unit
+                ),
                 'owner' => optional($component->item)->owner,
-                'shear_ram_dist_from_bottom' => optional($component->item)->shear_ram_dist_from_bottom,
-                'shear_ram_dist_from_bottom_unit' => optional($component->item)->shear_ram_dist_from_bottom_unit
+                'shear_ram_dist_from_bottom' => $this->convertLengthValue(
+                    optional($component->item)->shear_ram_dist_from_bottom,
+                    optional($component->item)->shear_ram_dist_from_bottom_unit,
+                    $selected_shear_ram_unit
+                ),
             ];
         });
 
@@ -704,11 +730,14 @@ class WellstackController extends Controller
             'total_height' => $total_height,
             'total_weight' => $get_all_components->sum('weight') ?: 0,
             'min_psi' => $get_all_components->min('pressure_rating') ?: 0,
+            'selected_height_unit' => $selected_height_unit,
+            'selected_weight_unit' => $selected_weight_unit,
+            'selected_pressure_unit' => $selected_pressure_unit,
+            'selected_shear_ram_unit' => $selected_shear_ram_unit,
         ];
 
         // Render Blade view to HTML
         $html = view('pdf.wellstack-reporting', $data)->render();
-
         // Konfigurasi mPDF
         $mpdfConfig = [
             'mode' => 'utf-8',
@@ -721,18 +750,138 @@ class WellstackController extends Controller
             'orientation' => 'P',
             'default_font_size' => 10,
             'default_font' => 'sans-serif',
-            'format' => [210, $heightPDF], // A4 size in mm, height can be adjusted
+            'format' => [210, $heightPDF],
             'tempDir' => sys_get_temp_dir(),
+
+            // Tambahan untuk large content
+            'max_memory_usage' => 128,
+            'simpleTables' => true,
+            'useKerning' => false,
+            'restrictColorSpace' => 3,
         ];
 
         // Inisialisasi mPDF
         $mpdf = new Mpdf($mpdfConfig);
         $mpdf->SetAutoPageBreak(false);
-        // Tambahkan konten
-        $mpdf->WriteHTML($html);
 
+        // Tambahkan konten
+        if (strlen($html) > 500000) { // 500KB
+            $chunks = str_split($html, 200000); // 200KB per chunk
+            foreach ($chunks as $index => $chunk) {
+                if ($index > 0) $mpdf->AddPage();
+                $mpdf->WriteHTML($chunk);
+            }
+        } else {
+            $mpdf->WriteHTML($html);
+        }
+
+        $timestamp = time();
         // Output PDF
-        return $mpdf->Output('Well_Stack_Schematic.pdf', 'I');
+        return $mpdf->Output("Well_Stack_Schematic_$timestamp.pdf", 'I');
+    }
+
+    /**
+     * Convert length value (inch, ft, m)
+     */
+    private function convertLengthValue($value, $fromUnit, $toUnit)
+    {
+        if (!$value || !$fromUnit || !$toUnit || $fromUnit === $toUnit) {
+            return floatval($value);
+        }
+
+        // Convert to meters as base unit
+        $valueInMeters = 0;
+        switch (strtolower($fromUnit)) {
+            case 'inch':
+                $valueInMeters = $value * 0.0254;
+                break;
+            case 'ft':
+                $valueInMeters = $value * 0.3048;
+                break;
+            case 'm':
+                $valueInMeters = $value;
+                break;
+            default:
+                return floatval($value);
+        }
+
+        // Convert from meters to target unit
+        switch (strtolower($toUnit)) {
+            case 'inch':
+                return round($valueInMeters / 0.0254, 2);
+            case 'ft':
+                return round($valueInMeters / 0.3048, 2);
+            case 'm':
+                return round($valueInMeters, 2);
+            default:
+                return floatval($value);
+        }
+    }
+
+    /**
+     * Convert weight value (lbs, kg)
+     */
+    private function convertWeightValue($value, $fromUnit, $toUnit)
+    {
+        if (!$value || !$fromUnit || !$toUnit || $fromUnit === $toUnit) {
+            return floatval($value);
+        }
+
+        // Convert to kg as base unit
+        $valueInKg = 0;
+        switch (strtolower($fromUnit)) {
+            case 'lbs':
+                $valueInKg = $value * 0.453592;
+                break;
+            case 'kg':
+                $valueInKg = $value;
+                break;
+            default:
+                return floatval($value);
+        }
+
+        // Convert from kg to target unit
+        switch (strtolower($toUnit)) {
+            case 'lbs':
+                return round($valueInKg / 0.453592, 2);
+            case 'kg':
+                return round($valueInKg, 2);
+            default:
+                return floatval($value);
+        }
+    }
+
+    /**
+     * Convert pressure value (psi, bar)
+     */
+    private function convertPressureValue($value, $fromUnit, $toUnit)
+    {
+        if (!$value || !$fromUnit || !$toUnit || $fromUnit === $toUnit) {
+            return floatval($value);
+        }
+
+        // Convert to bar as base unit
+        $valueInBar = 0;
+        switch (strtolower($fromUnit)) {
+            case 'psi':
+                $valueInBar = $value * 0.0689476;
+                break;
+            case 'bar':
+                $valueInBar = $value;
+                break;
+            default:
+                return floatval($value);
+        }
+
+        // Convert from bar to target unit
+        switch (strtolower($toUnit)) {
+            case 'psi':
+                return round($valueInBar / 0.0689476, 2);
+            case 'bar':
+                return round($valueInBar, 2);
+            default:
+                return floatval($value);
+        }
     }
 
     private function getImageAsBase64($path)

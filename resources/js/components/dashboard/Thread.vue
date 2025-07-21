@@ -39,7 +39,7 @@
                                     class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                                            Type
+                                            Type <span class="text-red-500">*</span>
                                         </label>
                                         <input type="text" v-model="threadForm.type"
                                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -61,7 +61,7 @@
                                     </div>
                                     <div class="flex items-end">
                                         <button type="button" @click="addSize"
-                                            class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
+                                            class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                             :disabled="addSizeLoading">
                                             <span v-if="!addSizeLoading">
                                                 {{ editingSizeIndex !== null ? 'Update Size' : 'Add Size' }}
@@ -155,7 +155,7 @@
                                                         <template v-if="editingRowIndex === index">
                                                             <input type="text"
                                                                 v-model="listThreadSizes[index].top_connection"
-                                                                class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" />
+                                                                class="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white" />
                                                         </template>
                                                         <template v-else>
                                                             {{ threadSize.top_connection }}
@@ -167,7 +167,7 @@
                                                         <template v-if="editingRowIndex === index">
                                                             <input type="text"
                                                                 v-model="listThreadSizes[index].bottom_connection"
-                                                                class="w-full px-2 py-1 border rounded dark:bg-gray-700 dark:text-white" />
+                                                                class="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white" />
                                                         </template>
                                                         <template v-else>
                                                             {{ threadSize.bottom_connection }}
@@ -237,7 +237,7 @@
                                         Cancel
                                     </button>
                                     <button type="submit"
-                                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                         :disabled="loading">
                                         <span v-if="!loading">{{ titleModalButton }}</span>
                                         <span v-else class="flex items-center">
