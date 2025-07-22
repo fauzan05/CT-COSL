@@ -147,11 +147,11 @@
                 @endphp
                 <tr>
                     <td>
-                        @if ($component['image_base64'])
-                            <img src="{{ $component['image_base64'] }}">
+                        @if ($component['image_url'])
+                            <img src="{{ asset($component['image_url']) }}">
                         @endif
                     </td>
-                    <td>{{ $component['description'] }}</td>
+                    <td>{{ $component['item_name'] }}</td>
                     <td>
                         {{ $component['dimension']['outer_diameter']['value'] ?? 'N/A' }}
                     </td>

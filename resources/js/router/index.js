@@ -6,6 +6,7 @@ import Reporting from "../components/dashboard/Reporting.vue";
 import Thread from "../components/dashboard/Thread.vue";
 import Wellstack from "../components/dashboard/WellstackType.vue";
 import Users from "../components/dashboard/Users.vue";
+import JobTracker from "../components/dashboard/JobTracker.vue";
 
 const routes = [
     {
@@ -35,6 +36,10 @@ const routes = [
     {
         path: "/users",
         component: Users,
+    },
+    {
+        path: "/job-tracker",
+        component: JobTracker,
     }
 ];
 

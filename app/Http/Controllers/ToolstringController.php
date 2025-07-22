@@ -690,9 +690,9 @@ class ToolstringController extends Controller
                 'image_url' => $detail->item && $detail->item->image
                     ? Storage::url('assets/images/toolstring_items/' . $detail->item->image)
                     : null,
-                'image_base64' => $detail->item && $detail->item->image
-                    ? $this->getImageAsBase64('assets/images/toolstring_items/' . $detail->item->image)
-                    : null,
+                // 'image_base64' => $detail->item && $detail->item->image
+                //     ? $this->getImageAsBase64('assets/images/toolstring_items/' . $detail->item->image)
+                //     : null,
                 'dimension' => [
                     'outer_diameter' => [
                         'value' => $this->convertDimensionValue(
@@ -745,7 +745,14 @@ class ToolstringController extends Controller
             'lengthUnit' => $selected_length_unit_convertion,
             'company_logo' => $logoBase64,
         ])
-            ->setPaper([0, 0, 595.28, $heightPDF], 'portrait');
+            ->setPaper([0, 0, 595.28, $heightPDF], 'portrait')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'isPhpEnabled' => true,
+                'defaultFont' => 'Arial',
+                'temp_dir' => storage_path('app/temp'),
+            ]);
 
         $timestamp = time();
         return $pdf->stream("Toolstring_Reporting_$timestamp.pdf");
@@ -817,5 +824,22 @@ class ToolstringController extends Controller
         $data = file_get_contents($fullPath);
 
         return 'data:image/' . $type . ';base64,' . base64_encode($data);
+    }
+
+    public function restoreItem(Request $request)
+    {
+        // Get the IDs from the request
+        $ids = $request->input('ids', []);
+
+        // If no IDs are provided, return an error response
+        if (empty($ids)) {
+            return response()->json(['message' => 'No IDs provided'], 400);
+        }
+
+        // Restore the items
+        ToolstringItemModel::withTrashed()->whereIn('id', $ids)->restore();
+
+        // Return a success response
+        return response()->json(['message' => 'Items restored successfully'], 200);
     }
 }

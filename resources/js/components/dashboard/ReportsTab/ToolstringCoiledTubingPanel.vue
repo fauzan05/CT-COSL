@@ -1695,8 +1695,8 @@ const handleAddComponent = async () => {
 
     const newComponent = {
         component_id: selectedItem.value.id,
-        image: baseUrl + selectedItem.value.image_url || 'default-image-url.jpg',
-        description: selectedItem.value.description,
+        image: selectedItem.value.image_url || 'default-image-url.jpg',
+        description: selectedItem.value.name,
         od: `${ parseFloat(selectedItemDimension?.value.outer_diameter.value) } ${selectedItemDimension.value.outer_diameter.unit}` || 'N/A',
         id: `${ parseFloat(selectedItemDimension?.value.inner_diameter.value) } ${selectedItemDimension.value.inner_diameter.unit}` || 'N/A',
         top_connection: selectedItemDimension.value.thread_size?.top_connection || 'N/A',

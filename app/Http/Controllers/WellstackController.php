@@ -133,7 +133,7 @@ class WellstackController extends Controller
 
     public function updateItem(Request $request, $id)
     {
-        DB::transaction(function () use ($request, $id) {
+        $response = DB::transaction(function () use ($request, $id) {
             // Validate input
             $validatedData = $request->validate([
                 'wellstack_type_id' => 'required|exists:wellstack_types,id',
@@ -159,23 +159,26 @@ class WellstackController extends Controller
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $extension = $image->getClientOriginalExtension();
-
                 $filename = Str::random(40) . '.' . $extension;
+                $result = $image->storeAs('public/assets/images/wellstack_items/', $filename);
 
-                $image->storeAs('public/assets/images/wellstack_items/', $filename);
+                if (!$result) {
+                    return response()->json(['message' => 'Failed to upload image'], 500);
+                }
 
-                // Simpan hanya nama file
                 $validatedData['image'] = $filename;
             }
 
             // Update fields
             $item->fill($validatedData);
-            $item->updated_by = $request->user()->id; // Assuming the user is authenticated
-            $item->updated_at = now(); // Update the updated_at timestamp
+            $item->updated_by = $request->user()->id;
+            $item->updated_at = now();
             $item->save();
 
-            return response()->json($item);
+            return $item; // Return data, bukan response
         });
+
+        return response()->json($response); // Return response di sini
     }
 
     public function getItems(Request $request)
@@ -497,7 +500,17 @@ class WellstackController extends Controller
 
         // Retrieve reporting history details by template ID
         $details = WellstackReportingHistoryDetailModel::where('wellstack_reporting_history_id', $templateId)
-            ->with(['reportingHistory', 'item'])
+            ->where('deleted_at', null) // Ensure we only get active details
+            ->whereHas('type', function ($query) {
+                $query->whereNull('deleted_at'); // Ensure we only get active types
+            })
+            ->whereHas('item', function ($query) {
+                $query->whereNull('deleted_at'); // Ensure we only get active items
+            })
+            ->whereHas('reportingHistory', function ($query) use ($templateId) {
+                $query->where('id', $templateId);
+            })
+            ->with(['reportingHistory', 'item', 'type'])
             ->orderBy('position', 'asc')
             ->get();
 
@@ -630,7 +643,16 @@ class WellstackController extends Controller
         ini_set('pcre.backtrack_limit', 3000000);
 
         $get_all_components = WellstackReportingHistoryDetailModel::where('wellstack_reporting_history_id', $templateId)
-            ->with(['item', 'type'])
+            ->with(['reportingHistory', 'item', 'type'])
+            ->whereHas('type', function ($query) {
+                $query->whereNull('deleted_at');
+            })
+            ->whereHas('item', function ($query) {
+                $query->whereNull('deleted_at'); // Ensure we only get active items
+            })
+            ->whereHas('reportingHistory', function ($query) use ($templateId) {
+                $query->where('id', $templateId);
+            })
             ->orderBy('position', 'asc')
             ->get();
 
@@ -657,9 +679,9 @@ class WellstackController extends Controller
                 'image_url' => $component->item && $component->item->image
                     ? Storage::url('assets/images/wellstack_items/' . $component->item->image)
                     : null,
-                'image_base64' => $component->item && $component->item->image
-                    ? $this->getImageAsBase64('assets/images/wellstack_items/' . $component->item->image)
-                    : null,
+                // 'image_base64' => $component->item && $component->item->image
+                //     ? $this->getImageAsBase64('assets/images/wellstack_items/' . $component->item->image)
+                //     : null,
                 'serial_number' => optional($component->item)->serial_number,
                 'height' => $this->convertLengthValue(
                     optional($component->item)->height,
@@ -688,7 +710,7 @@ class WellstackController extends Controller
         $total_height = $get_all_components->sum('height') ?: 0;
 
         $component_has_shear = $get_all_components->filter(function ($component) {
-            return !is_null($component['shear_ram_dist_from_bottom']);
+            return !is_null($component['shear_ram_dist_from_bottom']) && floatval($component['shear_ram_dist_from_bottom']) > 0;
         });
 
         if (count($component_has_shear) > 0) {
@@ -749,7 +771,8 @@ class WellstackController extends Controller
             'default_font_size' => 10,
             'default_font' => 'sans-serif',
             'format' => [210, $heightPDF],
-            'tempDir' => sys_get_temp_dir(),
+            'tempDir' => storage_path('app/temp'), // Laravel
+            // atau 'tempDir' => public_path('temp'), // untuk direktori public
             'simpleTables' => false,
         ];
 
@@ -904,5 +927,22 @@ class WellstackController extends Controller
         $data = file_get_contents($fullPath);
 
         return 'data:image/' . $type . ';base64,' . base64_encode($data);
+    }
+
+    public function restoreItem(Request $request)
+    {
+        // Get the IDs from the request
+        $ids = $request->input('ids', []);
+
+        // If no IDs are provided, return an error response
+        if (empty($ids)) {
+            return response()->json(['message' => 'No IDs provided'], 400);
+        }
+
+        // Restore the items
+        WellstackItemModel::withTrashed()->whereIn('id', $ids)->restore();
+
+        // Return a success response
+        return response()->json(['message' => 'Items restored successfully'], 200);
     }
 }

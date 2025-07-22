@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JobTrackerController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ToolstringController;
 use App\Http\Controllers\UserController;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::get('/', function() {
     return view('auth');
-})->name('auth')->middleware(RedirectIfAuthenticated::class);
+})->name('auth-blank')->middleware(RedirectIfAuthenticated::class);
 Route::get('/login', function () {
     return view('auth');
 })->name('auth')->middleware(RedirectIfAuthenticated::class);
@@ -31,6 +32,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/api/toolstring-types-search', [ToolstringController::class, 'searchTypes'])->name('searchTypes');
 
     // Toolstring items management
+    Route::put('/api/toolstring-items-restore', [ToolstringController::class, 'restoreItem'])->name('restoreItem');
     Route::post('/api/toolstring-items', [ToolstringController::class, 'storeItem'])->name('storeItem');
     Route::get('/api/toolstring-items', [ToolstringController::class, 'getItems'])->name('getItems');
     Route::put('/api/toolstring-items/{id}', [ToolstringController::class, 'updateItem'])->name('updateItem');
@@ -83,12 +85,14 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/api/wellstack-types-search', [WellstackController::class, 'searchTypes'])->name('searchWellstackTypes');
 
     // Wellstack item management
+    Route::put('/api/wellstack-items-restore', [WellstackController::class, 'restoreItem'])->name('restoreWellstackItem');
     Route::post('/api/wellstack-items', [WellstackController::class, 'storeItem'])->name('storeWellstackItem');
     Route::get('/api/wellstack-items', [WellstackController::class, 'getItems'])->name('getWellstackItems');
     Route::put('/api/wellstack-items/{id}', [WellstackController::class, 'updateItem'])->name('updateWellstackItem');
     Route::delete('/api/wellstack-items', [WellstackController::class, 'deleteItem'])->name('deleteWellstackItem');
     Route::get('/api/wellstack-items/{id}', [WellstackController::class, 'getItem'])->name('getWellstackItem');
     Route::get('/api/wellstack-items-search', [WellstackController::class, 'searchItemByIdType'])->name('searchWellstackItemByIdType');
+    // restore wellstack item
 
     // Wellstack reporting history
     Route::post('/api/wellstack-reporting-histories', [WellstackController::class, 'storeReportingHistory'])->name('storeWellstackReportingHistory');
@@ -114,6 +118,14 @@ Route::middleware([AuthMiddleware::class])->group(function () {
 
     Route::post('/api/check-username', [UserController::class, 'checkUsername'])->name('checkUsername');
     Route::post('/api/check-email', [UserController::class, 'checkEmail'])->name('checkEmail');
+
+    // Job Tackers
+    Route::post('/api/job-trackers', [JobTrackerController::class, 'storeJobTracker'])->name('storeJobTracker');
+    Route::get('/api/job-trackers', [JobTrackerController::class, 'getJobTrackers'])->name('getJobTrackers');
+    Route::get('/api/job-trackers/{id}', [JobTrackerController::class, 'getJobTracker'])->name('getJobTracker');
+    Route::put('/api/job-trackers/{id}', [JobTrackerController::class, 'updateJobTracker'])->name('updateJobTracker');
+    Route::delete('/api/job-trackers', [JobTrackerController::class, 'deleteJobTracker'])->name('deleteJobTracker');
+
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

@@ -452,8 +452,8 @@
                     <td class="col-f">{{ $component['pressure_rating'] ?? 0 }}</td>
                     <td class="col-g">{{ $component['owner'] ?? '-' }}</td>
                     <td class="col-n">
-                        @if (!empty($component['image_base64']))
-                            <img src="{{ $component['image_base64'] }}"
+                        @if (!empty($component['image_url']))
+                            <img src="{{ asset($component['image_url']) }}"
                                 style="width: 50px; height: 100%; object-fit: contain;">
                         @else
                             N/A

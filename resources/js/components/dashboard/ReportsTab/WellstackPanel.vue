@@ -1853,7 +1853,7 @@ const fetchAllWellstackReportingDetails = async (templateId) => {
         const response = await axios.get(`${baseUrl}/api/wellstack-reporting-history-details/${templateId}`);
         componentList.value = response.data.map((detail, index) => ({
             component_id: detail.id,
-            image: detail.image_url || 'default-image-url.jpg',
+            image: baseUrl + detail.image_url || 'default-image-url.jpg',
             description: detail.item_name,
             serial_number: detail.serial_number || '',
             height: parseFloat(detail.height) || 0,
@@ -1904,7 +1904,7 @@ const handleAddComponent = async () => {
 
     const newComponent = {
         component_id: selectedItem.value.id,
-        image: selectedItem.value.image_url || 'default-image-url.jpg',
+        image: baseUrl + selectedItem.value.image_url || 'default-image-url.jpg',
         description: selectedItem.value.name,
         serial_number: selectedItem.value.serial_number || '',
         height: parseFloat(selectedItem.value.height) || 0,

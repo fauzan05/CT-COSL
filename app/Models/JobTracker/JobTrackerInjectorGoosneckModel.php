@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models\JobTracker;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class JobTrackerInjectorGoosneckModel extends Model
+{
+    use SoftDeletes;
+    protected $table = 'job_tracker_injector_goosnecks';
+    public $timestamps = false;
+    protected $fillable = [
+        'job_tracker_id',
+        'injector_goosneck_id',
+        'created_by',
+        'updated_by',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+    /**
+     * Get the job tracker associated with the injector goosneck.
+     */
+    public function jobTracker()
+    {
+        return $this->belongsTo(JobTrackerModel::class, 'job_tracker_id');
+    }
+    /**
+     * Get the injector goosneck associated with the job tracker.
+     */
+    public function injectorGoosneck()
+    {
+        return $this->belongsTo(InjectorGoosneckModel::class, 'injector_goosneck_id');
+    }
+}
