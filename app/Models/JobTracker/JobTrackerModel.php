@@ -69,6 +69,13 @@ class JobTrackerModel extends Model
     {
         return $this->hasMany(NitrogenPersonnelModel::class, 'job_tracker_id');
     }
+     /**
+     * Get the ct personnel associated with the job tracker.
+     */
+    public function ctPersonnels()
+    {
+        return $this->hasMany(CtPersonnelModel::class, 'job_tracker_id');
+    }
     /**
      * Get the volume acids associated with the job tracker.
      */
@@ -90,5 +97,46 @@ class JobTrackerModel extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * Get the job descriptions associated with the job tracker.
+     */
+    public function jobDescriptions()
+    {
+        return $this->hasMany(JobTrackerJobDescriptionModel::class, 'job_tracker_id');
+    }
+    
+
+    /**
+     * Get the n2 tank associated with the job tracker.
+     */
+    public function n2Tanks()
+    {
+        return $this->hasMany(JobTrackerN2TankModel::class, 'job_tracker_id');
+    }
+
+    /**
+     * Get the containers associated with the job tracker.
+     */
+    public function containers()
+    {
+        return $this->hasMany(JobTrackerContainerModel::class, 'job_tracker_id');
+    }
+
+    /**
+     * Get the injector goosenecks associated with the job tracker.
+     */
+    public function injectorGoosenecks()
+    {
+        return $this->hasMany(JobTrackerInjectorGoosneckModel::class, 'job_tracker_id');
+    }
+
+    /**
+     * Get the miscellaneous tools associated with the job tracker.
+     */
+    public function miscellaneousTools()
+    {
+        return $this->hasMany(JobTrackerMiscellaneousToolModel::class, 'job_tracker_id');
     }
 }

@@ -200,6 +200,10 @@
                         </td>
                     </tr>
                     <tr>
+                        <td style="width:80px; white-space:nowrap; padding-right:5px;"><strong>NAME</strong></td>
+                        <td style="text-align:left;">{{ $reportingHistory->name }}</td>
+                    </tr>
+                    <tr>
                         <td style="width:80px; white-space:nowrap; padding-right:5px;"><strong>CLIENT</strong></td>
                         <td style="text-align:left;">{{ $reportingHistory->client }}</td>
                     </tr>

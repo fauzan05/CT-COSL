@@ -15,7 +15,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative z-10 p-6">
+        <div class="relative p-6">
             <!-- Development Stage Banner -->
             <div class="mb-6 bg-gradient-to-r from-orange-500/95 to-red-500/95 backdrop-blur-md rounded-xl border border-orange-300/50 shadow-2xl">
                 <div class="p-6">

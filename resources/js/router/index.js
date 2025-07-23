@@ -7,6 +7,7 @@ import Thread from "../components/dashboard/Thread.vue";
 import Wellstack from "../components/dashboard/WellstackType.vue";
 import Users from "../components/dashboard/Users.vue";
 import JobTracker from "../components/dashboard/JobTracker.vue";
+import JobTrackerForm from "../components/dashboard/JobTracker/JobTrackerForm.vue";
 
 const routes = [
     {
@@ -40,7 +41,14 @@ const routes = [
     {
         path: "/job-tracker",
         component: JobTracker,
-    }
+        children: [
+            {
+                path: "create",
+                component: JobTrackerForm,
+                name: 'create-job-tracker'
+            }
+        ]
+    },
 ];
 
 export default createRouter({

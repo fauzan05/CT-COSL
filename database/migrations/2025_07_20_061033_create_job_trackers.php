@@ -35,7 +35,6 @@ return new class extends Migration
             
             $table->string('revenue_currency')->default('USD');
             $table->decimal('revenue_coiled_tubing', 10, 2)->nullable();
-            $table->decimal('revenue_nitrogen', 10, 2)->nullable();
             $table->decimal('revenue_pumping', 10, 2)->nullable();
             $table->decimal('revenue_special_tools', 10, 2)->nullable();
             $table->decimal('revenue_acid', 10, 2)->nullable();
