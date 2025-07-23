@@ -9,6 +9,7 @@ use App\Models\WellstackTypeModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -791,9 +792,11 @@ class WellstackController extends Controller
             $mpdf->WriteHTML($html);
         }
 
-        $timestamp = time();
         // Output PDF
-        return $mpdf->Output("Well_Stack_Schematic_$timestamp.pdf", 'I');
+        $timestamp = time();
+        $fullname = Auth::user() ? Auth::user()->fullname : 'Unknown_User';
+        $filename = "Well_Stack_Schematic_{$fullname}_{$timestamp}.pdf";
+        return $mpdf->Output($filename, \Mpdf\Output\Destination::INLINE);
     }
 
     /**

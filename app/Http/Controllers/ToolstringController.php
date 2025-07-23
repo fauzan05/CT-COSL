@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Mpdf\Mpdf;
 
 class ToolstringController extends Controller
 {
@@ -735,8 +736,7 @@ class ToolstringController extends Controller
         $reportingHistory = ToolstringReportingHistoryModel::findOrFail($templateId);
         $formattedDate = \Carbon\Carbon::parse($reportingHistory->date)->format('j/n/Y');
         $logoBase64 = $this->imageToBase64FromPublic('assets/images/company/company-logo.png');
-
-        $pdf = Pdf::loadView('pdf.toolstring-reporting', [
+        $data = [
             'components' => $get_all_components,
             'reportingHistory' => ToolstringReportingHistoryModel::findOrFail($templateId),
             'formattedDate' => $formattedDate,
@@ -744,18 +744,44 @@ class ToolstringController extends Controller
             'idUnit' => $selected_id_unit_convertion,
             'lengthUnit' => $selected_length_unit_convertion,
             'company_logo' => $logoBase64,
-        ])
-            ->setPaper([0, 0, 595.28, $heightPDF], 'portrait')
-            ->setOptions([
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => true,
-                'isPhpEnabled' => true,
-                'defaultFont' => 'Arial',
-                'temp_dir' => storage_path('app/temp'),
-            ]);
+        ];
+        $html = view('pdf.toolstring-reporting', $data)->render();
+        $mpdfConfig = [
+            'mode' => 'utf-8',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 15,
+            'margin_bottom' => 15,
+            'margin_header' => 5,
+            'margin_footer' => 5,
+            'orientation' => 'P',
+            'default_font_size' => 10,
+            'default_font' => 'sans-serif',
+            'format' => [210, $heightPDF],
+            'tempDir' => storage_path('app/temp'), // Laravel
+            // atau 'tempDir' => public_path('temp'), // untuk direktori public
+            'simpleTables' => false,
+        ];
 
+        // Inisialisasi mPDF
+        $mpdf = new Mpdf($mpdfConfig);
+        $mpdf->SetAutoPageBreak(false);
+
+        // Tambahkan konten
+        if (strlen($html) > 500000) { // 500KB
+            $chunks = str_split($html, 200000); // 200KB per chunk
+            foreach ($chunks as $index => $chunk) {
+                if ($index > 0) $mpdf->AddPage();
+                $mpdf->WriteHTML($chunk);
+            }
+        } else {
+            $mpdf->WriteHTML($html);
+        }
+
+        // Output PDF
         $timestamp = time();
-        return $pdf->stream("Toolstring_Reporting_$timestamp.pdf");
+        $filename = "Toolstring_Reporting_{$reportingHistory->name}_{$timestamp}.pdf";
+        return $mpdf->Output($filename, \Mpdf\Output\Destination::INLINE);
     }
 
     /**
