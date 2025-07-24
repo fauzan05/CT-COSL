@@ -126,6 +126,11 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::put('/api/job-trackers/{id}', [JobTrackerController::class, 'updateJobTracker'])->name('updateJobTracker');
     Route::delete('/api/job-trackers', [JobTrackerController::class, 'deleteJobTracker'])->name('deleteJobTracker');
 
+    // Job Tracker Job Description
+    Route::get('/api/job-tracker-master/job-descriptions', [JobTrackerController::class, 'getJobDescriptions'])->name('getJobDescriptions');
+    Route::post('/api/job-tracker-master/job-descriptions', [JobTrackerController::class, 'storeJobDescription'])->name('storeJobDescription');
+    Route::put('/api/job-tracker-master/job-descriptions/{id}', [JobTrackerController::class, 'updateJobDescription'])->name('updateJobDescription');
+    Route::delete('/api/job-tracker-master/job-descriptions/{id}', [JobTrackerController::class, 'deleteJobDescription'])->name('deleteJobDescription');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

@@ -609,52 +609,8 @@ async function fetchJobTrackers(page = 1) {
     }
 }
 
-async function fetchJobTrackerSizes(jobTrackerId) {
-    try {
-        loadingAllSizes.value = true;
-        const response = await axios.get(`${baseUrl}/api/jobTrackers/${jobTrackerId}/sizes`);
-        listJobTrackerSizes.value = response.data.data;
-    } catch (error) {
-        console.error(error);
-    } finally {
-        loadingAllSizes.value = false;
-    }
-}
-
 const saveJobTracker = async () => {
-    loading.value = true;
-    const toast = useToast();
-
-    try {
-        const data = {
-            type: jobTrackerForm.value.type,
-            sizes: listJobTrackerSizes.value,
-        };
-
-        if (selectedJobTracker.value) {
-            // Update existing jobTracker
-            data.id = selectedJobTracker.value.id;
-            const response = await axios.put(`${baseUrl}/api/jobTrackers/${selectedJobTracker.value.id}`, data);
-            if (response.status === 200) {
-                toast.success('JobTracker updated successfully!');
-            }
-        } else {
-            // Add new jobTracker
-            const response = await axios.post(`${baseUrl}/api/jobTrackers`, data);
-            if (response.status === 201) {
-                toast.success('JobTracker saved successfully!');
-            }
-        }
-
-        resetForm();
-        fetchJobTrackers(pagination.value.current_page);
-        closeModal();
-    } catch (error) {
-        console.error(error);
-        toast.error('Failed to save jobTracker.');
-    } finally {
-        loading.value = false;
-    }
+    console.log('Saving JobTracker:', jobTrackerForm.value, listJobTrackerSizes.value);
 };
 
 function handleDeleteJobTracker() {

@@ -33,7 +33,7 @@
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
                 <h3
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
-                    Basic Information
+                    General Information
                 </h3>
                 <!-- Job Description -->
                 <JobDescriptionInput v-model="jobTracker.job_description" />
@@ -102,7 +102,7 @@
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
                 <h3
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
-                    Technical Specifications
+                    Well Information
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Max Deviation -->

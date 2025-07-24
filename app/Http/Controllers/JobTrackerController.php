@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
 use Illuminate\Http\Request;
 
@@ -37,7 +38,7 @@ class JobTrackerController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('job_name', 'like', '%' . $search . '%')
-                  ->orWhere('job_number', 'like', '%' . $search . '%');
+                    ->orWhere('job_number', 'like', '%' . $search . '%');
             });
         }
         // Paginate the results
@@ -117,5 +118,70 @@ class JobTrackerController extends Controller
 
         // Return the full paginator object as JSON
         return response()->json($jobTrackers, 200);
+    }
+
+    public function getJobDescriptions(Request $request)
+    {
+        // return with no pagination
+        $jobDescriptions = JobDescriptionModel::with('updatedBy')
+            ->get()
+            ->map(function ($jobDescription) {
+                return [
+                    'id' => $jobDescription->id,
+                    'description' => $jobDescription->description,
+                    'created_by' => $jobDescription->created_by,
+                    'updated_by_name' => $jobDescription->updatedBy ? $jobDescription->updatedBy->fullname : null,
+                ];
+            });
+        return response()->json($jobDescriptions, 200);
+    }
+
+    public function storeJobDescription(Request $request)
+    {
+        $request->validate([
+            'description' => 'required|string|max:255',
+        ]);
+
+        $jobDescription = JobDescriptionModel::create([
+            'description' => $request->input('description'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Job description created successfully.',
+            'data' => $jobDescription,
+        ], 201);
+    }
+
+    public function updateJobDescription(Request $request, $id)
+    {
+        $request->validate([
+            'description' => 'required|string|max:255',
+        ]);
+
+        $jobDescription = JobDescriptionModel::findOrFail($id);
+        $jobDescription->update([
+            'description' => $request->input('description'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Job description updated successfully.',
+            'data' => $jobDescription,
+        ], 200);
+    }
+
+    public function deleteJobDescription(Request $request, $id)
+    {
+        $jobDescription = JobDescriptionModel::findOrFail($id);
+        $jobDescription->delete();
+
+        return response()->json([
+            'message' => 'Job description deleted successfully.',
+        ], 200);
     }
 }
