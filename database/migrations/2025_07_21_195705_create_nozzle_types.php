@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('nozzle_types', function (Blueprint $table) {
             $table->id();
-            $table->string('nozzle_name');
+            $table->string('type_name');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

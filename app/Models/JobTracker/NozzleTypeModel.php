@@ -11,7 +11,7 @@ class NozzleTypeModel extends Model
     protected $table = 'nozzle_types';
     public $timestamps = false;
     protected $fillable = [
-        'nozzle_name',
+        'type_name',
         'created_by',
         'updated_by',
     ];

@@ -10,6 +10,7 @@ use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
+use App\Models\JobTracker\NozzleTypeModel;
 use App\Models\JobTracker\WellheadXOverModel;
 use App\Models\JobTracker\WellStatusModel;
 use Illuminate\Http\Request;
@@ -721,6 +722,65 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Completion Size deleted successfully.',
+        ], 200);
+    }
+
+    public function getNozzleTypes(Request $request)
+    {
+        // Assuming you have a NozzleTypeModel
+        $nozzleTypes = NozzleTypeModel::select('id', 'type_name')
+            ->orderBy('type_name')
+            ->get();
+
+        return response()->json($nozzleTypes, 200);
+    }
+
+    public function storeNozzleType(Request $request)
+    {
+        $request->validate([
+            'type_name' => 'required|string|max:255',
+        ]);
+
+        $nozzleType = NozzleTypeModel::create([
+            'type_name' => $request->input('type_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Nozzle Type created successfully.',
+            'data' => $nozzleType,
+        ], 201);
+    }
+
+    public function updateNozzleType(Request $request, $id)
+    {
+        $request->validate([
+            'type_name' => 'required|string|max:255',
+        ]);
+
+        $nozzleType = NozzleTypeModel::findOrFail($id);
+        $nozzleType->update([
+            'type_name' => $request->input('type_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Nozzle Type updated successfully.',
+            'data' => $nozzleType,
+        ], 200);
+    }
+
+    public function deleteNozzleType(Request $request, $id)
+    {
+        $nozzleType = NozzleTypeModel::findOrFail($id);
+        $nozzleType->delete();
+
+        return response()->json([
+            'message' => 'Nozzle Type deleted successfully.',
         ], 200);
     }
 }
