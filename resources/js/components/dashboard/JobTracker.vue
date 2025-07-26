@@ -1,6 +1,6 @@
 <template>
     <head>
-        <Title>JobTracker</Title>
+        <Title>Job Tracker</Title>
     </head>
     <!-- Main Content -->
     <div class="p-6 bg-gray-50 min-h-screen dark:bg-slate-900/50 dark:text-gray-100 rounded-xl">

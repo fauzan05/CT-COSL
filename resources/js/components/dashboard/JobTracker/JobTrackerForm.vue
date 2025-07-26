@@ -29,7 +29,7 @@
 
         <!-- Form content -->
         <form @submit.prevent="handleSubmit" class="space-y-6">
-            <!-- Basic Information Section -->
+            <!-- General Information Section -->
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
                 <h3
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
@@ -37,6 +37,7 @@
                 </h3>
                 <!-- Job Description -->
                 <JobDescriptionInput v-model="jobTracker.job_description" />
+                <CustomerInput v-model="jobTracker.customer" />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Well Name -->
                     <div>
@@ -98,7 +99,7 @@
                 </div>
             </div>
 
-            <!-- Technical Specifications Section -->
+            <!-- Well Information Section -->
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
                 <h3
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
@@ -186,11 +187,33 @@
                 </div>
             </div>
 
-            <!-- Volumes Section -->
+            <!-- Equipment and Tools Section -->
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
                 <h3
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
-                    Volumes
+                    Equipment and Tools
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <MaxDepthInput v-model="jobTracker.max_depths" />
+                </div>
+            </div>
+
+            <!-- Personnel Section -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
+                <h3
+                    class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    Personnel
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <CTPersonnelInput v-model="jobTracker.ct_personnels" />
+                </div>
+            </div>
+
+            <!-- Treatment Section -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
+                <h3
+                    class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    Treatment
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Nitrogen Volume -->
@@ -380,6 +403,9 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import JobDescriptionInput from "../../forms/JobTrackers/JobDescriptionInput.vue";
+import MaxDepthInput from "../../forms/JobTrackers/MaxDepthInput.vue";
+import CTPersonnelInput from "../../forms/JobTrackers/CTPersonnelInput.vue";
+import CustomerInput from "../../forms/JobTrackers/CustomerInput.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -397,6 +423,18 @@ const jobTracker = ref({
     job_finish_date: "",
     job_days: null,
     max_deviation: null,
+    max_depths: [
+        {
+            value: 0,
+            unit: "ft",
+        }
+    ],
+    ct_personnels: [
+        {
+            name: "",
+        }
+    ],
+    customer: "",
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,

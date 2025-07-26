@@ -4,17 +4,35 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Job Description
             </label>
-            <div class="flex gap-2">
+            <div class="flex items-center gap-2">
+                <!-- reset button -->
+                <button @click="selectedJobDescription = ''" type="button"
+                    class="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Reset
+                </button>
                 <button @click="showAddOption = true" type="button"
-                    class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">
+                    class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
                     Add Option
                 </button>
                 <button @click="showManageOptions = !showManageOptions" type="button"
-                    class="px-3 py-1 text-xs bg-purple-500 hover:bg-purple-600 text-white rounded-md transition-colors">
+                    class="px-3 py-1 text-xs bg-purple-500 hover:bg-purple-600 text-white rounded-md transition-colors flex items-center gap-1">
+                    <i class="fa-solid fa-sliders"></i>
                     Manage Options
                 </button>
                 <button @click="addDescription" type="button"
-                    class="px-3 py-1 text-xs bg-green-500 hover:bg-green-600 text-white rounded-md transition-colors">
+                    class="px-3 py-1 text-xs bg-green-500 hover:bg-green-600 text-white rounded-md transition-colors flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
                     Add Description
                 </button>
             </div>
@@ -37,7 +55,7 @@
                     leave-to-class="opacity-0">
                     <ListboxOptions
                         class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm z-10">
-                        <ListboxOption v-slot="{ active, selected }" v-for="option in listOptions" :key="option.value"
+                        <ListboxOption v-if="listOptions.length > 0" v-slot="{ active, selected }" v-for="option in listOptions" :key="option.value"
                             :value="option.value" as="template">
                             <li :class="[
                                 active ? 'bg-blue-100 dark:bg-gray-600 text-blue-900 dark:text-white' : 'text-gray-900 dark:text-gray-300',
@@ -51,6 +69,11 @@
                                     class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-blue-400">
                                     <CheckIcon class="h-5 w-5" aria-hidden="true" />
                                 </span>
+                            </li>
+                        </ListboxOption>
+                        <ListboxOption v-if="listOptions.length === 0" as="template">
+                            <li class="cursor-default select-none py-2 pl-10 pr-4 text-gray-500 dark:text-gray-400">
+                                No options available
                             </li>
                         </ListboxOption>
                     </ListboxOptions>
@@ -182,7 +205,7 @@ const updateOption = async ({ index, oldValue, newValue }) => {
             if (selectedJobDescription.value === oldValue) {
                 selectedJobDescription.value = newValue
             }
-            
+
             console.log(`Job description option "${oldValue}" updated to "${newValue}" successfully!`)
             toast.success('Job description option updated successfully!')
         })

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobTracker\CustomerModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
 use Illuminate\Http\Request;
@@ -182,6 +183,65 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Job description deleted successfully.',
+        ], 200);
+    }
+
+    public function getCustomers(Request $request)
+    {
+        // Assuming you have a Customer model
+        $customers = CustomerModel::select('id', 'customer_name')
+            ->orderBy('customer_name')
+            ->get();
+
+        return response()->json($customers, 200);
+    }
+
+    public function storeCustomer(Request $request)
+    {
+        $request->validate([
+            'customer_name' => 'required|string|max:255',
+        ]);
+
+        $customer = CustomerModel::create([
+            'customer_name' => $request->input('customer_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Customer created successfully.',
+            'data' => $customer,
+        ], 201);
+    }
+
+    public function updateCustomer(Request $request, $id)
+    {
+        $request->validate([
+            'customer_name' => 'required|string|max:255',
+        ]);
+
+        $customer = CustomerModel::findOrFail($id);
+        $customer->update([
+            'customer_name' => $request->input('customer_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Customer updated successfully.',
+            'data' => $customer,
+        ], 200);
+    }
+
+    public function deleteCustomer(Request $request, $id)
+    {
+        $customer = CustomerModel::findOrFail($id);
+        $customer->delete();
+
+        return response()->json([
+            'message' => 'Customer deleted successfully.',
         ], 200);
     }
 }
