@@ -227,6 +227,18 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/bops', [JobTrackerController::class, 'storeBOP'])->name('storeBOP');
     Route::put('/api/job-tracker-master/bops/{id}', [JobTrackerController::class, 'updateBOP'])->name('updateBOP');
     Route::delete('/api/job-tracker-master/bops/{id}', [JobTrackerController::class, 'deleteBOP'])->name('deleteBOP');
+
+    // Job Tracker CT Size
+    Route::get('/api/job-tracker-master/ct-sizes', [JobTrackerController::class, 'getCTSizes'])->name('getCTSizes');
+    Route::post('/api/job-tracker-master/ct-sizes', [JobTrackerController::class, 'storeCTSize'])->name('storeCTSize');
+    Route::put('/api/job-tracker-master/ct-sizes/{id}', [JobTrackerController::class, 'updateCTSize'])->name('updateCTSize');
+    Route::delete('/api/job-tracker-master/ct-sizes/{id}', [JobTrackerController::class, 'deleteCTSize'])->name('deleteCTSize');
+
+    // Job Tracker CT Grade
+    Route::get('/api/job-tracker-master/ct-grades', [JobTrackerController::class, 'getCTGrades'])->name('getCTGrades');
+    Route::post('/api/job-tracker-master/ct-grades', [JobTrackerController::class, 'storeCTGrade'])->name('storeCTGrade');
+    Route::put('/api/job-tracker-master/ct-grades/{id}', [JobTrackerController::class, 'updateCTGrade'])->name('updateCTGrade');
+    Route::delete('/api/job-tracker-master/ct-grades/{id}', [JobTrackerController::class, 'deleteCTGrade'])->name('deleteCTGrade');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

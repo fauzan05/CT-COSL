@@ -5,7 +5,7 @@ namespace App\Models\JobTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BjDistrictModel extends Model
+class BJDistrictModel extends Model
 {
     use SoftDeletes;
     protected $table = 'bj_districts';

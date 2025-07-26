@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobTracker\BjDistrictModel;
-use App\Models\JobTracker\BopModel;
+use App\Models\JobTracker\BJDistrictModel;
+use App\Models\JobTracker\BOPModel;
 use App\Models\JobTracker\CasingLinerSizeModel;
-use App\Models\JobTracker\CjInjectorModel;
+use App\Models\JobTracker\CJInjectorModel;
 use App\Models\JobTracker\CompletionSizeModel;
 use App\Models\JobTracker\ControlCabinModel;
+use App\Models\JobTracker\CTGradeModel;
+use App\Models\JobTracker\CTSizeModel;
 use App\Models\JobTracker\CustomerModel;
 use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
@@ -262,7 +264,7 @@ class JobTrackerController extends Controller
     public function getBJDistricts(Request $request)
     {
         // Assuming you have a BJDistrict model
-        $districts = BjDistrictModel::select('id', 'district_name')
+        $districts = BJDistrictModel::select('id', 'district_name')
             ->orderBy('district_name')
             ->get();
 
@@ -275,7 +277,7 @@ class JobTrackerController extends Controller
             'district_name' => 'required|string|max:255',
         ]);
 
-        $district = BjDistrictModel::create([
+        $district = BJDistrictModel::create([
             'district_name' => $request->input('district_name'),
             'created_at' => now(),
             'created_by' => $request->user()->id,
@@ -295,7 +297,7 @@ class JobTrackerController extends Controller
             'district_name' => 'required|string|max:255',
         ]);
 
-        $district = BjDistrictModel::findOrFail($id);
+        $district = BJDistrictModel::findOrFail($id);
         $district->update([
             'district_name' => $request->input('district_name'),
             'updated_at' => now(),
@@ -310,7 +312,7 @@ class JobTrackerController extends Controller
 
     public function deleteBJDistrict(Request $request, $id)
     {
-        $district = BjDistrictModel::findOrFail($id);
+        $district = BJDistrictModel::findOrFail($id);
         $district->delete();
 
         return response()->json([
@@ -1029,7 +1031,7 @@ class JobTrackerController extends Controller
     public function getCJInjectors(Request $request)
     {
         // Assuming you have a CJInjectorModel
-        $cjInjectors = CjInjectorModel::select('id', 'cj_injector_name')
+        $cjInjectors = CJInjectorModel::select('id', 'cj_injector_name')
             ->orderBy('cj_injector_name')
             ->get();
 
@@ -1042,7 +1044,7 @@ class JobTrackerController extends Controller
             'cj_injector_name' => 'required|string|max:255',
         ]);
 
-        $cjInjector = CjInjectorModel::create([
+        $cjInjector = CJInjectorModel::create([
             'cj_injector_name' => $request->input('cj_injector_name'),
             'created_at' => now(),
             'created_by' => $request->user()->id,
@@ -1062,7 +1064,7 @@ class JobTrackerController extends Controller
             'cj_injector_name' => 'required|string|max:255',
         ]);
 
-        $cjInjector = CjInjectorModel::findOrFail($id);
+        $cjInjector = CJInjectorModel::findOrFail($id);
         $cjInjector->update([
             'cj_injector_name' => $request->input('cj_injector_name'),
             'updated_at' => now(),
@@ -1077,7 +1079,7 @@ class JobTrackerController extends Controller
 
     public function deleteCJInjector(Request $request, $id)
     {
-        $cjInjector = CjInjectorModel::findOrFail($id);
+        $cjInjector = CJInjectorModel::findOrFail($id);
         $cjInjector->delete();
 
         return response()->json([
@@ -1088,7 +1090,7 @@ class JobTrackerController extends Controller
     public function getBOPs(Request $request)
     {
         // Assuming you have a BOPModel
-        $bops = BopModel::select('id', 'bop_name')
+        $bops = BOPModel::select('id', 'bop_name')
             ->orderBy('bop_name')
             ->get();
 
@@ -1101,7 +1103,7 @@ class JobTrackerController extends Controller
             'bop_name' => 'required|string|max:255',
         ]);
 
-        $bop = BopModel::create([
+        $bop = BOPModel::create([
             'bop_name' => $request->input('bop_name'),
             'created_at' => now(),
             'created_by' => $request->user()->id,
@@ -1121,7 +1123,7 @@ class JobTrackerController extends Controller
             'bop_name' => 'required|string|max:255',
         ]);
 
-        $bop = BopModel::findOrFail($id);
+        $bop = BOPModel::findOrFail($id);
         $bop->update([
             'bop_name' => $request->input('bop_name'),
             'updated_at' => now(),
@@ -1133,14 +1135,132 @@ class JobTrackerController extends Controller
             'data' => $bop,
         ], 200);
     }
-    
+
     public function deleteBOP(Request $request, $id)
     {
-        $bop = BopModel::findOrFail($id);
+        $bop = BOPModel::findOrFail($id);
         $bop->delete();
 
         return response()->json([
             'message' => 'BOP deleted successfully.',
+        ], 200);
+    }
+
+    public function getCTSizes(Request $request)
+    {
+        // Assuming you have a CTSizesModel
+        $ctSizes = CTSizeModel::select('id', 'size')
+            ->orderBy('size')
+            ->get();
+
+        return response()->json($ctSizes, 200);
+    }
+
+    public function storeCTSize(Request $request)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $ctSize = CTSizeModel::create([
+            'size' => $request->input('size'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT Size created successfully.',
+            'data' => $ctSize,
+        ], 201);
+    }
+
+    public function updateCTSize(Request $request, $id)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $ctSize = CTSizeModel::findOrFail($id);
+        $ctSize->update([
+            'size' => $request->input('size'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT Size updated successfully.',
+            'data' => $ctSize,
+        ], 200);
+    }
+
+    public function deleteCTSize(Request $request, $id)
+    {
+        $ctSize = CTSizeModel::findOrFail($id);
+        $ctSize->delete();
+
+        return response()->json([
+            'message' => 'CT Size deleted successfully.',
+        ], 200);
+    }
+
+    public function getCTGrades(Request $request)
+    {
+        // Assuming you have a CTGradeModel
+        $ctGrades = CTGradeModel::select('id', 'grade_name')
+            ->orderBy('grade_name')
+            ->get();
+
+        return response()->json($ctGrades, 200);
+    }
+
+    public function storeCTGrade(Request $request)
+    {
+        $request->validate([
+            'grade_name' => 'required|string|max:255',
+        ]);
+
+        $ctGrade = CTGradeModel::create([
+            'grade_name' => $request->input('grade_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT Grade created successfully.',
+            'data' => $ctGrade,
+        ], 201);
+    }
+
+    public function updateCTGrade(Request $request, $id)
+    {
+        $request->validate([
+            'grade_name' => 'required|string|max:255',
+        ]);
+
+        $ctGrade = CTGradeModel::findOrFail($id);
+        $ctGrade->update([
+            'grade_name' => $request->input('grade_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT Grade updated successfully.',
+            'data' => $ctGrade,
+        ], 200);
+    }
+
+    public function deleteCTGrade(Request $request, $id)
+    {
+        $ctGrade = CTGradeModel::findOrFail($id);
+        $ctGrade->delete();
+
+        return response()->json([
+            'message' => 'CT Grade deleted successfully.',
         ], 200);
     }
 }

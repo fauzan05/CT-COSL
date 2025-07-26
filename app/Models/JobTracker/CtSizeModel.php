@@ -5,14 +5,13 @@ namespace App\Models\JobTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CtSizeModel extends Model
+class CTSizeModel extends Model
 {
     use SoftDeletes;
     protected $table = 'ct_sizes';
     public $timestamps = false;
     protected $fillable = [
         'size',
-        'size_unit',
         'created_by',
         'updated_by',
     ];

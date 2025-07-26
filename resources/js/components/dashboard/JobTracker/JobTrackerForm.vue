@@ -192,6 +192,8 @@
                 <PowerReelInput v-model="jobTracker.power_reel" />
                 <CJInjectorInput v-model="jobTracker.cj_injector" />
                 <BOPInput v-model="jobTracker.bop" />
+                <CTSizeInput v-model="jobTracker.ct_size" />
+                <CTGradeInput v-model="jobTracker.ct_grade" />
             </div>
 
             <!-- Personnel Section -->
@@ -427,6 +429,8 @@ import PowerPackInput from "../../forms/JobTrackers/PowerPackInput.vue";
 import PowerReelInput from "../../forms/JobTrackers/PowerReelInput.vue";
 import CJInjectorInput from "../../forms/JobTrackers/CJInjectorInput.vue";
 import BOPInput from "../../forms/JobTrackers/BOPInput.vue";
+import CTSizeInput from "../../forms/JobTrackers/CTSizeInput.vue";
+import CTGradeInput from "../../forms/JobTrackers/CTGradeInput.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -481,6 +485,8 @@ const jobTracker = ref({
     power_reel: "",
     cj_injector: "",
     bop: "",
+    ct_size: "",
+    ct_grade: "",
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,

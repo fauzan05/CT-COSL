@@ -5,7 +5,7 @@ namespace App\Models\JobTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CjInjectorModel extends Model
+class CJInjectorModel extends Model
 {
     use SoftDeletes;
     protected $table = 'cj_injectors';

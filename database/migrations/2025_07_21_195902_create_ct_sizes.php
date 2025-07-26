@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('ct_sizes', function (Blueprint $table) {
             $table->id();
             $table->string('size');
-            $table->string('size_unit')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

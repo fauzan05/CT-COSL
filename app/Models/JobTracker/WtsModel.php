@@ -5,7 +5,7 @@ namespace App\Models\JobTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class WtsModel extends Model
+class WTSModel extends Model
 {
     use SoftDeletes;
     protected $table = 'wts';

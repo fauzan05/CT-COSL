@@ -5,7 +5,7 @@ namespace App\Models\JobTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CtStringModel extends Model
+class CTStringModel extends Model
 {
     use SoftDeletes;
     protected $table = 'ct_strings';

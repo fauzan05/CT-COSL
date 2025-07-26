@@ -5,7 +5,7 @@ namespace App\Models\JobTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BopModel extends Model
+class BOPModel extends Model
 {
     use SoftDeletes;
     protected $table = 'bops';
