@@ -215,6 +215,18 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/power-reels', [JobTrackerController::class, 'storePowerReel'])->name('storePowerReel');
     Route::put('/api/job-tracker-master/power-reels/{id}', [JobTrackerController::class, 'updatePowerReel'])->name('updatePowerReel');
     Route::delete('/api/job-tracker-master/power-reels/{id}', [JobTrackerController::class, 'deletePowerReel'])->name('deletePowerReel');
+
+    // Job Tracker CJ Injector
+    Route::get('/api/job-tracker-master/cj-injectors', [JobTrackerController::class, 'getCJInjectors'])->name('getCJInjectors');
+    Route::post('/api/job-tracker-master/cj-injectors', [JobTrackerController::class, 'storeCJInjector'])->name('storeCJInjector');
+    Route::put('/api/job-tracker-master/cj-injectors/{id}', [JobTrackerController::class, 'updateCJInjector'])->name('updateCJInjector');
+    Route::delete('/api/job-tracker-master/cj-injectors/{id}', [JobTrackerController::class, 'deleteCJInjector'])->name('deleteCJInjector');
+
+    // Job Tracker BOP
+    Route::get('/api/job-tracker-master/bops', [JobTrackerController::class, 'getBOPs'])->name('getBOPs');
+    Route::post('/api/job-tracker-master/bops', [JobTrackerController::class, 'storeBOP'])->name('storeBOP');
+    Route::put('/api/job-tracker-master/bops/{id}', [JobTrackerController::class, 'updateBOP'])->name('updateBOP');
+    Route::delete('/api/job-tracker-master/bops/{id}', [JobTrackerController::class, 'deleteBOP'])->name('deleteBOP');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

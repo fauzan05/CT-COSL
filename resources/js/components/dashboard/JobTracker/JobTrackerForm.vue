@@ -190,6 +190,8 @@
                 </div>
                 <PowerPackInput v-model="jobTracker.power_pack" />
                 <PowerReelInput v-model="jobTracker.power_reel" />
+                <CJInjectorInput v-model="jobTracker.cj_injector" />
+                <BOPInput v-model="jobTracker.bop" />
             </div>
 
             <!-- Personnel Section -->
@@ -423,6 +425,9 @@ import MaxBHAODInput from "../../forms/JobTrackers/MaxBHAODInput.vue";
 import ControlCabinInput from "../../forms/JobTrackers/ControlCabinInput.vue";
 import PowerPackInput from "../../forms/JobTrackers/PowerPackInput.vue";
 import PowerReelInput from "../../forms/JobTrackers/PowerReelInput.vue";
+import CJInjectorInput from "../../forms/JobTrackers/CJInjectorInput.vue";
+import BOPInput from "../../forms/JobTrackers/BOPInput.vue";
+
 const router = useRouter();
 const route = useRoute();
 
@@ -474,6 +479,8 @@ const jobTracker = ref({
     control_cabin: "",
     power_pack: "",
     power_reel: "",
+    cj_injector: "",
+    bop: "",
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,

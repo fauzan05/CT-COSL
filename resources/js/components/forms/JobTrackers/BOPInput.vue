@@ -2,11 +2,11 @@
     <div class="mb-5">
         <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Power Pack
+                BOP
             </label>
             <div class="flex items-center gap-2">
                 <!-- reset button -->
-                <button @click="selectedPowerPack = ''" type="button"
+                <button @click="selectedBOP = ''" type="button"
                     class="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
@@ -31,12 +31,12 @@
         </div>
 
         <!-- Headless UI Listbox (Dropdown) -->
-        <Listbox v-model="selectedPowerPack">
+        <Listbox v-model="selectedBOP">
             <div class="relative">
                 <ListboxButton
                     class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                     <span class="block truncate text-gray-900 dark:text-white">
-                        {{ selectedPowerPack || placeholder }}
+                        {{ selectedBOP || placeholder }}
                     </span>
                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -75,7 +75,7 @@
 
         <!-- Add Option Input -->
         <div v-if="showAddOption" class="mt-2 flex gap-2">
-            <input v-model="newOption" type="text" placeholder="Enter new power pack"
+            <input v-model="newOption" type="text" placeholder="Enter new BOP"
                 class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 @keyup.enter="addNewOption">
             <button @click="addNewOption" type="button"
@@ -119,10 +119,10 @@ const emit = defineEmits(['update:modelValue'])
 const toast = useToast()
 
 // Dropdown options - hanya satu list
-const placeholder = ref('Select power pack')
+const placeholder = ref('Select BOP')
 const listOptions = ref([])
 
-const selectedPowerPack = ref('')
+const selectedBOP = ref('')
 
 // UI States
 const showAddOption = ref(false)
@@ -133,19 +133,19 @@ const newOption = ref('')
 const addNewOption = async () => {
     if (newOption.value.trim()) {
         try {
-            await axios.post(`${baseUrl}/api/job-tracker-master/power-packs`, {
-                power_pack_name: newOption.value.trim()
+            await axios.post(`${baseUrl}/api/job-tracker-master/bops`, {
+                bop_name: newOption.value.trim()
             })
 
-            fetchAllPowerPacks() // Refresh the list options from the API
+            fetchAllBOPs() // Refresh the list options from the API
 
-            toast.success('Control cabin option added successfully!')
+            toast.success('BOP option added successfully!')
 
             newOption.value = ''
             showAddOption.value = false
         } catch (error) {
-            console.error('Error adding power pack option:', error)
-            toast.error('Failed to add power pack option.')
+            console.error('Error adding BOP option:', error)
+            toast.error('Failed to add BOP option.')
         }
     }
 }
@@ -156,65 +156,65 @@ const cancelAddOption = () => {
 }
 
 const updateOption = async ({ index, oldValue, newValue }) => {
-    // Extract power pack name from newValue object or use it directly if it's a string
-    const newPowerPackName = typeof newValue === 'object' ? newValue.power_pack_name : newValue
+    // Extract BOP name from newValue object or use it directly if it's a string
+    const newBOPName = typeof newValue === 'object' ? newValue.bop_name : newValue
 
     try {
-        await axios.put(`${baseUrl}/api/job-tracker-master/power-packs/${listOptions.value[index].id}`, {
-            power_pack_name: newPowerPackName.trim()
+        await axios.put(`${baseUrl}/api/job-tracker-master/bops/${listOptions.value[index].id}`, {
+            bop_name: newBOPName.trim()
         })
 
-        fetchAllPowerPacks() // Refresh the list options from the API
+        fetchAllBOPs() // Refresh the list options from the API
 
-        toast.success('Control cabin option updated successfully!')
+        toast.success('BOP option updated successfully!')
     } catch (error) {
-        console.error('Error updating power pack option:', error)
-        toast.error('Failed to update power pack option.')
+        console.error('Error updating BOP option:', error)
+        toast.error('Failed to update BOP option.')
     }
 }
 
 const removeOption = async (index) => {
     try {
-        await axios.delete(`${baseUrl}/api/job-tracker-master/power-packs/${listOptions.value[index].id}`)
+        await axios.delete(`${baseUrl}/api/job-tracker-master/bops/${listOptions.value[index].id}`)
 
-        fetchAllPowerPacks() // Refresh the list options from the API
+        fetchAllBOPs() // Refresh the list options from the API
 
-        toast.success('Control cabin option removed successfully!')
+        toast.success('BOP option removed successfully!')
     } catch (error) {
-        console.error('Error removing power pack option:', error)
-        toast.error('Failed to remove power pack option.')
+        console.error('Error removing BOP option:', error)
+        toast.error('Failed to remove BOP option.')
     }
 }
 
-const fetchAllPowerPacks = async () => {
+const fetchAllBOPs = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/job-tracker-master/power-packs`)
+        const response = await axios.get(`${baseUrl}/api/job-tracker-master/bops`)
         if (response.data && Array.isArray(response.data)) {
             listOptions.value = [] // Reset options before populating
-            // Sort by power_pack_name alphabetically
-            response.data.sort((a, b) => a.power_pack_name.localeCompare(b.power_pack_name))
+            // Sort by bop_name alphabetically
+            response.data.sort((a, b) => a.bop_name.localeCompare(b.bop_name))
 
             listOptions.value = response.data.map(loc => ({
                 id: loc.id,
-                value: loc.power_pack_name,
-                label: loc.power_pack_name
+                value: loc.bop_name,
+                label: loc.bop_name
             }))
 
-            if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedPowerPack.value)) {
-                selectedPowerPack.value = ''
+            if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedBOP.value)) {
+                selectedBOP.value = ''
             }
         }
     } catch (error) {
-        console.error('Error fetching power pack:', error)
-        toast.error('Failed to fetch power pack.')
+        console.error('Error fetching BOP:', error)
+        toast.error('Failed to fetch BOP.')
     }
 }
 
 onMounted(async () => {
-    await fetchAllPowerPacks()
+    await fetchAllBOPs()
 })
 
-watch(selectedPowerPack, (newValue) => {
+watch(selectedBOP, (newValue) => {
     // Emit the selected value to parent component
     emit('update:modelValue', newValue)
 })

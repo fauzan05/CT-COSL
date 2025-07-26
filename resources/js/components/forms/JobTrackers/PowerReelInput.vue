@@ -144,8 +144,8 @@ const addNewOption = async () => {
             newOption.value = ''
             showAddOption.value = false
         } catch (error) {
-            console.error('Error adding nozzle option:', error)
-            toast.error('Failed to add nozzle option.')
+            console.error('Error adding power reel option:', error)
+            toast.error('Failed to add power reel option.')
         }
     }
 }
@@ -156,7 +156,7 @@ const cancelAddOption = () => {
 }
 
 const updateOption = async ({ index, oldValue, newValue }) => {
-    // Extract nozzle name from newValue object or use it directly if it's a string
+    // Extract power reel name from newValue object or use it directly if it's a string
     const newPowerReelName = typeof newValue === 'object' ? newValue.power_reel_name : newValue
 
     try {
@@ -168,8 +168,8 @@ const updateOption = async ({ index, oldValue, newValue }) => {
 
         toast.success('Control cabin option updated successfully!')
     } catch (error) {
-        console.error('Error updating nozzle option:', error)
-        toast.error('Failed to update nozzle option.')
+        console.error('Error updating power reel option:', error)
+        toast.error('Failed to update power reel option.')
     }
 }
 
@@ -181,8 +181,8 @@ const removeOption = async (index) => {
 
         toast.success('Control cabin option removed successfully!')
     } catch (error) {
-        console.error('Error removing nozzle option:', error)
-        toast.error('Failed to remove nozzle option.')
+        console.error('Error removing power reel option:', error)
+        toast.error('Failed to remove power reel option.')
     }
 }
 

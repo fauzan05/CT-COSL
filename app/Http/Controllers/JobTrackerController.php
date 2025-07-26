@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobTracker\BjDistrictModel;
+use App\Models\JobTracker\BopModel;
 use App\Models\JobTracker\CasingLinerSizeModel;
+use App\Models\JobTracker\CjInjectorModel;
 use App\Models\JobTracker\CompletionSizeModel;
 use App\Models\JobTracker\ControlCabinModel;
 use App\Models\JobTracker\CustomerModel;
@@ -1021,6 +1023,124 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Power Reel deleted successfully.',
+        ], 200);
+    }
+
+    public function getCJInjectors(Request $request)
+    {
+        // Assuming you have a CJInjectorModel
+        $cjInjectors = CjInjectorModel::select('id', 'cj_injector_name')
+            ->orderBy('cj_injector_name')
+            ->get();
+
+        return response()->json($cjInjectors, 200);
+    }
+
+    public function storeCJInjector(Request $request)
+    {
+        $request->validate([
+            'cj_injector_name' => 'required|string|max:255',
+        ]);
+
+        $cjInjector = CjInjectorModel::create([
+            'cj_injector_name' => $request->input('cj_injector_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CJ Injector created successfully.',
+            'data' => $cjInjector,
+        ], 201);
+    }
+
+    public function updateCJInjector(Request $request, $id)
+    {
+        $request->validate([
+            'cj_injector_name' => 'required|string|max:255',
+        ]);
+
+        $cjInjector = CjInjectorModel::findOrFail($id);
+        $cjInjector->update([
+            'cj_injector_name' => $request->input('cj_injector_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CJ Injector updated successfully.',
+            'data' => $cjInjector,
+        ], 200);
+    }
+
+    public function deleteCJInjector(Request $request, $id)
+    {
+        $cjInjector = CjInjectorModel::findOrFail($id);
+        $cjInjector->delete();
+
+        return response()->json([
+            'message' => 'CJ Injector deleted successfully.',
+        ], 200);
+    }
+
+    public function getBOPs(Request $request)
+    {
+        // Assuming you have a BOPModel
+        $bops = BopModel::select('id', 'bop_name')
+            ->orderBy('bop_name')
+            ->get();
+
+        return response()->json($bops, 200);
+    }
+
+    public function storeBOP(Request $request)
+    {
+        $request->validate([
+            'bop_name' => 'required|string|max:255',
+        ]);
+
+        $bop = BopModel::create([
+            'bop_name' => $request->input('bop_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'BOP created successfully.',
+            'data' => $bop,
+        ], 201);
+    }
+
+    public function updateBOP(Request $request, $id)
+    {
+        $request->validate([
+            'bop_name' => 'required|string|max:255',
+        ]);
+
+        $bop = BopModel::findOrFail($id);
+        $bop->update([
+            'bop_name' => $request->input('bop_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'BOP updated successfully.',
+            'data' => $bop,
+        ], 200);
+    }
+    
+    public function deleteBOP(Request $request, $id)
+    {
+        $bop = BopModel::findOrFail($id);
+        $bop->delete();
+
+        return response()->json([
+            'message' => 'BOP deleted successfully.',
         ], 200);
     }
 }
