@@ -195,6 +195,8 @@
                 <CTSizeInput v-model="jobTracker.ct_size" />
                 <CTGradeInput v-model="jobTracker.ct_grade" />
                 <WTInput v-model="jobTracker.wt" />
+                <CTStringInput v-model="jobTracker.ct_string" />
+                <N2ConverterInput v-model="jobTracker.n2_converter" />
             </div>
 
             <!-- Personnel Section -->
@@ -433,6 +435,8 @@ import BOPInput from "../../forms/JobTrackers/BOPInput.vue";
 import CTSizeInput from "../../forms/JobTrackers/CTSizeInput.vue";
 import CTGradeInput from "../../forms/JobTrackers/CTGradeInput.vue";
 import WTInput from "../../forms/JobTrackers/WTInput.vue";
+import CTStringInput from "../../forms/JobTrackers/CTStringInput.vue";
+import N2ConverterInput from "../../forms/JobTrackers/N2ConverterInput.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -490,6 +494,8 @@ const jobTracker = ref({
     ct_size: "",
     ct_grade: "",
     wt: "",
+    ct_string: "",
+    n2_converter: "",
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,

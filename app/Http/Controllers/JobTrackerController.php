@@ -10,12 +10,14 @@ use App\Models\JobTracker\CompletionSizeModel;
 use App\Models\JobTracker\ControlCabinModel;
 use App\Models\JobTracker\CTGradeModel;
 use App\Models\JobTracker\CTSizeModel;
+use App\Models\JobTracker\CTStringModel;
 use App\Models\JobTracker\CustomerModel;
 use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
 use App\Models\JobTracker\MaxBHAODModel;
+use App\Models\JobTracker\N2ConverterModel;
 use App\Models\JobTracker\NozzleTypeModel;
 use App\Models\JobTracker\PowerPackModel;
 use App\Models\JobTracker\PowerReelModel;
@@ -1321,6 +1323,124 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'WT deleted successfully.',
+        ], 200);
+    }
+
+    public function getCTStrings(Request $request)
+    {
+        // Assuming you have a CTStringModel
+        $ctStrings = CTStringModel::select('id', 'ct_string_name')
+            ->orderBy('ct_string_name')
+            ->get();
+
+        return response()->json($ctStrings, 200);
+    }
+
+    public function storeCTString(Request $request)
+    {
+        $request->validate([
+            'ct_string_name' => 'required|string|max:255',
+        ]);
+
+        $ctString = CTStringModel::create([
+            'ct_string_name' => $request->input('ct_string_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT String created successfully.',
+            'data' => $ctString,
+        ], 201);
+    }
+
+    public function updateCTString(Request $request, $id)
+    {
+        $request->validate([
+            'ct_string_name' => 'required|string|max:255',
+        ]);
+
+        $ctString = CTStringModel::findOrFail($id);
+        $ctString->update([
+            'ct_string_name' => $request->input('ct_string_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT String updated successfully.',
+            'data' => $ctString,
+        ], 200);
+    }
+
+    public function deleteCTString(Request $request, $id)
+    {
+        $ctString = CTStringModel::findOrFail($id);
+        $ctString->delete();
+
+        return response()->json([
+            'message' => 'CT String deleted successfully.',
+        ], 200);
+    }
+
+    public function getN2Converters(Request $request)
+    {
+        // Assuming you have a N2ConverterModel
+        $n2Converters = N2ConverterModel::select('id', 'n2_converter_name')
+            ->orderBy('n2_converter_name')
+            ->get();
+
+        return response()->json($n2Converters, 200);
+    }
+
+    public function storeN2Converter(Request $request)
+    {
+        $request->validate([
+            'n2_converter_name' => 'required|string|max:255',
+        ]);
+
+        $n2Converter = N2ConverterModel::create([
+            'n2_converter_name' => $request->input('n2_converter_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'N2 Converter created successfully.',
+            'data' => $n2Converter,
+        ], 201);
+    }
+
+    public function updateN2Converter(Request $request, $id)
+    {
+        $request->validate([
+            'n2_converter_name' => 'required|string|max:255',
+        ]);
+
+        $n2Converter = N2ConverterModel::findOrFail($id);
+        $n2Converter->update([
+            'n2_converter_name' => $request->input('n2_converter_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'N2 Converter updated successfully.',
+            'data' => $n2Converter,
+        ], 200);
+    }
+
+    public function deleteN2Converter(Request $request, $id)
+    {
+        $n2Converter = N2ConverterModel::findOrFail($id);
+        $n2Converter->delete();
+
+        return response()->json([
+            'message' => 'N2 Converter deleted successfully.',
         ], 200);
     }
 }

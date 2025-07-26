@@ -245,6 +245,18 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/wts', [JobTrackerController::class, 'storeWT'])->name('storeWT');
     Route::put('/api/job-tracker-master/wts/{id}', [JobTrackerController::class, 'updateWT'])->name('updateWT');
     Route::delete('/api/job-tracker-master/wts/{id}', [JobTrackerController::class, 'deleteWT'])->name('deleteWT');
+
+    // Job Tracker CT String
+    Route::get('/api/job-tracker-master/ct-strings', [JobTrackerController::class, 'getCTStrings'])->name('getCTStrings');
+    Route::post('/api/job-tracker-master/ct-strings', [JobTrackerController::class, 'storeCTString'])->name('storeCTString');
+    Route::put('/api/job-tracker-master/ct-strings/{id}', [JobTrackerController::class, 'updateCTString'])->name('updateCTString');
+    Route::delete('/api/job-tracker-master/ct-strings/{id}', [JobTrackerController::class, 'deleteCTString'])->name('deleteCTString');
+
+    // Job Tracker N2 Converter
+    Route::get('/api/job-tracker-master/n2-converters', [JobTrackerController::class, 'getN2Converters'])->name('getN2Converters');
+    Route::post('/api/job-tracker-master/n2-converters', [JobTrackerController::class, 'storeN2Converter'])->name('storeN2Converter');
+    Route::put('/api/job-tracker-master/n2-converters/{id}', [JobTrackerController::class, 'updateN2Converter'])->name('updateN2Converter');
+    Route::delete('/api/job-tracker-master/n2-converters/{id}', [JobTrackerController::class, 'deleteN2Converter'])->name('deleteN2Converter');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route
