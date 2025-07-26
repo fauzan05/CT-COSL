@@ -109,6 +109,8 @@
                 <FieldLocationInput v-model="jobTracker.field_location" />
                 <FieldTypeInput v-model="jobTracker.field_type" />
                 <WellStatusInput v-model="jobTracker.well_status" />
+                <WellTypeInput v-model="jobTracker.well_type" />
+                <WellheadXOverInput v-model="jobTracker.wellhead_x_over" />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Max Deviation -->
                     <div>
@@ -414,6 +416,8 @@ import BJDistrictInput from "../../forms/JobTrackers/BJDistrictInput.vue";
 import FieldLocationInput from "../../forms/JobTrackers/FieldLocationInput.vue";
 import FieldTypeInput from "../../forms/JobTrackers/FieldTypeInput.vue";
 import WellStatusInput from "../../forms/JobTrackers/WellStatusInput.vue";
+import WellTypeInput from "../../forms/JobTrackers/WellTypeInput.vue";
+import WellheadXOverInput from "../../forms/JobTrackers/WellheadXOverInput.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -447,6 +451,8 @@ const jobTracker = ref({
     field_location: "",
     field_type: "",
     well_status: "",
+    well_type: "",
+    wellhead_x_over: "",
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,

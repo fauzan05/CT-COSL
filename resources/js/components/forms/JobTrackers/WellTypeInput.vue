@@ -2,11 +2,11 @@
     <div class="mb-5">
         <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Well Status
+                Well Type
             </label>
             <div class="flex items-center gap-2">
                 <!-- reset button -->
-                <button @click="selectedWellStatus = ''" type="button"
+                <button @click="selectedWellType = ''" type="button"
                     class="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
@@ -31,12 +31,12 @@
         </div>
 
         <!-- Headless UI Listbox (Dropdown) -->
-        <Listbox v-model="selectedWellStatus">
+        <Listbox v-model="selectedWellType">
             <div class="relative">
                 <ListboxButton
                     class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                     <span class="block truncate text-gray-900 dark:text-white">
-                        {{ selectedWellStatus || placeholder }}
+                        {{ selectedWellType || placeholder }}
                     </span>
                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -75,7 +75,7 @@
 
         <!-- Add Option Input -->
         <div v-if="showAddOption" class="mt-2 flex gap-2">
-            <input v-model="newOption" type="text" placeholder="Enter new well status"
+            <input v-model="newOption" type="text" placeholder="Enter new well type"
                 class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 @keyup.enter="addNewOption">
             <button @click="addNewOption" type="button"
@@ -119,10 +119,10 @@ const emit = defineEmits(['update:modelValue'])
 const toast = useToast()
 
 // Dropdown options - hanya satu list
-const placeholder = ref('Select well status')
+const placeholder = ref('Select well type')
 const listOptions = ref([])
 
-const selectedWellStatus = ref('')
+const selectedWellType = ref('')
 
 // UI States
 const showAddOption = ref(false)
@@ -133,13 +133,13 @@ const newOption = ref('')
 const addNewOption = async () => {
     if (newOption.value.trim()) {
         try {
-            await axios.post(`${baseUrl}/api/job-tracker-master/well-statuses`, {
-                status_name: newOption.value.trim()
+            await axios.post(`${baseUrl}/api/job-tracker-master/well-types`, {
+                type_name: newOption.value.trim()
             })
 
-            fetchAllWellStatuses() // Refresh the list options from the API
+            fetchAllWellTypes() // Refresh the list options from the API
 
-            toast.success('Well status option added successfully!')
+            toast.success('Well type option added successfully!')
 
             newOption.value = ''
             showAddOption.value = false
@@ -157,16 +157,16 @@ const cancelAddOption = () => {
 
 const updateOption = async ({ index, oldValue, newValue }) => {
     // Extract well status name from newValue object or use it directly if it's a string
-    const newWellStatusName = typeof newValue === 'object' ? newValue.status_name : newValue
+    const newWellTypeName = typeof newValue === 'object' ? newValue.type_name : newValue
 
     try {
-        await axios.put(`${baseUrl}/api/job-tracker-master/well-statuses/${listOptions.value[index].id}`, {
-            status_name: newWellStatusName.trim()
+        await axios.put(`${baseUrl}/api/job-tracker-master/well-types/${listOptions.value[index].id}`, {
+            type_name: newWellTypeName.trim()
         })
 
-        fetchAllWellStatuses() // Refresh the list options from the API
+        fetchAllWellTypes() // Refresh the list options from the API
 
-        toast.success('Well status option updated successfully!')
+        toast.success('Well type option updated successfully!')
     } catch (error) {
         console.error('Error updating well status option:', error)
         toast.error('Failed to update well status option.')
@@ -175,51 +175,51 @@ const updateOption = async ({ index, oldValue, newValue }) => {
 
 const removeOption = async (index) => {
     try {
-        await axios.delete(`${baseUrl}/api/job-tracker-master/well-statuses/${listOptions.value[index].id}`)
+        await axios.delete(`${baseUrl}/api/job-tracker-master/well-types/${listOptions.value[index].id}`)
 
-        fetchAllWellStatuses() // Refresh the list options from the API
+        fetchAllWellTypes() // Refresh the list options from the API
 
-        toast.success('Well status option removed successfully!')
+        toast.success('Well type option removed successfully!')
     } catch (error) {
         console.error('Error removing well status option:', error)
         toast.error('Failed to remove well status option.')
     }
 }
 
-const fetchAllWellStatuses = async () => {
+const fetchAllWellTypes = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/job-tracker-master/well-statuses`)
+        const response = await axios.get(`${baseUrl}/api/job-tracker-master/well-types`)
         if (response.data && Array.isArray(response.data)) {
             listOptions.value = [] // Reset options before populating
-            // Sort by status_name alphabetically
-            response.data.sort((a, b) => a.status_name.localeCompare(b.status_name))
+            // Sort by type_name alphabetically
+            response.data.sort((a, b) => a.type_name.localeCompare(b.type_name))
 
             listOptions.value = response.data.map(loc => ({
                 id: loc.id,
-                value: loc.status_name,
-                label: loc.status_name
+                value: loc.type_name,
+                label: loc.type_name
             }))
 
-            if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedWellStatus.value)) {
-                selectedWellStatus.value = ''
+            if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedWellType.value)) {
+                selectedWellType.value = ''
             }
         }
     } catch (error) {
-        console.error('Error fetching well statuses:', error)
-        toast.error('Failed to fetch well statuses.')
+        console.error('Error fetching well types:', error)
+        toast.error('Failed to fetch well types.')
     }
 }
 
 onMounted(async () => {
-    await fetchAllWellStatuses()
+    await fetchAllWellTypes()
 
-    // Initialize selectedWellStatus with the first option if available
+    // Initialize selectedWellType with the first option if available
     if (listOptions.value.length > 0) {
-        selectedWellStatus.value = listOptions.value[0].value
+        selectedWellType.value = listOptions.value[0].value
     }
 })
 
-watch(selectedWellStatus, (newValue) => {
+watch(selectedWellType, (newValue) => {
     // Emit the selected value to parent component
     emit('update:modelValue', newValue)
 })

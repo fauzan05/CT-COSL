@@ -161,6 +161,18 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/well-statuses', [JobTrackerController::class, 'storeWellStatus'])->name('storeWellStatus');
     Route::put('/api/job-tracker-master/well-statuses/{id}', [JobTrackerController::class, 'updateWellStatus'])->name('updateWellStatus');
     Route::delete('/api/job-tracker-master/well-statuses/{id}', [JobTrackerController::class, 'deleteWellStatus'])->name('deleteWellStatus');
+
+    // Job Tracker Well Type
+    Route::get('/api/job-tracker-master/well-types', [JobTrackerController::class, 'getWellTypes'])->name('getWellTypes');
+    Route::post('/api/job-tracker-master/well-types', [JobTrackerController::class, 'storeWellType'])->name('storeWellType');
+    Route::put('/api/job-tracker-master/well-types/{id}', [JobTrackerController::class, 'updateWellType'])->name('updateWellType');
+    Route::delete('/api/job-tracker-master/well-types/{id}', [JobTrackerController::class, 'deleteWellType'])->name('deleteWellType');
+
+    // Job Tracker Wellhead X-Over
+    Route::get('/api/job-tracker-master/wellhead-x-overs', [JobTrackerController::class, 'getWellheadXOvers'])->name('getWellheadXOvers');
+    Route::post('/api/job-tracker-master/wellhead-x-overs', [JobTrackerController::class, 'storeWellheadXOver'])->name('storeWellheadXOver');
+    Route::put('/api/job-tracker-master/wellhead-x-overs/{id}', [JobTrackerController::class, 'updateWellheadXOver'])->name('updateWellheadXOver');
+    Route::delete('/api/job-tracker-master/wellhead-x-overs/{id}', [JobTrackerController::class, 'deleteWellheadXOver'])->name('deleteWellheadXOver');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

@@ -8,6 +8,7 @@ use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
+use App\Models\JobTracker\WellheadXOverModel;
 use App\Models\JobTracker\WellStatusModel;
 use Illuminate\Http\Request;
 
@@ -482,6 +483,124 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Well status deleted successfully.',
+        ], 200);
+    }
+
+    public function getWellTypes(Request $request)
+    {
+        // Assuming you have a WellTypeModel
+        $wellTypes = FieldTypeModel::select('id', 'type_name')
+            ->orderBy('type_name')
+            ->get();
+
+        return response()->json($wellTypes, 200);
+    }
+
+    public function storeWellType(Request $request)
+    {
+        $request->validate([
+            'type_name' => 'required|string|max:255',
+        ]);
+
+        $wellType = FieldTypeModel::create([
+            'type_name' => $request->input('type_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Well type created successfully.',
+            'data' => $wellType,
+        ], 201);
+    }
+
+    public function updateWellType(Request $request, $id)
+    {
+        $request->validate([
+            'type_name' => 'required|string|max:255',
+        ]);
+
+        $wellType = FieldTypeModel::findOrFail($id);
+        $wellType->update([
+            'type_name' => $request->input('type_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Well type updated successfully.',
+            'data' => $wellType,
+        ], 200);
+    }
+
+    public function deleteWellType(Request $request, $id)
+    {
+        $wellType = FieldTypeModel::findOrFail($id);
+        $wellType->delete();
+
+        return response()->json([
+            'message' => 'Well type deleted successfully.',
+        ], 200);
+    }
+
+    public function getWellheadXOvers(Request $request)
+    {
+        // Assuming you have a WellheadXOvershootModel
+        $wellheadxovers = WellheadXOverModel::select('id', 'wellhead_name')
+            ->orderBy('wellhead_name')
+            ->get();
+
+        return response()->json($wellheadxovers, 200);
+    }
+
+    public function storeWellheadXOver(Request $request)
+    {
+        $request->validate([
+            'wellhead_name' => 'required|string|max:255',
+        ]);
+
+        $wellheadxover = WellheadXOverModel::create([
+            'wellhead_name' => $request->input('wellhead_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Wellhead XOver created successfully.',
+            'data' => $wellheadxover,
+        ], 201);
+    }
+
+    public function updateWellheadXOver(Request $request, $id)
+    {
+        $request->validate([
+            'wellhead_name' => 'required|string|max:255',
+        ]);
+
+        $wellheadxover = WellheadXOverModel::findOrFail($id);
+        $wellheadxover->update([
+            'wellhead_name' => $request->input('wellhead_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Wellhead XOver updated successfully.',
+            'data' => $wellheadxover,
+        ], 200);
+    }
+
+    public function deleteWellheadXOver(Request $request, $id)
+    {
+        $wellheadxover = WellheadXOverModel::findOrFail($id);
+        $wellheadxover->delete();
+
+        return response()->json([
+            'message' => 'Wellhead XOver deleted successfully.',
         ], 200);
     }
 }
