@@ -257,6 +257,12 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/n2-converters', [JobTrackerController::class, 'storeN2Converter'])->name('storeN2Converter');
     Route::put('/api/job-tracker-master/n2-converters/{id}', [JobTrackerController::class, 'updateN2Converter'])->name('updateN2Converter');
     Route::delete('/api/job-tracker-master/n2-converters/{id}', [JobTrackerController::class, 'deleteN2Converter'])->name('deleteN2Converter');
+
+    // Jo Tracker N2 Tank
+    Route::get('/api/job-tracker-master/n2-tanks', [JobTrackerController::class, 'getN2Tanks'])->name('getN2Tanks');
+    Route::post('/api/job-tracker-master/n2-tanks', [JobTrackerController::class, 'storeN2Tank'])->name('storeN2Tank');
+    Route::put('/api/job-tracker-master/n2-tanks/{id}', [JobTrackerController::class, 'updateN2Tank'])->name('updateN2Tank');
+    Route::delete('/api/job-tracker-master/n2-tanks/{id}', [JobTrackerController::class, 'deleteN2Tank'])->name('deleteN2Tank');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

@@ -49,7 +49,7 @@
                         <transition leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
                             leave-to-class="opacity-0">
                             <ListboxOptions
-                                class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm z-10">
                                 <ListboxOption v-if="sizeOptions.length > 0" v-slot="{ active, selected }"
                                     v-for="option in sizeOptions" :key="option.id" :value="option.value" as="template">
                                     <li :class="[
@@ -94,7 +94,7 @@
                         <transition leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
                             leave-to-class="opacity-0">
                             <ListboxOptions
-                                class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm z-10">
                                 <ListboxOption v-slot="{ active, selected }" v-for="unit in unitOptions" :key="unit.value"
                                     :value="unit.value" as="template">
                                     <li :class="[

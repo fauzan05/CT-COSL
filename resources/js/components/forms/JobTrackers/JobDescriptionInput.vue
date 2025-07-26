@@ -42,7 +42,7 @@
         <Listbox v-model="selectedJobDescription">
             <div class="relative">
                 <ListboxButton
-                    class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                    class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all duration-200 sm:text-sm">
                     <span class="block truncate text-gray-900 dark:text-white">
                         {{ selectedJobDescription || placeholder }}
                     </span>
@@ -54,8 +54,8 @@
                 <transition leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
                     leave-to-class="opacity-0">
                     <ListboxOptions
-                        class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm z-10">
-                        <ListboxOption v-if="listOptions.length > 0" v-slot="{ active, selected }" v-for="option in listOptions" :key="option.value"
+                        class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                        <ListboxOption v-if="listOptions.length > 0" v-slot="{ active, selected }" v-for="option in listOptions" :key="option.id"
                             :value="option.value" as="template">
                             <li :class="[
                                 active ? 'bg-blue-100 dark:bg-gray-600 text-blue-900 dark:text-white' : 'text-gray-900 dark:text-gray-300',
@@ -116,7 +116,7 @@ import {
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import ManageOptionsPanel from './ManageOptionsPanel.vue'
 import SelectedDescriptionsList from './SelectedDescriptionsList.vue'
-import { useToast } from 'vue-toastification';
+import { useToast } from 'vue-toastification'
 
 // Props & Emits
 const props = defineProps({
@@ -125,9 +125,9 @@ const props = defineProps({
         default: () => []
     }
 })
-const baseUrl = import.meta.env.VITE_API_URL;
+const baseUrl = import.meta.env.VITE_API_URL
 const emit = defineEmits(['update:modelValue'])
-const toast = useToast();
+const toast = useToast()
 
 // Dropdown options - hanya satu list
 const placeholder = ref('Select job description')
@@ -141,24 +141,22 @@ const showManageOptions = ref(false)
 const newOption = ref('')
 
 // Methods
-const addNewOption = () => {
+const addNewOption = async () => {
     if (newOption.value.trim()) {
-        // saat di add, post ke api
-        axios.post(`${baseUrl}/api/job-tracker-master/job-descriptions`, {
-            description: newOption.value.trim()
-        })
-            .then(() => {
-                fetchAllJobDescriptions() // Refresh the list after adding
-                toast.success('Job description option added successfully!')
+        try {
+            await axios.post(`${baseUrl}/api/job-tracker-master/job-descriptions`, {
+                description: newOption.value.trim()
             })
-            .catch(error => {
-                console.error('Error adding job description option:', error)
-                toast.error('Failed to add job description option.')
-            })
-        // urutkan listOptions berdasarkan value (alphabetical)
-        listOptions.value.sort((a, b) => a.value.localeCompare(b.value))
-        newOption.value = ''
-        showAddOption.value = false
+            
+            await fetchAllJobDescriptions() // Refresh the list after adding
+            toast.success('Job description option added successfully!')
+            
+            newOption.value = ''
+            showAddOption.value = false
+        } catch (error) {
+            console.error('Error adding job description option:', error)
+            toast.error('Failed to add job description option.')
+        }
     }
 }
 
@@ -184,73 +182,98 @@ const removeDescription = (index) => {
 }
 
 const updateOption = async ({ index, oldValue, newValue }) => {
-    // Update in parent's job descriptions
-    await axios.put(`${baseUrl}/api/job-tracker-master/job-descriptions/${listOptions.value[index].id}`, {
-        description: newValue
-    })
-        .then(() => {
-            // Update the option
-            listOptions.value[index] = {
-                id: listOptions.value[index].id, // Assuming id is not changing
-                value: newValue,
-                label: newValue
-            }
-
-            fetchAllJobDescriptions() // Refresh the list after updating
-
-            toast.success('Job description option updated successfully!')
+    const newDescriptionName = typeof newValue === 'object' ? newValue.description : newValue
+    
+    try {
+        await axios.put(`${baseUrl}/api/job-tracker-master/job-descriptions/${listOptions.value[index].id}`, {
+            description: newDescriptionName
         })
-        .catch(error => {
-            console.error('Error updating job description option:', error)
-            toast.error('Failed to update job description option.')
-        })
+        
+        // Update selected items in modelValue if they match the old value
+        const updatedModelValue = props.modelValue.map(desc => 
+            desc === oldValue ? newDescriptionName : desc
+        )
+        emit('update:modelValue', updatedModelValue)
+        
+        // Update selected description if it matches
+        if (selectedJobDescription.value === oldValue) {
+            selectedJobDescription.value = newDescriptionName
+        }
+        
+        await fetchAllJobDescriptions() // Refresh the list after updating
+        toast.success('Job description option updated successfully!')
+        
+    } catch (error) {
+        console.error('Error updating job description option:', error)
+        toast.error('Failed to update job description option.')
+    }
 }
 
 const removeOption = async (index) => {
-    await axios.delete(`${baseUrl}/api/job-tracker-master/job-descriptions/${listOptions.value[index].id}`).
-        then(() => {
-            fetchAllJobDescriptions() // Refresh the list after removing
-            toast.success('Job description option removed successfully!')
-        }).catch(error => {
-            console.error('Error removing job description option:', error)
-            toast.error('Failed to remove job description option.')
-        })
+    const optionToRemove = listOptions.value[index].value
+    
+    try {
+        await axios.delete(`${baseUrl}/api/job-tracker-master/job-descriptions/${listOptions.value[index].id}`)
+        
+        // Remove from modelValue if exists
+        const updatedDescriptions = props.modelValue.filter(desc => desc !== optionToRemove)
+        emit('update:modelValue', updatedDescriptions)
+        
+        // Clear selected if it matches
+        if (selectedJobDescription.value === optionToRemove) {
+            selectedJobDescription.value = ''
+        }
+        
+        await fetchAllJobDescriptions() // Refresh the list after removing
+        toast.success('Job description option removed successfully!')
+        
+    } catch (error) {
+        console.error('Error removing job description option:', error)
+        toast.error('Failed to remove job description option.')
+    }
 }
 
 const fetchAllJobDescriptions = async () => {
-    // call use axios
-    await axios.get(`${baseUrl}/api/job-tracker-master/job-descriptions`)
-        .then(response => {
-            if (response.data && Array.isArray(response.data)) {
-                // reset listOptions
-                listOptions.value = []
-                // urutkan listOptions berdasarkan value (alphabetical)
-                response.data.sort((a, b) => a.description.localeCompare(b.description))
-                listOptions.value = response.data.map(desc => ({
-                    id: desc.id,
-                    value: desc.description,
-                    label: desc.description
-                }))
+    try {
+        const response = await axios.get(`${baseUrl}/api/job-tracker-master/job-descriptions`)
+        
+        if (response.data && Array.isArray(response.data)) {
+            // Sort by description alphabetically
+            response.data.sort((a, b) => a.description.localeCompare(b.description))
+            
+            listOptions.value = response.data.map(desc => ({
+                id: desc.id,
+                value: desc.description,
+                label: desc.description
+            }))
 
-                if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedJobDescription.value)) {
-                    selectedJobDescription.value = ''
-                }
+            // Clean up selected description if not in list
+            if (selectedJobDescription.value && !listOptions.value.some(opt => opt.value === selectedJobDescription.value)) {
+                selectedJobDescription.value = ''
+            }
 
-                // jika salah satu selectedJobDescription tidak ada di listOptions, maka hapus selectedJobDescription yang tidak ada di listOptions dan lakukan emit juga
-                if (selectedJobDescription.value || !listOptions.value.some(opt => opt.value === selectedJobDescription.value)) {
-                    selectedJobDescription.value = ''
-                    emit('update:modelValue', props.modelValue.filter(desc => listOptions.value.some(opt => opt.value === desc)))
-                    
+            // Clean up modelValue - remove any items that are no longer in the options
+            if (Array.isArray(props.modelValue) && props.modelValue.length > 0) {
+                const validDescriptions = props.modelValue.filter(desc => 
+                    typeof desc === 'string' && 
+                    desc.trim() !== '' && 
+                    listOptions.value.some(opt => opt.value === desc)
+                )
+                
+                // Only emit if there are changes
+                if (validDescriptions.length !== props.modelValue.length || 
+                    !validDescriptions.every((desc, index) => desc === props.modelValue[index])) {
+                    emit('update:modelValue', validDescriptions)
                 }
             }
-        })
-        .catch(error => {
-            console.error('Error fetching job descriptions:', error)
-        })
+        }
+    } catch (error) {
+        console.error('Error fetching job descriptions:', error)
+        toast.error('Failed to fetch job descriptions.')
+    }
 }
 
 onMounted(async () => {
-    // Fetch all job descriptions from the API
     await fetchAllJobDescriptions()
 })
 </script>

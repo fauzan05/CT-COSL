@@ -18,6 +18,7 @@ use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
 use App\Models\JobTracker\MaxBHAODModel;
 use App\Models\JobTracker\N2ConverterModel;
+use App\Models\JobTracker\N2TankModel;
 use App\Models\JobTracker\NozzleTypeModel;
 use App\Models\JobTracker\PowerPackModel;
 use App\Models\JobTracker\PowerReelModel;
@@ -1441,6 +1442,65 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'N2 Converter deleted successfully.',
+        ], 200);
+    }
+
+    public function getN2Tanks(Request $request)
+    {
+        // Assuming you have a N2TankModel
+        $n2Tanks = N2TankModel::select('id', 'n2_tank_name')
+            ->orderBy('n2_tank_name')
+            ->get();
+
+        return response()->json($n2Tanks, 200);
+    }
+
+    public function storeN2Tank(Request $request)
+    {
+        $request->validate([
+            'n2_tank_name' => 'required|string|max:255',
+        ]);
+
+        $n2Tank = N2TankModel::create([
+            'n2_tank_name' => $request->input('n2_tank_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'N2 Tank created successfully.',
+            'data' => $n2Tank,
+        ], 201);
+    }
+
+    public function updateN2Tank(Request $request, $id)
+    {
+        $request->validate([
+            'n2_tank_name' => 'required|string|max:255',
+        ]);
+
+        $n2Tank = N2TankModel::findOrFail($id);
+        $n2Tank->update([
+            'n2_tank_name' => $request->input('n2_tank_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'N2 Tank updated successfully.',
+            'data' => $n2Tank,
+        ], 200);
+    }
+
+    public function deleteN2Tank(Request $request, $id)
+    {
+        $n2Tank = N2TankModel::findOrFail($id);
+        $n2Tank->delete();
+
+        return response()->json([
+            'message' => 'N2 Tank deleted successfully.',
         ], 200);
     }
 }

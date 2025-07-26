@@ -150,7 +150,7 @@
                                     <transition leave-active-class="transition duration-100 ease-in"
                                         leave-from-class="opacity-100" leave-to-class="opacity-0">
                                         <ListboxOptions
-                                            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm z-10">
                                             <ListboxOption v-for="unit in field.units" :key="unit"
                                                 v-slot="{ active, selected }" :value="unit" as="template">
                                                 <li :class="[
@@ -197,6 +197,7 @@
                 <WTInput v-model="jobTracker.wt" />
                 <CTStringInput v-model="jobTracker.ct_string" />
                 <N2ConverterInput v-model="jobTracker.n2_converter" />
+                <N2TankInput v-model="jobTracker.n2_tank" />
             </div>
 
             <!-- Personnel Section -->
@@ -437,6 +438,7 @@ import CTGradeInput from "../../forms/JobTrackers/CTGradeInput.vue";
 import WTInput from "../../forms/JobTrackers/WTInput.vue";
 import CTStringInput from "../../forms/JobTrackers/CTStringInput.vue";
 import N2ConverterInput from "../../forms/JobTrackers/N2ConverterInput.vue";
+import N2TankInput from "../../forms/JobTrackers/N2TankInput.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -496,6 +498,7 @@ const jobTracker = ref({
     wt: "",
     ct_string: "",
     n2_converter: "",
+    n2_tank: [],
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,
