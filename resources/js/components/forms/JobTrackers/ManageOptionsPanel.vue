@@ -4,7 +4,7 @@
 
         <!-- All Options -->
         <div class="space-y-2">
-            <div v-for="(option, index) in listOptions" :key="option.value"
+            <div v-if="listOptions.length > 0" v-for="(option, index) in listOptions" :key="option.value"
                 class="flex items-center gap-2 p-2 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600">
 
                 <input v-if="editingIndex === index" v-model="editingValue" type="text"
@@ -51,6 +51,9 @@
                         </button>
                     </template>
                 </div>
+            </div>
+            <div v-else class="text-sm text-gray-500 dark:text-gray-400">
+                No options available. Add new options below.
             </div>
         </div>
 

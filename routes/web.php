@@ -137,6 +137,18 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/customers', [JobTrackerController::class, 'storeCustomer'])->name('storeCustomer');
     Route::put('/api/job-tracker-master/customers/{id}', [JobTrackerController::class, 'updateCustomer'])->name('updateCustomer');
     Route::delete('/api/job-tracker-master/customers/{id}', [JobTrackerController::class, 'deleteCustomer'])->name('deleteCustomer');
+
+    // Job Tracker BJ District
+    Route::get('/api/job-tracker-master/bj-districts', [JobTrackerController::class, 'getBJDistricts'])->name('getBJDistricts');
+    Route::post('/api/job-tracker-master/bj-districts', [JobTrackerController::class, 'storeBJDistrict'])->name('storeBJDistrict');
+    Route::put('/api/job-tracker-master/bj-districts/{id}', [JobTrackerController::class, 'updateBJDistrict'])->name('updateBJDistrict');
+    Route::delete('/api/job-tracker-master/bj-districts/{id}', [JobTrackerController::class, 'deleteBJDistrict'])->name('deleteBJDistrict');
+
+    // Job Tracker Field Location
+    Route::get('/api/job-tracker-master/field-locations', [JobTrackerController::class, 'getFieldLocations'])->name('getFieldLocations');
+    Route::post('/api/job-tracker-master/field-locations', [JobTrackerController::class, 'storeFieldLocation'])->name('storeFieldLocation');
+    Route::put('/api/job-tracker-master/field-locations/{id}', [JobTrackerController::class, 'updateFieldLocation'])->name('updateFieldLocation');
+    Route::delete('/api/job-tracker-master/field-locations/{id}', [JobTrackerController::class, 'deleteFieldLocation'])->name('deleteFieldLocation');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

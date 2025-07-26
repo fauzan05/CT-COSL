@@ -143,16 +143,12 @@ const newOption = ref('')
 // Methods
 const addNewOption = () => {
     if (newOption.value.trim()) {
-        listOptions.value.push({
-            value: newOption.value.trim(),
-            label: newOption.value.trim()
-        })
         // saat di add, post ke api
         axios.post(`${baseUrl}/api/job-tracker-master/job-descriptions`, {
             description: newOption.value.trim()
         })
             .then(() => {
-                console.log(`Job description option "${newOption.value}" added successfully!`)
+                fetchAllJobDescriptions() // Refresh the list after adding
                 toast.success('Job description option added successfully!')
             })
             .catch(error => {
@@ -200,13 +196,8 @@ const updateOption = async ({ index, oldValue, newValue }) => {
                 label: newValue
             }
 
-            updateDescriptionValue(oldValue, newValue)
-            // Update selected if it matches
-            if (selectedJobDescription.value === oldValue) {
-                selectedJobDescription.value = newValue
-            }
+            fetchAllJobDescriptions() // Refresh the list after updating
 
-            console.log(`Job description option "${oldValue}" updated to "${newValue}" successfully!`)
             toast.success('Job description option updated successfully!')
         })
         .catch(error => {
@@ -216,19 +207,9 @@ const updateOption = async ({ index, oldValue, newValue }) => {
 }
 
 const removeOption = async (index) => {
-    const optionToRemove = listOptions.value[index].value
-
-    // Remove from parent's job descriptions
-    const updatedDescriptions = props.modelValue.filter(desc => desc !== optionToRemove)
-    emit('update:modelValue', updatedDescriptions)
     await axios.delete(`${baseUrl}/api/job-tracker-master/job-descriptions/${listOptions.value[index].id}`).
         then(() => {
-            // Remove from list options
-            listOptions.value.splice(index, 1)
-            // Clear selected if it matches
-            if (selectedJobDescription.value === optionToRemove) {
-                selectedJobDescription.value = ''
-            }
+            fetchAllJobDescriptions() // Refresh the list after removing
             toast.success('Job description option removed successfully!')
         }).catch(error => {
             console.error('Error removing job description option:', error)
@@ -236,18 +217,13 @@ const removeOption = async (index) => {
         })
 }
 
-const updateDescriptionValue = (oldValue, newValue) => {
-    const updatedDescriptions = props.modelValue.map(desc =>
-        desc === oldValue ? newValue : desc
-    )
-    emit('update:modelValue', updatedDescriptions)
-}
-
 const fetchAllJobDescriptions = async () => {
     // call use axios
     await axios.get(`${baseUrl}/api/job-tracker-master/job-descriptions`)
         .then(response => {
             if (response.data && Array.isArray(response.data)) {
+                // reset listOptions
+                listOptions.value = []
                 // urutkan listOptions berdasarkan value (alphabetical)
                 response.data.sort((a, b) => a.description.localeCompare(b.description))
                 listOptions.value = response.data.map(desc => ({
@@ -255,6 +231,17 @@ const fetchAllJobDescriptions = async () => {
                     value: desc.description,
                     label: desc.description
                 }))
+
+                if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedJobDescription.value)) {
+                    selectedJobDescription.value = ''
+                }
+
+                // jika salah satu selectedJobDescription tidak ada di listOptions, maka hapus selectedJobDescription yang tidak ada di listOptions dan lakukan emit juga
+                if (selectedJobDescription.value || !listOptions.value.some(opt => opt.value === selectedJobDescription.value)) {
+                    selectedJobDescription.value = ''
+                    emit('update:modelValue', props.modelValue.filter(desc => listOptions.value.some(opt => opt.value === desc)))
+                    
+                }
             }
         })
         .catch(error => {

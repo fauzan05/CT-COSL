@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobTracker\BjDistrictModel;
 use App\Models\JobTracker\CustomerModel;
+use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
 use Illuminate\Http\Request;
@@ -242,6 +244,124 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Customer deleted successfully.',
+        ], 200);
+    }
+
+    public function getBJDistricts(Request $request)
+    {
+        // Assuming you have a BJDistrict model
+        $districts = BjDistrictModel::select('id', 'district_name')
+            ->orderBy('district_name')
+            ->get();
+
+        return response()->json($districts, 200);
+    }
+
+    public function storeBJDistrict(Request $request)
+    {
+        $request->validate([
+            'district_name' => 'required|string|max:255',
+        ]);
+
+        $district = BjDistrictModel::create([
+            'district_name' => $request->input('district_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'BJ District created successfully.',
+            'data' => $district,
+        ], 201);
+    }
+
+    public function updateBJDistrict(Request $request, $id)
+    {
+        $request->validate([
+            'district_name' => 'required|string|max:255',
+        ]);
+
+        $district = BjDistrictModel::findOrFail($id);
+        $district->update([
+            'district_name' => $request->input('district_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'BJ District updated successfully.',
+            'data' => $district,
+        ], 200);
+    }
+
+    public function deleteBJDistrict(Request $request, $id)
+    {
+        $district = BjDistrictModel::findOrFail($id);
+        $district->delete();
+
+        return response()->json([
+            'message' => 'BJ District deleted successfully.',
+        ], 200);
+    }
+
+    public function getFieldLocations(Request $request)
+    {
+        // Assuming you have a FieldLocation model
+        $fieldLocations = FieldLocationModel::select('id', 'location_name')
+            ->orderBy('location_name')
+            ->get();
+
+        return response()->json($fieldLocations, 200);
+    }
+
+    public function storeFieldLocation(Request $request)
+    {
+        $request->validate([
+            'location_name' => 'required|string|max:255',
+        ]);
+
+        $fieldLocation = FieldLocationModel::create([
+            'location_name' => $request->input('location_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Field location created successfully.',
+            'data' => $fieldLocation,
+        ], 201);
+    }
+
+    public function updateFieldLocation(Request $request, $id)
+    {
+        $request->validate([
+            'location_name' => 'required|string|max:255',
+        ]);
+
+        $fieldLocation = FieldLocationModel::findOrFail($id);
+        $fieldLocation->update([
+            'location_name' => $request->input('location_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Field location updated successfully.',
+            'data' => $fieldLocation,
+        ], 200);
+    }
+
+    public function deleteFieldLocation(Request $request, $id)
+    {
+        $fieldLocation = FieldLocationModel::findOrFail($id);
+        $fieldLocation->delete();
+
+        return response()->json([
+            'message' => 'Field location deleted successfully.',
         ], 200);
     }
 }
