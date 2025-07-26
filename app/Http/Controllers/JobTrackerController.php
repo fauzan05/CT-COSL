@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobTracker\BjDistrictModel;
+use App\Models\JobTracker\CasingLinerSizeModel;
 use App\Models\JobTracker\CustomerModel;
 use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
@@ -601,6 +602,65 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Wellhead XOver deleted successfully.',
+        ], 200);
+    }
+
+    public function getCasingLinerSizes(Request $request)
+    {
+        // Assuming you have a CasingLinerSizeModel
+        $casingLinerSizes = CasingLinerSizeModel::select('id', 'size')
+            ->orderBy('size')
+            ->get();
+
+        return response()->json($casingLinerSizes, 200);
+    }
+
+    public function storeCasingLinerSize(Request $request)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $casingLinerSize = CasingLinerSizeModel::create([
+            'size' => $request->input('size'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Casing Liner Size created successfully.',
+            'data' => $casingLinerSize,
+        ], 201);
+    }
+
+    public function updateCasingLinerSize(Request $request, $id)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $casingLinerSize = CasingLinerSizeModel::findOrFail($id);
+        $casingLinerSize->update([
+            'size' => $request->input('size'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Casing Liner Size updated successfully.',
+            'data' => $casingLinerSize,
+        ], 200);
+    }
+
+    public function deleteCasingLinerSize(Request $request, $id)
+    {
+        $casingLinerSize = CasingLinerSizeModel::findOrFail($id);
+        $casingLinerSize->delete();
+
+        return response()->json([
+            'message' => 'Casing Liner Size deleted successfully.',
         ], 200);
     }
 }

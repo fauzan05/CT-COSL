@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('casing_line_sizes', function (Blueprint $table) {
+        Schema::create('casing_liner_sizes', function (Blueprint $table) {
             $table->id();
             $table->string('size');
-            $table->string('size_unit')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

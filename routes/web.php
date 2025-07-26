@@ -173,6 +173,12 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/wellhead-x-overs', [JobTrackerController::class, 'storeWellheadXOver'])->name('storeWellheadXOver');
     Route::put('/api/job-tracker-master/wellhead-x-overs/{id}', [JobTrackerController::class, 'updateWellheadXOver'])->name('updateWellheadXOver');
     Route::delete('/api/job-tracker-master/wellhead-x-overs/{id}', [JobTrackerController::class, 'deleteWellheadXOver'])->name('deleteWellheadXOver');
+
+    // Job Tracker Casing Liner Size
+    Route::get('/api/job-tracker-master/casing-liner-sizes', [JobTrackerController::class, 'getCasingLinerSizes'])->name('getCasingLinerSizes');
+    Route::post('/api/job-tracker-master/casing-liner-sizes', [JobTrackerController::class, 'storeCasingLinerSize'])->name('storeCasingLinerSize');
+    Route::put('/api/job-tracker-master/casing-liner-sizes/{id}', [JobTrackerController::class, 'updateCasingLinerSize'])->name('updateCasingLinerSize');
+    Route::delete('/api/job-tracker-master/casing-liner-sizes/{id}', [JobTrackerController::class, 'deleteCasingLinerSize'])->name('deleteCasingLinerSize');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route
