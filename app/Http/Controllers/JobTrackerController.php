@@ -10,6 +10,7 @@ use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
+use App\Models\JobTracker\MaxBHAODModel;
 use App\Models\JobTracker\NozzleTypeModel;
 use App\Models\JobTracker\WellheadXOverModel;
 use App\Models\JobTracker\WellStatusModel;
@@ -781,6 +782,65 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Nozzle Type deleted successfully.',
+        ], 200);
+    }
+
+    public function getMaxBHAODs(Request $request)
+    {
+        // Assuming you have a MaxBHAODModel
+        $maxBHAODs = MaxBHAODModel::select('id', 'size')
+            ->orderBy('size')
+            ->get();
+
+        return response()->json($maxBHAODs, 200);
+    }
+
+    public function storeMaxBHAOD(Request $request)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $maxBHAOD = MaxBHAODModel::create([
+            'size' => $request->input('size'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Max BHA OD created successfully.',
+            'data' => $maxBHAOD,
+        ], 201);
+    }
+
+    public function updateMaxBHAOD(Request $request, $id)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $maxBHAOD = MaxBHAODModel::findOrFail($id);
+        $maxBHAOD->update([
+            'size' => $request->input('size'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Max BHA OD updated successfully.',
+            'data' => $maxBHAOD,
+        ], 200);
+    }
+
+    public function deleteMaxBHAOD(Request $request, $id)
+    {
+        $maxBHAOD = MaxBHAODModel::findOrFail($id);
+        $maxBHAOD->delete();
+
+        return response()->json([
+            'message' => 'Max BHA OD deleted successfully.',
         ], 200);
     }
 }

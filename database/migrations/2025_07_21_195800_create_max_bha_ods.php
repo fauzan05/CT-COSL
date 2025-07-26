@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('max_bha_ods', function (Blueprint $table) {
             $table->id();
-            $table->string('max_bha_od');
-            $table->string('max_bha_od_unit')->nullable();
+            $table->string('size');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

@@ -191,7 +191,13 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/nozzle-types', [JobTrackerController::class, 'storeNozzleType'])->name('storeNozzleType');
     Route::put('/api/job-tracker-master/nozzle-types/{id}', [JobTrackerController::class, 'updateNozzleType'])->name('updateNozzleType');
     Route::delete('/api/job-tracker-master/nozzle-types/{id}', [JobTrackerController::class, 'deleteNozzleType'])->name('deleteNozzleType');
-    
+
+    // Job Tracker Max BHA OD
+    Route::get('/api/job-tracker-master/max-bha-ods', [JobTrackerController::class, 'getMaxBHAODs'])->name('getMaxBHAODs');
+    Route::post('/api/job-tracker-master/max-bha-ods', [JobTrackerController::class, 'storeMaxBHAOD'])->name('storeMaxBHAOD');
+    Route::put('/api/job-tracker-master/max-bha-ods/{id}', [JobTrackerController::class, 'updateMaxBHAOD'])->name('updateMaxBHAOD');
+    Route::delete('/api/job-tracker-master/max-bha-ods/{id}', [JobTrackerController::class, 'deleteMaxBHAOD'])->name('deleteMaxBHAOD');
+
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

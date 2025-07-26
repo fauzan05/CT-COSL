@@ -113,84 +113,64 @@
                 <WellheadXOverInput v-model="jobTracker.wellhead_x_over" />
                 <CasingLinerSizeInput v-model="jobTracker.casing_linear_size" />
                 <CompletionSizeInput v-model="jobTracker.completion_size" />
-                <NozzleTypeInput v-model="jobTracker.nozzle_type" />
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     <!-- Max Deviation -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Max Deviation
                         </label>
                         <input v-model.number="jobTracker.max_deviation" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full h-9.5 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter max deviation" />
                     </div>
 
-                    <!-- Depth MD -->
-                    <div>
+                    <!-- Dynamic Fields with Units -->
+                    <div v-for="field in fieldsWithUnits" :key="field.key">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Depth MD
+                            {{ field.label }}
                         </label>
-                        <div class="flex space-x-2">
-                            <input v-model.number="jobTracker.depth_md" type="number" step="0.01" min="0"
-                                class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Depth" />
-                            <select v-model="jobTracker.depth_md_unit"
-                                class="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="ft">ft</option>
-                                <option value="m">m</option>
-                            </select>
-                        </div>
-                    </div>
+                        <div class="flex gap-2">
+                            <input v-model.number="jobTracker[field.valueKey]" type="number" step="0.01"
+                                :min="field.min || 0"
+                                class="flex-1 px-3 h-9.5 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                :placeholder="field.placeholder" />
 
-                    <!-- Depth TVD -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Depth TVD
-                        </label>
-                        <div class="flex space-x-2">
-                            <input v-model.number="jobTracker.depth_tvd" type="number" step="0.01" min="0"
-                                class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="TVD" />
-                            <select v-model="jobTracker.depth_tvd_unit"
-                                class="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="ft">ft</option>
-                                <option value="m">m</option>
-                            </select>
-                        </div>
-                    </div>
+                            <Listbox v-model="jobTracker[field.unitKey]">
+                                <div class="relative w-20">
+                                    <ListboxButton
+                                        class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-8 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500 sm:text-sm">
+                                        <span class="block truncate text-gray-900 dark:text-white">
+                                            {{ jobTracker[field.unitKey] }}
+                                        </span>
+                                        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                            <ChevronUpDownIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
+                                        </span>
+                                    </ListboxButton>
 
-                    <!-- BH Pressure -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            BH Pressure
-                        </label>
-                        <div class="flex space-x-2">
-                            <input v-model.number="jobTracker.bh_pressure" type="number" step="0.01" min="0"
-                                class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Pressure" />
-                            <select v-model="jobTracker.bh_pressure_unit"
-                                class="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="psi">psi</option>
-                                <option value="bar">bar</option>
-                                <option value="kPa">kPa</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- BH Temperature -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            BH Temperature
-                        </label>
-                        <div class="flex space-x-2">
-                            <input v-model.number="jobTracker.bh_temp" type="number" step="0.01"
-                                class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Temperature" />
-                            <select v-model="jobTracker.bh_temp_unit"
-                                class="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="°F">°F</option>
-                                <option value="°C">°C</option>
-                            </select>
+                                    <transition leave-active-class="transition duration-100 ease-in"
+                                        leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                        <ListboxOptions
+                                            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                            <ListboxOption v-for="unit in field.units" :key="unit"
+                                                v-slot="{ active, selected }" :value="unit" as="template">
+                                                <li :class="[
+                                                    active ? 'bg-blue-100 dark:bg-gray-600 text-blue-900 dark:text-white' : 'text-gray-900 dark:text-gray-300',
+                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
+                                                ]">
+                                                    <span
+                                                        :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
+                                                        {{ unit }}
+                                                    </span>
+                                                    <span v-if="selected"
+                                                        class="absolute inset-y-0 left-0 flex items-center pl-2 text-blue-600 dark:text-blue-400">
+                                                        <CheckIcon class="h-4 w-4" aria-hidden="true" />
+                                                    </span>
+                                                </li>
+                                            </ListboxOption>
+                                        </ListboxOptions>
+                                    </transition>
+                                </div>
+                            </Listbox>
                         </div>
                     </div>
                 </div>
@@ -202,6 +182,8 @@
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
                     Equipment and Tools
                 </h3>
+                <NozzleTypeInput v-model="jobTracker.nozzle_type" />
+                <MaxBHAODInput v-model="jobTracker.max_bha_od" />
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <MaxDepthInput v-model="jobTracker.max_depths" />
                 </div>
@@ -411,6 +393,16 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import {
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions
+} from '@headlessui/vue'
+import {
+    ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
+    ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CheckIcon
+} from '@heroicons/vue/20/solid';
 import JobDescriptionInput from "../../forms/JobTrackers/JobDescriptionInput.vue";
 import MaxDepthInput from "../../forms/JobTrackers/MaxDepthInput.vue";
 import CTPersonnelInput from "../../forms/JobTrackers/CTPersonnelInput.vue";
@@ -424,6 +416,7 @@ import WellheadXOverInput from "../../forms/JobTrackers/WellheadXOverInput.vue";
 import CasingLinerSizeInput from "../../forms/JobTrackers/CasingLinerSizeInput.vue";
 import CompletionSizeInput from "../../forms/JobTrackers/CompletionSizeInput.vue";
 import NozzleTypeInput from "../../forms/JobTrackers/NozzleTypeInput.vue";
+import MaxBHAODInput from "../../forms/JobTrackers/MaxBHAODInput.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -468,6 +461,10 @@ const jobTracker = ref({
         unit: "in",
     },
     nozzle_type: "",
+    max_bha_od: {
+        value: null,
+        unit: "in",
+    },
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,
@@ -491,6 +488,47 @@ const jobTracker = ref({
     service_charges: null,
     other_charges: null,
 });
+
+// Fields configuration
+const fieldsWithUnits = ref([
+    {
+        key: 'depth_md',
+        label: 'Depth MD',
+        valueKey: 'depth_md',
+        unitKey: 'depth_md_unit',
+        placeholder: 'Depth',
+        units: ['ft', 'm'],
+        defaultUnit: 'ft'
+    },
+    {
+        key: 'depth_tvd',
+        label: 'Depth TVD',
+        valueKey: 'depth_tvd',
+        unitKey: 'depth_tvd_unit',
+        placeholder: 'TVD',
+        units: ['ft', 'm'],
+        defaultUnit: 'ft'
+    },
+    {
+        key: 'bh_pressure',
+        label: 'BH Pressure',
+        valueKey: 'bh_pressure',
+        unitKey: 'bh_pressure_unit',
+        placeholder: 'Pressure',
+        units: ['psi', 'bar', 'kPa'],
+        defaultUnit: 'psi'
+    },
+    {
+        key: 'bh_temp',
+        label: 'BH Temperature',
+        valueKey: 'bh_temp',
+        unitKey: 'bh_temp_unit',
+        placeholder: 'Temperature',
+        units: ['°F', '°C'],
+        defaultUnit: '°F',
+        min: undefined // No minimum for temperature
+    }
+])
 
 // Computed properties
 const totalRevenue = computed(() => {
