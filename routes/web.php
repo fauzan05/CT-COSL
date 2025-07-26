@@ -198,6 +198,12 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::put('/api/job-tracker-master/max-bha-ods/{id}', [JobTrackerController::class, 'updateMaxBHAOD'])->name('updateMaxBHAOD');
     Route::delete('/api/job-tracker-master/max-bha-ods/{id}', [JobTrackerController::class, 'deleteMaxBHAOD'])->name('deleteMaxBHAOD');
 
+    // Job Tracker Control Cabin
+    Route::get('/api/job-tracker-master/control-cabins', [JobTrackerController::class, 'getControlCabins'])->name('getControlCabins');
+    Route::post('/api/job-tracker-master/control-cabins', [JobTrackerController::class, 'storeControlCabin'])->name('storeControlCabin');
+    Route::put('/api/job-tracker-master/control-cabins/{id}', [JobTrackerController::class, 'updateControlCabin'])->name('updateControlCabin');
+    Route::delete('/api/job-tracker-master/control-cabins/{id}', [JobTrackerController::class, 'deleteControlCabin'])->name('deleteControlCabin');
+
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\JobTracker\BjDistrictModel;
 use App\Models\JobTracker\CasingLinerSizeModel;
 use App\Models\JobTracker\CompletionSizeModel;
+use App\Models\JobTracker\ControlCabinModel;
 use App\Models\JobTracker\CustomerModel;
 use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
@@ -841,6 +842,65 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Max BHA OD deleted successfully.',
+        ], 200);
+    }
+
+    public function getControlCabins(Request $request)
+    {
+        // Assuming you have a ControlCabinModel
+        $controlCabins = ControlCabinModel::select('id', 'cabin_name')
+            ->orderBy('cabin_name')
+            ->get();
+
+        return response()->json($controlCabins, 200);
+    }
+
+    public function storeControlCabin(Request $request)
+    {
+        $request->validate([
+            'cabin_name' => 'required|string|max:255',
+        ]);
+
+        $controlCabin = ControlCabinModel::create([
+            'cabin_name' => $request->input('cabin_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Control Cabin created successfully.',
+            'data' => $controlCabin,
+        ], 201);
+    }
+
+    public function updateControlCabin(Request $request, $id)
+    {
+        $request->validate([
+            'cabin_name' => 'required|string|max:255',
+        ]);
+
+        $controlCabin = ControlCabinModel::findOrFail($id);
+        $controlCabin->update([
+            'cabin_name' => $request->input('cabin_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Control Cabin updated successfully.',
+            'data' => $controlCabin,
+        ], 200);
+    }
+
+    public function deleteControlCabin(Request $request, $id)
+    {
+        $controlCabin = ControlCabinModel::findOrFail($id);
+        $controlCabin->delete();
+
+        return response()->json([
+            'message' => 'Control Cabin deleted successfully.',
         ], 200);
     }
 }

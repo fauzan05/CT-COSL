@@ -23,18 +23,45 @@
         <div class="space-y-2 w-auto">
             <div v-for="(depth, index) in maxDepths" :key="index" class="flex items-center gap-2 w-auto">
                 <input v-model.number="maxDepths[index].value" type="number" step="0.1" min="0"
-                    class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="flex-1 px-3 py-2 h-9.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     :placeholder="`Enter max depth ${index + 1}`" @input="emitValues" />
 
-                <!-- Unit dropdown -->
-                <select v-model="maxDepths[index].unit" @change="emitValues"
-                    class="px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[65px]">
-                    <option value="ft">ft</option>
-                    <option value="mm">mm</option>
-                    <option value="cm">cm</option>
-                    <option value="m">m</option>
-                    <option value="inch">inch</option>
-                </select>
+                <!-- Unit dropdown using Headless UI -->
+                <Listbox v-model="maxDepths[index].unit" @update:model-value="emitValues">
+                    <div class="relative min-w-[150px]">
+                        <ListboxButton
+                            class="relative w-full cursor-default rounded-md bg-white dark:bg-gray-700 py-2 pl-3 pr-8 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500 sm:text-sm">
+                            <span class="block truncate text-gray-900 dark:text-white">
+                                {{ maxDepths[index].unit }}
+                            </span>
+                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                <ChevronUpDownIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
+                            </span>
+                        </ListboxButton>
+
+                        <transition leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
+                            leave-to-class="opacity-0">
+                            <ListboxOptions
+                                class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                <ListboxOption v-for="unit in unitOptions" :key="unit" v-slot="{ active, selected }" 
+                                    :value="unit" as="template">
+                                    <li :class="[
+                                        active ? 'bg-blue-100 dark:bg-gray-600 text-blue-900 dark:text-white' : 'text-gray-900 dark:text-gray-300',
+                                        'relative cursor-default select-none py-2 pl-8 pr-4',
+                                    ]">
+                                        <span :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
+                                            {{ unit }}
+                                        </span>
+                                        <span v-if="selected"
+                                            class="absolute inset-y-0 left-0 flex items-center pl-2 text-blue-600 dark:text-blue-400">
+                                            <CheckIcon class="h-4 w-4" aria-hidden="true" />
+                                        </span>
+                                    </li>
+                                </ListboxOption>
+                            </ListboxOptions>
+                        </transition>
+                    </div>
+                </Listbox>
 
                 <!-- Remove button (only show if more than 1 input) -->
                 <button v-if="maxDepths.length > 1" @click="removeDepth(index)" type="button"
@@ -50,6 +77,13 @@
   
 <script setup>
 import { ref, watch } from 'vue'
+import {
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+} from '@headlessui/vue'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 
 // Props untuk v-model support
 const props = defineProps({
@@ -61,6 +95,9 @@ const props = defineProps({
 
 // Emit untuk v-model support
 const emit = defineEmits(['update:modelValue'])
+
+// Unit options
+const unitOptions = ref(['ft', 'mm', 'cm', 'm', 'inch'])
 
 // Reactive array untuk menyimpan nilai-nilai max depth
 const maxDepths = ref([])

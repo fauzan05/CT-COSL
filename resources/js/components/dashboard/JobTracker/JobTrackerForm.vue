@@ -184,8 +184,9 @@
                 </h3>
                 <NozzleTypeInput v-model="jobTracker.nozzle_type" />
                 <MaxBHAODInput v-model="jobTracker.max_bha_od" />
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <MaxDepthInput v-model="jobTracker.max_depths" />
+                    <ControlCabinInput v-model="jobTracker.control_cabin" />
                 </div>
             </div>
 
@@ -417,6 +418,7 @@ import CasingLinerSizeInput from "../../forms/JobTrackers/CasingLinerSizeInput.v
 import CompletionSizeInput from "../../forms/JobTrackers/CompletionSizeInput.vue";
 import NozzleTypeInput from "../../forms/JobTrackers/NozzleTypeInput.vue";
 import MaxBHAODInput from "../../forms/JobTrackers/MaxBHAODInput.vue";
+import ControlCabinInput from "../../forms/JobTrackers/ControlCabinInput.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -465,6 +467,7 @@ const jobTracker = ref({
         value: null,
         unit: "in",
     },
+    control_cabin: "",
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,
