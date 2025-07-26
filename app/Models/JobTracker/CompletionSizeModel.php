@@ -12,7 +12,6 @@ class CompletionSizeModel extends Model
     public $timestamps = false;
     protected $fillable = [
         'size',
-        'size_unit',
         'created_by',
         'updated_by',
     ];

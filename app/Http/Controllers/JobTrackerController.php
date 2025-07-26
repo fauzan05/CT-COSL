@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobTracker\BjDistrictModel;
 use App\Models\JobTracker\CasingLinerSizeModel;
+use App\Models\JobTracker\CompletionSizeModel;
 use App\Models\JobTracker\CustomerModel;
 use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
@@ -661,6 +662,65 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Casing Liner Size deleted successfully.',
+        ], 200);
+    }
+
+    public function getCompletionSizes(Request $request)
+    {
+        // Assuming you have a CompletionSizeModel
+        $completionSizes = CompletionSizeModel::select('id', 'size')
+            ->orderBy('size')
+            ->get();
+
+        return response()->json($completionSizes, 200);
+    }
+
+    public function storeCompletionSize(Request $request)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $completionSize = CompletionSizeModel::create([
+            'size' => $request->input('size'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Completion Size created successfully.',
+            'data' => $completionSize,
+        ], 201);
+    }
+
+    public function updateCompletionSize(Request $request, $id)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $completionSize = CompletionSizeModel::findOrFail($id);
+        $completionSize->update([
+            'size' => $request->input('size'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Completion Size updated successfully.',
+            'data' => $completionSize,
+        ], 200);
+    }
+
+    public function deleteCompletionSize(Request $request, $id)
+    {
+        $completionSize = CompletionSizeModel::findOrFail($id);
+        $completionSize->delete();
+
+        return response()->json([
+            'message' => 'Completion Size deleted successfully.',
         ], 200);
     }
 }

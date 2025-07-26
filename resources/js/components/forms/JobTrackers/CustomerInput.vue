@@ -236,11 +236,6 @@ const fetchAllCustomers = async () => {
 onMounted(async () => {
     // Fetch all customers from the API first
     await fetchAllCustomers()
-    
-    // Initialize selectedJobCustomer with the first option if available
-    if (listOptions.value.length > 0) {
-        selectedJobCustomer.value = listOptions.value[0].value
-    }
 })
 
 watch(selectedJobCustomer, (newValue) => {

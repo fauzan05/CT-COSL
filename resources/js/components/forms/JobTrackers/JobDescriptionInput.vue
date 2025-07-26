@@ -249,13 +249,8 @@ const fetchAllJobDescriptions = async () => {
         })
 }
 
-onMounted(() => {
-    // Initialize selectedJobDescription with the first option if available
-    if (listOptions.value.length > 0) {
-        selectedJobDescription.value = listOptions.value[0].value
-    }
-
+onMounted(async () => {
     // Fetch all job descriptions from the API
-    fetchAllJobDescriptions()
+    await fetchAllJobDescriptions()
 })
 </script>

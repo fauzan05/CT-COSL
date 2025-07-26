@@ -212,11 +212,6 @@ const fetchAllWellStatuses = async () => {
 
 onMounted(async () => {
     await fetchAllWellStatuses()
-
-    // Initialize selectedWellStatus with the first option if available
-    if (listOptions.value.length > 0) {
-        selectedWellStatus.value = listOptions.value[0].value
-    }
 })
 
 watch(selectedWellStatus, (newValue) => {

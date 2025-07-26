@@ -212,11 +212,6 @@ const fetchAllWellheadXOvers = async () => {
 
 onMounted(async () => {
     await fetchAllWellheadXOvers()
-
-    // Initialize selectedWellheadXOver with the first option if available
-    if (listOptions.value.length > 0) {
-        selectedWellheadXOver.value = listOptions.value[0].value
-    }
 })
 
 watch(selectedWellheadXOver, (newValue) => {

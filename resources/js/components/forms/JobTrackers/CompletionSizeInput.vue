@@ -2,7 +2,7 @@
     <div class="mb-5">
         <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Casing/Liner Size
+                Completion Size
             </label>
             <div class="flex items-center gap-2">
                 <!-- reset button -->
@@ -34,12 +34,12 @@
         <div class="grid grid-cols-3 gap-2">
             <!-- Size Dropdown -->
             <div class="col-span-2">
-                <Listbox v-model="selectedCasingLinerSize">
+                <Listbox v-model="selectedCompletionSize">
                     <div class="relative">
                         <ListboxButton
                             class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                             <span class="block truncate text-gray-900 dark:text-white">
-                                {{ selectedCasingLinerSize || sizePlaceholder }}
+                                {{ selectedCompletionSize || sizePlaceholder }}
                             </span>
                             <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                 <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -186,7 +186,7 @@ const unitOptions = ref([
     { value: 'ID', label: 'ID (Inner Diameter)' }
 ])
 
-const selectedCasingLinerSize = ref('')
+const selectedCompletionSize = ref('')
 const selectedUnit = ref(unitOptions.value[0].value) // Default to first unit
 
 // UI States
@@ -196,11 +196,11 @@ const newOptionSize = ref('')
 
 // Computed property for complete selection
 const completeSelection = computed(() => {
-    if (selectedCasingLinerSize.value && selectedUnit.value) {
+    if (selectedCompletionSize.value && selectedUnit.value) {
         return {
-            size: selectedCasingLinerSize.value,
+            size: selectedCompletionSize.value,
             unit: selectedUnit.value,
-            label: `${selectedCasingLinerSize.value} ${selectedUnit.value}`
+            label: `${selectedCompletionSize.value} ${selectedUnit.value}`
         }
     }
     return {
@@ -212,26 +212,26 @@ const completeSelection = computed(() => {
 
 // Methods
 const resetSelection = () => {
-    selectedCasingLinerSize.value = ''
+    selectedCompletionSize.value = ''
     selectedUnit.value = unitOptions.value[0].value // Reset to first unit
 }
 
 const addNewOption = async () => {
     if (newOptionSize.value.trim()) {
         try {
-            await axios.post(`${baseUrl}/api/job-tracker-master/casing-liner-sizes`, {
+            await axios.post(`${baseUrl}/api/job-tracker-master/completion-sizes`, {
                 size: newOptionSize.value.trim()
             })
 
-            await fetchAllCasingLinerSizes() // Refresh the list options from the API
+            await fetchAllCompletionSizes() // Refresh the list options from the API
 
-            toast.success('Casing/liner size option added successfully!')
+            toast.success('Completion size option added successfully!')
 
             newOptionSize.value = ''
             showAddOption.value = false
         } catch (error) {
-            console.error('Error adding casing/liner size option:', error)
-            toast.error('Failed to add casing/liner size option.')
+            console.error('Error adding completion size option:', error)
+            toast.error('Failed to add completion size option.')
         }
     } else {
         toast.warning('Please enter size.')
@@ -244,39 +244,39 @@ const cancelAddOption = () => {
 }
 
 const updateOption = async ({ index, oldValue, newValue }) => {
-    // Extract casing/liner size name from newValue object or use it directly if it's a string
-    const newCasingLinerSizeName = typeof newValue === 'object' ? newValue.size : newValue
+    // Extract completion size name from newValue object or use it directly if it's a string
+    const newCompletionSizeName = typeof newValue === 'object' ? newValue.size : newValue
 
     try {
-        await axios.put(`${baseUrl}/api/job-tracker-master/casing-liner-sizes/${sizeOptions.value[index].id}`, {
-            size: newCasingLinerSizeName.trim()
+        await axios.put(`${baseUrl}/api/job-tracker-master/completion-sizes/${sizeOptions.value[index].id}`, {
+            size: newCompletionSizeName.trim()
         })
 
-        await fetchAllCasingLinerSizes() // Refresh the list options from the API
+        await fetchAllCompletionSizes() // Refresh the list options from the API
 
-        toast.success('Casing/liner size option updated successfully!')
+        toast.success('Completion size option updated successfully!')
     } catch (error) {
-        console.error('Error updating casing/liner size option:', error)
-        toast.error('Failed to update casing/liner size option.')
+        console.error('Error updating completion size option:', error)
+        toast.error('Failed to update completion size option.')
     }
 }
 
 const removeOption = async (index) => {
     try {
-        await axios.delete(`${baseUrl}/api/job-tracker-master/casing-liner-sizes/${sizeOptions.value[index].id}`)
+        await axios.delete(`${baseUrl}/api/job-tracker-master/completion-sizes/${sizeOptions.value[index].id}`)
 
-        await fetchAllCasingLinerSizes() // Refresh the list options from the API
+        await fetchAllCompletionSizes() // Refresh the list options from the API
 
-        toast.success('Casing/liner size option removed successfully!')
+        toast.success('Completion size option removed successfully!')
     } catch (error) {
-        console.error('Error removing casing/liner size option:', error)
-        toast.error('Failed to remove casing/liner size option.')
+        console.error('Error removing completion size option:', error)
+        toast.error('Failed to remove completion size option.')
     }
 }
 
-const fetchAllCasingLinerSizes = async () => {
+const fetchAllCompletionSizes = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/job-tracker-master/casing-liner-sizes`)
+        const response = await axios.get(`${baseUrl}/api/job-tracker-master/completion-sizes`)
         if (response.data && Array.isArray(response.data)) {
             sizeOptions.value = [] // Reset options before populating
 
@@ -295,23 +295,19 @@ const fetchAllCasingLinerSizes = async () => {
             }))
 
             // Reset selection if current selection is not in the updated list
-            if (sizeOptions.value.length < 1 || !sizeOptions.value.some(opt => opt.value === selectedCasingLinerSize.value)) {
-                selectedCasingLinerSize.value = ''
+            if (sizeOptions.value.length < 1 || !sizeOptions.value.some(opt => opt.value === selectedCompletionSize.value)) {
+                selectedCompletionSize.value = ''
             }
         }
     } catch (error) {
-        console.error('Error fetching casing/liner sizes:', error)
-        toast.error('Failed to fetch casing/liner sizes.')
+        console.error('Error fetching completion sizes:', error)
+        toast.error('Failed to fetch completion sizes.')
     }
 }
 
 onMounted(async () => {
-    await fetchAllCasingLinerSizes()
+    await fetchAllCompletionSizes()
 
-    // Initialize with props value if available
-    if (props.modelValue?.size) {
-        selectedCasingLinerSize.value = props.modelValue.size
-    }
     if (props.modelValue?.unit) {
         selectedUnit.value = props.modelValue.unit
     }
@@ -329,8 +325,8 @@ watch(completeSelection, (newValue) => {
 
 // Watch for external prop changes
 watch(() => props.modelValue, (newValue) => {
-    if (newValue?.size !== selectedCasingLinerSize.value) {
-        selectedCasingLinerSize.value = newValue?.size || ''
+    if (newValue?.size !== selectedCompletionSize.value) {
+        selectedCompletionSize.value = newValue?.size || ''
     }
     if (newValue?.unit !== selectedUnit.value) {
         selectedUnit.value = newValue?.unit || ''

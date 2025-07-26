@@ -112,6 +112,7 @@
                 <WellTypeInput v-model="jobTracker.well_type" />
                 <WellheadXOverInput v-model="jobTracker.wellhead_x_over" />
                 <CasingLinerSizeInput v-model="jobTracker.casing_linear_size" />
+                <CompletionSizeInput v-model="jobTracker.completion_size" />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Max Deviation -->
                     <div>
@@ -420,6 +421,7 @@ import WellStatusInput from "../../forms/JobTrackers/WellStatusInput.vue";
 import WellTypeInput from "../../forms/JobTrackers/WellTypeInput.vue";
 import WellheadXOverInput from "../../forms/JobTrackers/WellheadXOverInput.vue";
 import CasingLinerSizeInput from "../../forms/JobTrackers/CasingLinerSizeInput.vue";
+import CompletionSizeInput from "../../forms/JobTrackers/CompletionSizeInput.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -456,6 +458,10 @@ const jobTracker = ref({
     well_type: "",
     wellhead_x_over: "",
     casing_linear_size: {
+        size: "",
+        unit: "in",
+    },
+    completion_size: {
         size: "",
         unit: "in",
     },

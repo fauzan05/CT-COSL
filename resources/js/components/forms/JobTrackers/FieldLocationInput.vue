@@ -213,11 +213,6 @@ const fetchAllFieldLocations = async () => {
 onMounted(async () => {
     // Fetch all districts from the API first
     await fetchAllFieldLocations()
-
-    // Initialize selectedFieldLocation with the first option if available
-    if (listOptions.value.length > 0) {
-        selectedFieldLocation.value = listOptions.value[0].value
-    }
 })
 
 watch(selectedFieldLocation, (newValue) => {

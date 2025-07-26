@@ -212,11 +212,6 @@ const fetchAllWellTypes = async () => {
 
 onMounted(async () => {
     await fetchAllWellTypes()
-
-    // Initialize selectedWellType with the first option if available
-    if (listOptions.value.length > 0) {
-        selectedWellType.value = listOptions.value[0].value
-    }
 })
 
 watch(selectedWellType, (newValue) => {

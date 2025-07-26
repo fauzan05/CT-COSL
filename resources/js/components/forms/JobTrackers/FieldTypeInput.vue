@@ -210,10 +210,6 @@ const fetchAllFieldTypes = async () => {
 
 onMounted(async () => {
     await fetchAllFieldTypes()
-
-    if (listOptions.value.length > 0) {
-        selectedFieldType.value = listOptions.value[0].value
-    }
 })
 
 watch(selectedFieldType, (newValue) => {
