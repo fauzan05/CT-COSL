@@ -149,6 +149,18 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/field-locations', [JobTrackerController::class, 'storeFieldLocation'])->name('storeFieldLocation');
     Route::put('/api/job-tracker-master/field-locations/{id}', [JobTrackerController::class, 'updateFieldLocation'])->name('updateFieldLocation');
     Route::delete('/api/job-tracker-master/field-locations/{id}', [JobTrackerController::class, 'deleteFieldLocation'])->name('deleteFieldLocation');
+
+    // Job Tracker Field Type
+    Route::get('/api/job-tracker-master/field-types', [JobTrackerController::class, 'getFieldTypes'])->name('getFieldTypes');
+    Route::post('/api/job-tracker-master/field-types', [JobTrackerController::class, 'storeFieldType'])->name('storeFieldType');
+    Route::put('/api/job-tracker-master/field-types/{id}', [JobTrackerController::class, 'updateFieldType'])->name('updateFieldType');
+    Route::delete('/api/job-tracker-master/field-types/{id}', [JobTrackerController::class, 'deleteFieldType'])->name('deleteFieldType');
+
+    // Job Tracker Well Status
+    Route::get('/api/job-tracker-master/well-statuses', [JobTrackerController::class, 'getWellStatuses'])->name('getWellStatuses');
+    Route::post('/api/job-tracker-master/well-statuses', [JobTrackerController::class, 'storeWellStatus'])->name('storeWellStatus');
+    Route::put('/api/job-tracker-master/well-statuses/{id}', [JobTrackerController::class, 'updateWellStatus'])->name('updateWellStatus');
+    Route::delete('/api/job-tracker-master/well-statuses/{id}', [JobTrackerController::class, 'deleteWellStatus'])->name('deleteWellStatus');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

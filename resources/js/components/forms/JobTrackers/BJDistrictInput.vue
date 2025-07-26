@@ -95,7 +95,7 @@
 </template>
   
 <script setup>
-import { ref, defineProps, defineEmits, onMounted } from 'vue'
+import { ref, defineProps, defineEmits, onMounted, watch } from 'vue'
 import {
     Listbox,
     ListboxButton,
@@ -221,5 +221,10 @@ onMounted(async () => {
     if (listOptions.value.length > 0) {
         selectedDistrict.value = listOptions.value[0].value
     }
+})
+
+watch(selectedDistrict, (newValue) => {
+    // Emit the selected district value to the parent component
+    emit('update:modelValue', newValue)
 })
 </script>

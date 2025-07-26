@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\JobTracker\BjDistrictModel;
 use App\Models\JobTracker\CustomerModel;
 use App\Models\JobTracker\FieldLocationModel;
+use App\Models\JobTracker\FieldTypeModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
+use App\Models\JobTracker\WellStatusModel;
 use Illuminate\Http\Request;
 
 class JobTrackerController extends Controller
@@ -362,6 +364,124 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Field location deleted successfully.',
+        ], 200);
+    }
+
+    public function getFieldTypes(Request $request)
+    {
+        // Assuming you have a FieldTypeModel
+        $fieldTypes = FieldTypeModel::select('id', 'type_name')
+            ->orderBy('type_name')
+            ->get();
+
+        return response()->json($fieldTypes, 200);
+    }
+
+    public function storeFieldType(Request $request)
+    {
+        $request->validate([
+            'type_name' => 'required|string|max:255',
+        ]);
+
+        $fieldType = FieldTypeModel::create([
+            'type_name' => $request->input('type_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Field type created successfully.',
+            'data' => $fieldType,
+        ], 201);
+    }
+
+    public function updateFieldType(Request $request, $id)
+    {
+        $request->validate([
+            'type_name' => 'required|string|max:255',
+        ]);
+
+        $fieldType = FieldTypeModel::findOrFail($id);
+        $fieldType->update([
+            'type_name' => $request->input('type_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Field type updated successfully.',
+            'data' => $fieldType,
+        ], 200);
+    }
+
+    public function deleteFieldType(Request $request, $id)
+    {
+        $fieldType = FieldTypeModel::findOrFail($id);
+        $fieldType->delete();
+
+        return response()->json([
+            'message' => 'Field type deleted successfully.',
+        ], 200);
+    }
+
+    public function getWellStatuses(Request $request)
+    {
+        // Assuming you have a WellStatusModel
+        $wellStatuses = WellStatusModel::select('id', 'status_name')
+            ->orderBy('status_name')
+            ->get();
+
+        return response()->json($wellStatuses, 200);
+    }
+
+    public function storeWellStatus(Request $request)
+    {
+        $request->validate([
+            'status_name' => 'required|string|max:255',
+        ]);
+
+        $wellStatus = WellStatusModel::create([
+            'status_name' => $request->input('status_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Well status created successfully.',
+            'data' => $wellStatus,
+        ], 201);
+    }
+
+    public function updateWellStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status_name' => 'required|string|max:255',
+        ]);
+
+        $wellStatus = WellStatusModel::findOrFail($id);
+        $wellStatus->update([
+            'status_name' => $request->input('status_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Well status updated successfully.',
+            'data' => $wellStatus,
+        ], 200);
+    }
+
+    public function deleteWellStatus(Request $request, $id)
+    {
+        $wellStatus = WellStatusModel::findOrFail($id);
+        $wellStatus->delete();
+
+        return response()->json([
+            'message' => 'Well status deleted successfully.',
         ], 200);
     }
 }

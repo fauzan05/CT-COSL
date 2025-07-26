@@ -2,11 +2,11 @@
     <div class="mb-5">
         <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Field Location
+                Field Type
             </label>
             <div class="flex items-center gap-2">
                 <!-- reset button -->
-                <button @click="selectedFieldLocation = ''" type="button"
+                <button @click="selectedFieldType = ''" type="button"
                     class="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
@@ -31,12 +31,12 @@
         </div>
 
         <!-- Headless UI Listbox (Dropdown) -->
-        <Listbox v-model="selectedFieldLocation">
+        <Listbox v-model="selectedFieldType">
             <div class="relative">
                 <ListboxButton
                     class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                     <span class="block truncate text-gray-900 dark:text-white">
-                        {{ selectedFieldLocation || placeholder }}
+                        {{ selectedFieldType || placeholder }}
                     </span>
                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -75,7 +75,7 @@
 
         <!-- Add Option Input -->
         <div v-if="showAddOption" class="mt-2 flex gap-2">
-            <input v-model="newOption" type="text" placeholder="Enter new field location"
+            <input v-model="newOption" type="text" placeholder="Enter new field type"
                 class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 @keyup.enter="addNewOption">
             <button @click="addNewOption" type="button"
@@ -119,10 +119,10 @@ const emit = defineEmits(['update:modelValue'])
 const toast = useToast()
 
 // Dropdown options - hanya satu list
-const placeholder = ref('Select field location')
+const placeholder = ref('Select field type')
 const listOptions = ref([])
 
-const selectedFieldLocation = ref('')
+const selectedFieldType = ref('')
 
 // UI States
 const showAddOption = ref(false)
@@ -133,19 +133,19 @@ const newOption = ref('')
 const addNewOption = async () => {
     if (newOption.value.trim()) {
         try {
-            const response = await axios.post(`${baseUrl}/api/job-tracker-master/field-locations`, {
-                location_name: newOption.value.trim()
+            const response = await axios.post(`${baseUrl}/api/job-tracker-master/field-types`, {
+                type_name: newOption.value.trim()
             })
 
-            fetchAllFieldLocations() // Refresh the list options from the API
+            fetchAllFieldTypes() // Refresh the list options from the API
 
-            toast.success('Field location option added successfully!')
+            toast.success('Field type option added successfully!')
 
             newOption.value = ''
             showAddOption.value = false
         } catch (error) {
-            console.error('Error adding field location option:', error)
-            toast.error('Failed to add field location option.')
+            console.error('Error adding field type option:', error)
+            toast.error('Failed to add field type option.')
         }
     }
 }
@@ -156,72 +156,67 @@ const cancelAddOption = () => {
 }
 
 const updateOption = async ({ index, oldValue, newValue }) => {
-    // Extract field location name from newValue object or use it directly if it's a string
-    const newFieldLocationName = typeof newValue === 'object' ? newValue.location_name : newValue
+    const newFieldTypeName = typeof newValue === 'object' ? newValue.type_name : newValue
 
     try {
-        await axios.put(`${baseUrl}/api/job-tracker-master/field-locations/${listOptions.value[index].id}`, {
-            location_name: newFieldLocationName.trim()
+        await axios.put(`${baseUrl}/api/job-tracker-master/field-types/${listOptions.value[index].id}`, {
+            type_name: newFieldTypeName.trim()
         })
 
-        fetchAllFieldLocations() // Refresh the list options from the API
+        fetchAllFieldTypes() // Refresh the list options from the API
 
-        toast.success('Field location option updated successfully!')
+        toast.success('Field type option updated successfully!')
     } catch (error) {
-        console.error('Error updating field location option:', error)
-        toast.error('Failed to update field location option.')
+        console.error('Error updating field type option:', error)
+        toast.error('Failed to update field type option.')
     }
 }
 
 const removeOption = async (index) => {
     try {
-        await axios.delete(`${baseUrl}/api/job-tracker-master/field-locations/${listOptions.value[index].id}`)
+        await axios.delete(`${baseUrl}/api/job-tracker-master/field-types/${listOptions.value[index].id}`)
 
-        fetchAllFieldLocations() // Refresh the list options from the API
+        fetchAllFieldTypes() // Refresh the list options from the API
 
-        toast.success('Field location option removed successfully!')
+        toast.success('Field type option removed successfully!')
     } catch (error) {
-        console.error('Error removing field location option:', error)
-        toast.error('Failed to remove field location option.')
+        console.error('Error removing field type option:', error)
+        toast.error('Failed to remove field type option.')
     }
 }
 
-const fetchAllFieldLocations = async () => {
+const fetchAllFieldTypes = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/job-tracker-master/field-locations`)
+        const response = await axios.get(`${baseUrl}/api/job-tracker-master/field-types`)
         if (response.data && Array.isArray(response.data)) {
-            listOptions.value = [] // Reset options before populating
-            // Sort by location_name alphabetically
-            response.data.sort((a, b) => a.location_name.localeCompare(b.location_name))
+            listOptions.value = []
+            response.data.sort((a, b) => a.type_name.localeCompare(b.type_name))
 
             listOptions.value = response.data.map(loc => ({
                 id: loc.id,
-                value: loc.location_name,
-                label: loc.location_name
+                value: loc.type_name,
+                label: loc.type_name
             }))
 
-            if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedFieldLocation.value)) {
-                selectedFieldLocation.value = ''
+            if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedFieldType.value)) {
+                selectedFieldType.value = ''
             }
         }
     } catch (error) {
-        console.error('Error fetching districts:', error)
-        toast.error('Failed to fetch districts.')
+        console.error('Error fetching field types:', error)
+        toast.error('Failed to fetch field types.')
     }
 }
 
 onMounted(async () => {
-    // Fetch all districts from the API first
-    await fetchAllFieldLocations()
+    await fetchAllFieldTypes()
 
-    // Initialize selectedFieldLocation with the first option if available
     if (listOptions.value.length > 0) {
-        selectedFieldLocation.value = listOptions.value[0].value
+        selectedFieldType.value = listOptions.value[0].value
     }
 })
 
-watch(selectedFieldLocation, (newValue) => {
-    // Emit the selected value to the parent component
+watch(selectedFieldType, (newValue) => {
     emit('update:modelValue', newValue)
 })
 </script>

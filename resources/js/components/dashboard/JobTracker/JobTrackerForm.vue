@@ -106,7 +106,9 @@
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
                     Well Information
                 </h3>
-                <FieldLocaionInput v-model="jobTracker.field_location" />
+                <FieldLocationInput v-model="jobTracker.field_location" />
+                <FieldTypeInput v-model="jobTracker.field_type" />
+                <WellStatusInput v-model="jobTracker.well_status" />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Max Deviation -->
                     <div>
@@ -409,7 +411,9 @@ import MaxDepthInput from "../../forms/JobTrackers/MaxDepthInput.vue";
 import CTPersonnelInput from "../../forms/JobTrackers/CTPersonnelInput.vue";
 import CustomerInput from "../../forms/JobTrackers/CustomerInput.vue";
 import BJDistrictInput from "../../forms/JobTrackers/BJDistrictInput.vue";
-import FieldLocaionInput from "../../forms/JobTrackers/FieldLocationInput.vue";
+import FieldLocationInput from "../../forms/JobTrackers/FieldLocationInput.vue";
+import FieldTypeInput from "../../forms/JobTrackers/FieldTypeInput.vue";
+import WellStatusInput from "../../forms/JobTrackers/WellStatusInput.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -441,6 +445,8 @@ const jobTracker = ref({
     customer: "",
     bj_district: "",
     field_location: "",
+    field_type: "",
+    well_status: "",
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,
