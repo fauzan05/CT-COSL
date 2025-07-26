@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('wts', function (Blueprint $table) {
             $table->id();
-            $table->string('wt_name');
-            $table->string('wt_unit')->nullable();
+            $table->string('size');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

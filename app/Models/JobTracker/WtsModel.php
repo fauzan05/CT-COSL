@@ -11,8 +11,7 @@ class WTSModel extends Model
     protected $table = 'wts';
     public $timestamps = false;
     protected $fillable = [
-        'wt_name',
-        'wt_unit',
+        'size',
         'created_by',
         'updated_by',
     ];

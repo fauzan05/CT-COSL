@@ -21,6 +21,7 @@ use App\Models\JobTracker\PowerPackModel;
 use App\Models\JobTracker\PowerReelModel;
 use App\Models\JobTracker\WellheadXOverModel;
 use App\Models\JobTracker\WellStatusModel;
+use App\Models\JobTracker\WTSModel;
 use Illuminate\Http\Request;
 
 class JobTrackerController extends Controller
@@ -1261,6 +1262,65 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'CT Grade deleted successfully.',
+        ], 200);
+    }
+
+    public function getWTs(Request $request)
+    {
+        // Assuming you have a WTModel
+        $wts = WTSModel::select('id', 'size')
+            ->orderBy('size')
+            ->get();
+
+        return response()->json($wts, 200);
+    }
+
+    public function storeWT(Request $request)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $wt = WTSModel::create([
+            'size' => $request->input('size'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'WT created successfully.',
+            'data' => $wt,
+        ], 201);
+    }
+
+    public function updateWT(Request $request, $id)
+    {
+        $request->validate([
+            'size' => 'required|string|max:255',
+        ]);
+
+        $wt = WTSModel::findOrFail($id);
+        $wt->update([
+            'size' => $request->input('size'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'WT updated successfully.',
+            'data' => $wt,
+        ], 200);
+    }
+
+    public function deleteWT(Request $request, $id)
+    {
+        $wt = WTSModel::findOrFail($id);
+        $wt->delete();
+
+        return response()->json([
+            'message' => 'WT deleted successfully.',
         ], 200);
     }
 }
