@@ -13,6 +13,8 @@ use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
 use App\Models\JobTracker\MaxBHAODModel;
 use App\Models\JobTracker\NozzleTypeModel;
+use App\Models\JobTracker\PowerPackModel;
+use App\Models\JobTracker\PowerReelModel;
 use App\Models\JobTracker\WellheadXOverModel;
 use App\Models\JobTracker\WellStatusModel;
 use Illuminate\Http\Request;
@@ -901,6 +903,124 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Control Cabin deleted successfully.',
+        ], 200);
+    }
+
+    public function getPowerPacks(Request $request)
+    {
+        // Assuming you have a PowerPackModel
+        $powerPacks = PowerPackModel::select('id', 'power_pack_name')
+            ->orderBy('power_pack_name')
+            ->get();
+
+        return response()->json($powerPacks, 200);
+    }
+
+    public function storePowerPack(Request $request)
+    {
+        $request->validate([
+            'power_pack_name' => 'required|string|max:255',
+        ]);
+
+        $powerPack = PowerPackModel::create([
+            'power_pack_name' => $request->input('power_pack_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Power Pack created successfully.',
+            'data' => $powerPack,
+        ], 201);
+    }
+
+    public function updatePowerPack(Request $request, $id)
+    {
+        $request->validate([
+            'power_pack_name' => 'required|string|max:255',
+        ]);
+
+        $powerPack = PowerPackModel::findOrFail($id);
+        $powerPack->update([
+            'power_pack_name' => $request->input('power_pack_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Power Pack updated successfully.',
+            'data' => $powerPack,
+        ], 200);
+    }
+
+    public function deletePowerPack(Request $request, $id)
+    {
+        $powerPack = PowerPackModel::findOrFail($id);
+        $powerPack->delete();
+
+        return response()->json([
+            'message' => 'Power Pack deleted successfully.',
+        ], 200);
+    }
+
+    public function getPowerReels(Request $request)
+    {
+        // Assuming you have a PowerReelModel
+        $powerReels = PowerReelModel::select('id', 'power_reel_name')
+            ->orderBy('power_reel_name')
+            ->get();
+
+        return response()->json($powerReels, 200);
+    }
+
+    public function storePowerReel(Request $request)
+    {
+        $request->validate([
+            'power_reel_name' => 'required|string|max:255',
+        ]);
+
+        $powerReel = PowerReelModel::create([
+            'power_reel_name' => $request->input('power_reel_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Power Reel created successfully.',
+            'data' => $powerReel,
+        ], 201);
+    }
+
+    public function updatePowerReel(Request $request, $id)
+    {
+        $request->validate([
+            'power_reel_name' => 'required|string|max:255',
+        ]);
+
+        $powerReel = PowerReelModel::findOrFail($id);
+        $powerReel->update([
+            'power_reel_name' => $request->input('power_reel_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Power Reel updated successfully.',
+            'data' => $powerReel,
+        ], 200);
+    }
+
+    public function deletePowerReel(Request $request, $id)
+    {
+        $powerReel = PowerReelModel::findOrFail($id);
+        $powerReel->delete();
+
+        return response()->json([
+            'message' => 'Power Reel deleted successfully.',
         ], 200);
     }
 }

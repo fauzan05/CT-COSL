@@ -204,6 +204,17 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::put('/api/job-tracker-master/control-cabins/{id}', [JobTrackerController::class, 'updateControlCabin'])->name('updateControlCabin');
     Route::delete('/api/job-tracker-master/control-cabins/{id}', [JobTrackerController::class, 'deleteControlCabin'])->name('deleteControlCabin');
 
+    // Job Tracker Power Pack
+    Route::get('/api/job-tracker-master/power-packs', [JobTrackerController::class, 'getPowerPacks'])->name('getPowerPacks');
+    Route::post('/api/job-tracker-master/power-packs', [JobTrackerController::class, 'storePowerPack'])->name('storePowerPack');
+    Route::put('/api/job-tracker-master/power-packs/{id}', [JobTrackerController::class, 'updatePowerPack'])->name('updatePowerPack');
+    Route::delete('/api/job-tracker-master/power-packs/{id}', [JobTrackerController::class, 'deletePowerPack'])->name('deletePowerPack');
+
+    // Job Tracker Power Reel
+    Route::get('/api/job-tracker-master/power-reels', [JobTrackerController::class, 'getPowerReels'])->name('getPowerReels');
+    Route::post('/api/job-tracker-master/power-reels', [JobTrackerController::class, 'storePowerReel'])->name('storePowerReel');
+    Route::put('/api/job-tracker-master/power-reels/{id}', [JobTrackerController::class, 'updatePowerReel'])->name('updatePowerReel');
+    Route::delete('/api/job-tracker-master/power-reels/{id}', [JobTrackerController::class, 'deletePowerReel'])->name('deletePowerReel');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

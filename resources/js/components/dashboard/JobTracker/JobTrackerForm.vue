@@ -46,7 +46,7 @@
                             Well Name
                         </label>
                         <input v-model="jobTracker.well_name" type="text" required
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter well name" />
                     </div>
 
@@ -56,7 +56,7 @@
                             Company Man
                         </label>
                         <input v-model="jobTracker.company_man" type="text"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter company man name" />
                     </div>
 
@@ -66,7 +66,7 @@
                             BJ Representative
                         </label>
                         <input v-model="jobTracker.bj_representative" type="text"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter BJ representative name" />
                     </div>
 
@@ -76,7 +76,7 @@
                             Job Start Date
                         </label>
                         <input v-model="jobTracker.job_start_date" type="date"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
 
                     <!-- Job Finish Date -->
@@ -85,7 +85,7 @@
                             Job Finish Date
                         </label>
                         <input v-model="jobTracker.job_finish_date" type="date"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
 
                     <!-- Job Days -->
@@ -94,7 +94,7 @@
                             Job Days
                         </label>
                         <input v-model.number="jobTracker.job_days" type="number" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter number of days" />
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                             Max Deviation
                         </label>
                         <input v-model.number="jobTracker.max_deviation" type="number" step="0.01" min="0"
-                            class="w-full h-9.5 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full h-9 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter max deviation" />
                     </div>
 
@@ -132,7 +132,7 @@
                         <div class="flex gap-2">
                             <input v-model.number="jobTracker[field.valueKey]" type="number" step="0.01"
                                 :min="field.min || 0"
-                                class="flex-1 px-3 h-9.5 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="flex-1 px-3 h-9 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 :placeholder="field.placeholder" />
 
                             <Listbox v-model="jobTracker[field.unitKey]">
@@ -188,6 +188,8 @@
                     <MaxDepthInput v-model="jobTracker.max_depths" />
                     <ControlCabinInput v-model="jobTracker.control_cabin" />
                 </div>
+                <PowerPackInput v-model="jobTracker.power_pack" />
+                <PowerReelInput v-model="jobTracker.power_reel" />
             </div>
 
             <!-- Personnel Section -->
@@ -419,6 +421,8 @@ import CompletionSizeInput from "../../forms/JobTrackers/CompletionSizeInput.vue
 import NozzleTypeInput from "../../forms/JobTrackers/NozzleTypeInput.vue";
 import MaxBHAODInput from "../../forms/JobTrackers/MaxBHAODInput.vue";
 import ControlCabinInput from "../../forms/JobTrackers/ControlCabinInput.vue";
+import PowerPackInput from "../../forms/JobTrackers/PowerPackInput.vue";
+import PowerReelInput from "../../forms/JobTrackers/PowerReelInput.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -468,6 +472,8 @@ const jobTracker = ref({
         unit: "in",
     },
     control_cabin: "",
+    power_pack: "",
+    power_reel: "",
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,
