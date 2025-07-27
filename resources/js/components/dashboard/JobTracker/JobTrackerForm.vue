@@ -150,7 +150,7 @@
                                     <transition leave-active-class="transition duration-100 ease-in"
                                         leave-from-class="opacity-100" leave-to-class="opacity-0">
                                         <ListboxOptions
-                                            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm z-10">
                                             <ListboxOption v-for="unit in field.units" :key="unit"
                                                 v-slot="{ active, selected }" :value="unit" as="template">
                                                 <li :class="[
@@ -229,41 +229,113 @@
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
                     Treatment
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Nitrogen Volume -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Nitrogen Volume
-                        </label>
-                        <div class="flex space-x-2">
-                            <input v-model.number="jobTracker.nitrogen_volume" type="number" step="0.01" min="0"
-                                class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Volume" />
-                            <select v-model="jobTracker.nitrogen_volume_unit"
-                                class="w-24 px-2 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="Gals">Gals</option>
-                                <option value="Liters">Liters</option>
-                                <option value="Bbls">Bbls</option>
-                            </select>
+                <div class="bg-white mb-5 dark:bg-slate-800 rounded-xl shadow-sm p-6">
+                    <!-- Main Title -->
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+                        Acid Treatment
+                    </h3>
+
+                    <!-- Grid Layout -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Acid Type Section -->
+                        <div class="space-y-4">
+                            <AcidTypeInput v-model="jobTracker.acid_types" />
+                        </div>
+
+                        <!-- Acid Volume Section -->
+                        <div class="space-y-4">
+                            <AcidVolumeInput v-model="jobTracker.acid_volumes" />
                         </div>
                     </div>
+                </div>
+                <!-- Nitrogen Volume -->
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Nitrogen Volume
+                    </label>
+                    <div class="flex space-x-2 mt-3">
+                        <input v-model.number="jobTracker.nitrogen_volume" type="number" step="0.01" min="0"
+                            class="flex-1 px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Volume" />
+                        <Listbox v-model="jobTracker.nitrogen_volume_unit">
+                            <div class="relative w-24">
+                                <ListboxButton
+                                    class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm border border-gray-300 dark:border-gray-600 dark:text-white">
+                                    <span class="block truncate">{{ jobTracker.nitrogen_volume_unit }}</span>
+                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    </span>
+                                </ListboxButton>
 
-                    <!-- Cement Volume -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Cement Volume
-                        </label>
-                        <div class="flex space-x-2">
-                            <input v-model.number="jobTracker.cement_volume" type="number" step="0.01" min="0"
-                                class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Volume" />
-                            <select v-model="jobTracker.cement_volume_unit"
-                                class="w-24 px-2 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="Bbls">Bbls</option>
-                                <option value="Gals">Gals</option>
-                                <option value="Liters">Liters</option>
-                            </select>
-                        </div>
+                                <transition leave-active-class="transition duration-100 ease-in"
+                                    leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                    <ListboxOptions
+                                        class="absolute mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                        <ListboxOption v-slot="{ active, selected }" v-for="unit in volumeUnits"
+                                            :key="unit.value" :value="unit.value" as="template">
+                                            <li :class="[
+                                                active ? 'bg-blue-100 text-blue-900 dark:bg-gray-600 dark:text-white' : 'text-gray-900 dark:text-gray-100',
+                                                'relative cursor-default select-none py-2 pl-10 pr-4',
+                                            ]">
+                                                <span :class="[
+                                                    selected ? 'font-medium' : 'font-normal',
+                                                    'block truncate',
+                                                ]">{{ unit.label }}</span>
+                                                <span v-if="selected"
+                                                    class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-blue-400">
+                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                </span>
+                                            </li>
+                                        </ListboxOption>
+                                    </ListboxOptions>
+                                </transition>
+                            </div>
+                        </Listbox>
+                    </div>
+                </div>
+                <!-- Cement Volume -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Cement Volume
+                    </label>
+                    <div class="flex space-x-2">
+                        <input v-model.number="jobTracker.cement_volume" type="number" step="0.01" min="0"
+                            class="flex-1 px-3 py-2 border h-9 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Volume" />
+                        <Listbox v-model="jobTracker.cement_volume_unit">
+                            <div class="relative w-24">
+                                <ListboxButton
+                                    class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm border border-gray-300 dark:border-gray-600 dark:text-white">
+                                    <span class="block truncate">{{ jobTracker.cement_volume_unit }}</span>
+                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    </span>
+                                </ListboxButton>
+
+                                <transition leave-active-class="transition duration-100 ease-in"
+                                    leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                    <ListboxOptions
+                                        class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                        <ListboxOption v-slot="{ active, selected }" v-for="unit in cementVolumeUnits"
+                                            :key="unit.value" :value="unit.value" as="template">
+                                            <li :class="[
+                                                active ? 'bg-blue-100 text-blue-900 dark:bg-gray-600 dark:text-white' : 'text-gray-900 dark:text-gray-100',
+                                                'relative cursor-default select-none py-2 pl-10 pr-4',
+                                            ]">
+                                                <span :class="[
+                                                    selected ? 'font-medium' : 'font-normal',
+                                                    'block truncate',
+                                                ]">{{ unit.label }}</span>
+                                                <span v-if="selected"
+                                                    class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-blue-400">
+                                                    <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                </span>
+                                            </li>
+                                        </ListboxOption>
+                                    </ListboxOptions>
+                                </transition>
+                            </div>
+                        </Listbox>
                     </div>
                 </div>
             </div>
@@ -289,88 +361,116 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Revenue Fields -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Coiled Tubing Revenue
-                        </label>
-                        <input v-model.number="jobTracker.revenue_coiled_tubing" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00" />
-                    </div>
+                <!-- Revenue Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3">
+                    <div class="bg-white mb-5 dark:bg-slate-800 rounded-xl shadow-sm p-6">
+                        <!-- Main Title -->
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+                            Equipment
+                        </h3>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Pumping Revenue
-                        </label>
-                        <input v-model.number="jobTracker.revenue_pumping" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00" />
-                    </div>
+                        <!-- Grid Layout -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Coiled Tubing Revenue
+                                </label>
+                                <input v-model.number="jobTracker.revenue_coiled_tubing" type="number" step="0.01" min="0"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="0.00" />
+                            </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Special Tools Revenue
-                        </label>
-                        <input v-model.number="jobTracker.revenue_special_tools" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00" />
-                    </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Nitrogen Revenue
+                                </label>
+                                <input v-model.number="jobTracker.revenue_nitrogen_equipment" type="number" step="0.01" min="0"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="0.00" />
+                            </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Acid Revenue
-                        </label>
-                        <input v-model.number="jobTracker.revenue_acid" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00" />
-                    </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Pumping Revenue
+                                </label>
+                                <input v-model.number="jobTracker.revenue_pumping" type="number" step="0.01" min="0"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="0.00" />
+                            </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Nitrogen Revenue
-                        </label>
-                        <input v-model.number="jobTracker.revenue_nitrogen" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00" />
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Special Tools Revenue
+                                </label>
+                                <input v-model.number="jobTracker.revenue_special_tools" type="number" step="0.01" min="0"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="0.00" />
+                            </div>
+                        </div>
                     </div>
+                    <div class="bg-white mb-5 dark:bg-slate-800 rounded-xl shadow-sm p-6">
+                        <!-- Main Title -->
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+                            Products
+                        </h3>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Cement Revenue
-                        </label>
-                        <input v-model.number="jobTracker.revenue_cement" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00" />
-                    </div>
+                        <!-- Grid Layout -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Acid Revenue
+                                </label>
+                                <input v-model.number="jobTracker.revenue_acid" type="number" step="0.01" min="0"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="0.00" />
+                            </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Personnel Charges
-                        </label>
-                        <input v-model.number="jobTracker.personnel_charges" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00" />
-                    </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Nitrogen Revenue
+                                </label>
+                                <input v-model.number="jobTracker.revenue_nitrogen_product" type="number" step="0.01" min="0"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="0.00" />
+                            </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Service Charges
-                        </label>
-                        <input v-model.number="jobTracker.service_charges" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00" />
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Cement Revenue
+                                </label>
+                                <input v-model.number="jobTracker.revenue_cement" type="number" step="0.01" min="0"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="0.00" />
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Other Charges
-                        </label>
-                        <input v-model.number="jobTracker.other_charges" type="number" step="0.01" min="0"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="0.00" />
-                    </div>
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Personnel Charges
+                    </label>
+                    <input v-model.number="jobTracker.personnel_charges" type="number" step="0.01" min="0"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="0.00" />
+                </div>
+
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Service Charges
+                    </label>
+                    <input v-model.number="jobTracker.service_charges" type="number" step="0.01" min="0"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="0.00" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Other Charges
+                    </label>
+                    <input v-model.number="jobTracker.other_charges" type="number" step="0.01" min="0"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="0.00" />
                 </div>
 
                 <!-- Total Revenue (Read-only, calculated) -->
@@ -458,6 +558,8 @@ import CTSupervisorInput from "../../forms/JobTrackers/CTSupervisorInput.vue";
 import NitrogenSupervisorInput from "../../forms/JobTrackers/NitrogenSupervisorInput.vue";
 import NitrogenPersonnelInput from "../../forms/JobTrackers/NitrogenPersonnelInput.vue";
 import PumpPersonnelInput from "../../forms/JobTrackers/PumpPersonnelInput.vue";
+import AcidTypeInput from "../../forms/JobTrackers/AcidTypeInput.vue";
+import AcidVolumeInput from "../../forms/JobTrackers/AcidVolumeInput.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -521,8 +623,9 @@ const jobTracker = ref({
     nitrogen_supervisor: "",
     nitrogen_personnels: [],
     pump_supervisor: "",
-    pump_personnels: [
-    ],
+    pump_personnels: [],
+    acid_types: [],
+    acid_volumes: [],
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,
@@ -540,7 +643,8 @@ const jobTracker = ref({
     revenue_pumping: null,
     revenue_special_tools: null,
     revenue_acid: null,
-    revenue_nitrogen: null,
+    revenue_nitrogen_equipment: null,
+    revenue_nitrogen_product: null,
     revenue_cement: null,
     personnel_charges: null,
     service_charges: null,
@@ -588,6 +692,18 @@ const fieldsWithUnits = ref([
     }
 ])
 
+const volumeUnits = [
+    { value: 'Gals', label: 'Gals' },
+    { value: 'Liters', label: 'Liters' },
+    { value: 'Bbls', label: 'Bbls' },
+]
+
+const cementVolumeUnits = [
+    { value: 'Bbls', label: 'Bbls' },
+    { value: 'Gals', label: 'Gals' },
+    { value: 'Liters', label: 'Liters' },
+]
+
 // Computed properties
 const totalRevenue = computed(() => {
     const revenues = [
@@ -595,7 +711,8 @@ const totalRevenue = computed(() => {
         jobTracker.value.revenue_pumping || 0,
         jobTracker.value.revenue_special_tools || 0,
         jobTracker.value.revenue_acid || 0,
-        jobTracker.value.revenue_nitrogen || 0,
+        jobTracker.value.revenue_nitrogen_product || 0,
+        jobTracker.value.revenue_nitrogen_equipment || 0,
         jobTracker.value.revenue_cement || 0,
         jobTracker.value.personnel_charges || 0,
         jobTracker.value.service_charges || 0,
