@@ -200,6 +200,7 @@
                 <N2TankInput v-model="jobTracker.n2_tank" />
                 <ContainerInput v-model="jobTracker.container" />
                 <InjectorGoosneckInput v-model="jobTracker.injector_goosneck" />
+                <MiscellaneousToolInput v-model="jobTracker.miscellaneous_tool" />
             </div>
 
             <!-- Personnel Section -->
@@ -443,6 +444,7 @@ import N2ConverterInput from "../../forms/JobTrackers/N2ConverterInput.vue";
 import N2TankInput from "../../forms/JobTrackers/N2TankInput.vue";
 import ContainerInput from "../../forms/JobTrackers/ContainerInput.vue";
 import InjectorGoosneckInput from "../../forms/JobTrackers/InjectorGoosneckInput.vue";
+import MiscellaneousToolInput from "../../forms/JobTrackers/MiscellaneousToolInput.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -505,6 +507,7 @@ const jobTracker = ref({
     n2_tank: [],
     container: [],
     injector_goosneck: [],
+    miscellaneous_tool: [],
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,

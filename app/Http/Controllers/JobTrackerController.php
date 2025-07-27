@@ -19,6 +19,7 @@ use App\Models\JobTracker\InjectorGoosneckModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
 use App\Models\JobTracker\MaxBHAODModel;
+use App\Models\JobTracker\MiscellaneousToolModel;
 use App\Models\JobTracker\N2ConverterModel;
 use App\Models\JobTracker\N2TankModel;
 use App\Models\JobTracker\NozzleTypeModel;
@@ -1621,6 +1622,65 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Injector Gooseneck deleted successfully.',
+        ], 200);
+    }
+
+    public function getMiscellaneousTools(Request $request)
+    {
+        // Assuming you have a MiscellaneousToolModel
+        $miscellaneousTools = MiscellaneousToolModel::select('id', 'miscellaneous_tool_name')
+            ->orderBy('miscellaneous_tool_name')
+            ->get();
+
+        return response()->json($miscellaneousTools, 200);
+    }
+
+    public function storeMiscellaneousTool(Request $request)
+    {
+        $request->validate([
+            'miscellaneous_tool_name' => 'required|string|max:255',
+        ]);
+
+        $miscellaneousTool = MiscellaneousToolModel::create([
+            'miscellaneous_tool_name' => $request->input('miscellaneous_tool_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Miscellaneous Tool created successfully.',
+            'data' => $miscellaneousTool,
+        ], 201);
+    }
+
+    public function updateMiscellaneousTool(Request $request, $id)
+    {
+        $request->validate([
+            'miscellaneous_tool_name' => 'required|string|max:255',
+        ]);
+
+        $miscellaneousTool = MiscellaneousToolModel::findOrFail($id);
+        $miscellaneousTool->update([
+            'miscellaneous_tool_name' => $request->input('miscellaneous_tool_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Miscellaneous Tool updated successfully.',
+            'data' => $miscellaneousTool,
+        ], 200);
+    }
+
+    public function deleteMiscellaneousTool(Request $request, $id)
+    {
+        $miscellaneousTool = MiscellaneousToolModel::findOrFail($id);
+        $miscellaneousTool->delete();
+
+        return response()->json([
+            'message' => 'Miscellaneous Tool deleted successfully.',
         ], 200);
     }
 }

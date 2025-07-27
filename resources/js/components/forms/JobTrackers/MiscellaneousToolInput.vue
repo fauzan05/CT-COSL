@@ -2,11 +2,11 @@
     <div class="mb-5">
         <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Injector Goosneck
+                Miscellaneous Tool
             </label>
             <div class="flex items-center gap-2">
                 <!-- reset button -->
-                <button @click="selectedInjectorGoosneck = ''" type="button"
+                <button @click="selectedMiscellaneousTool = ''" type="button"
                     class="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -27,24 +27,24 @@
                     <i class="fa-solid fa-sliders"></i>
                     Manage Options
                 </button>
-                <button @click="addInjectorGoosneck" type="button"
+                <button @click="addMiscellaneousTool" type="button"
                     class="px-3 py-1 text-xs bg-green-500 hover:bg-green-600 text-white rounded-md transition-colors flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
-                    Add Injector Goosneck
+                    Add Miscellaneous Tool
                 </button>
             </div>
         </div>
 
         <!-- Headless UI Listbox (Dropdown) -->
-        <Listbox v-model="selectedInjectorGoosneck">
+        <Listbox v-model="selectedMiscellaneousTool">
             <div class="relative">
                 <ListboxButton
                     class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                     <span class="block truncate text-gray-900 dark:text-white">
-                        {{ selectedInjectorGoosneck || placeholder }}
+                        {{ selectedMiscellaneousTool || placeholder }}
                     </span>
                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -83,7 +83,7 @@
 
         <!-- Add Option Input -->
         <div v-if="showAddOption" class="mt-2 flex gap-2">
-            <input v-model="newOption" type="text" placeholder="Enter new Injector Goosneck"
+            <input v-model="newOption" type="text" placeholder="Enter new Miscellaneous Tool"
                 class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 @keyup.enter="addNewOption">
             <button @click="addNewOption" type="button"
@@ -100,8 +100,8 @@
         <ManageOptionsPanel v-if="showManageOptions" :list-options="listOptions" @update-option="updateOption"
             @remove-option="removeOption" @close="showManageOptions = false" />
 
-        <!-- Selected Injector Goosnecks List -->
-        <SelectedInjectorGoosnecksList :injector_goosnecks="modelValue" @remove="removeInjectorGoosneck" />
+        <!-- Selected Miscellaneous Tool List -->
+        <SelectedMiscellaneousToolsList :miscellaneous_tools="modelValue" @remove="removeMiscellaneousTool" />
     </div>
 </template>
   
@@ -115,7 +115,7 @@ import {
 } from '@headlessui/vue'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import ManageOptionsPanel from './ManageOptionsPanel.vue'
-import SelectedInjectorGoosnecksList from './SelectedInjectorGoosnecksList.vue'
+import SelectedMiscellaneousToolsList from './SelectedMiscellaneousToolsList.vue'
 import { useToast } from 'vue-toastification'
 
 // Props & Emits
@@ -130,10 +130,10 @@ const emit = defineEmits(['update:modelValue'])
 const toast = useToast()
 
 // Dropdown options - hanya satu list
-const placeholder = ref('Select Injector Goosneck')
+const placeholder = ref('Select Miscellaneous Tool')
 const listOptions = ref([])
 
-const selectedInjectorGoosneck = ref('')
+const selectedMiscellaneousTool = ref('')
 
 // UI States
 const showAddOption = ref(false)
@@ -144,18 +144,18 @@ const newOption = ref('')
 const addNewOption = async () => {
     if (newOption.value.trim()) {
         try {
-            await axios.post(`${baseUrl}/api/job-tracker-master/injector-goosnecks`, {
-                injector_goosneck_name: newOption.value.trim()
+            await axios.post(`${baseUrl}/api/job-tracker-master/miscellaneous-tools`, {
+                miscellaneous_tool_name: newOption.value.trim()
             })
             
-            await fetchAllInjectorGoosnecks() // Refresh the list after adding
-            toast.success('Injector Goosneck option added successfully!')
+            await fetchAllMiscellaneousTools() // Refresh the list after adding
+            toast.success('Miscellaneous Tool option added successfully!')
             
             newOption.value = ''
             showAddOption.value = false
         } catch (error) {
-            console.error('Error adding Injector Goosneck option:', error)
-            toast.error('Failed to add Injector Goosneck option.')
+            console.error('Error adding Miscellaneous Tool option:', error)
+            toast.error('Failed to add Miscellaneous Tool option.')
         }
     }
 }
@@ -165,93 +165,93 @@ const cancelAddOption = () => {
     showAddOption.value = false
 }
 
-const addInjectorGoosneck = () => {
-    if (selectedInjectorGoosneck.value) {
-        const updatedInjectorGoosnecks = [...props.modelValue, selectedInjectorGoosneck.value]
-        emit('update:modelValue', updatedInjectorGoosnecks)
+const addMiscellaneousTool = () => {
+    if (selectedMiscellaneousTool.value) {
+        const updatedMiscellaneousTools = [...props.modelValue, selectedMiscellaneousTool.value]
+        emit('update:modelValue', updatedMiscellaneousTools)
 
-        // Clear the selected Injector Goosneck after adding
-        selectedInjectorGoosneck.value = ''
+        // Clear the selected Miscellaneous Tool after adding
+        selectedMiscellaneousTool.value = ''
     }
 }
 
-const removeInjectorGoosneck = (index) => {
-    const updatedInjectorGoosnecks = [...props.modelValue]
-    updatedInjectorGoosnecks.splice(index, 1)
-    emit('update:modelValue', updatedInjectorGoosnecks)
+const removeMiscellaneousTool = (index) => {
+    const updatedMiscellaneousTools = [...props.modelValue]
+    updatedMiscellaneousTools.splice(index, 1)
+    emit('update:modelValue', updatedMiscellaneousTools)
 }
 
 const updateOption = async ({ index, oldValue, newValue }) => {
-    const newInjectorGoosneckName = typeof newValue === 'object' ? newValue.injector_goosneck_name : newValue
+    const newMiscellaneousToolName = typeof newValue === 'object' ? newValue.miscellaneous_tool_name : newValue
     
     try {
-        await axios.put(`${baseUrl}/api/job-tracker-master/injector-goosnecks/${listOptions.value[index].id}`, {
-            injector_goosneck_name: newInjectorGoosneckName
+        await axios.put(`${baseUrl}/api/job-tracker-master/miscellaneous-tools/${listOptions.value[index].id}`, {
+            miscellaneous_tool_name: newMiscellaneousToolName
         })
         
-        await fetchAllInjectorGoosnecks() // Refresh the list after updating
-        toast.success('Injector Goosneck option updated successfully!')
+        await fetchAllMiscellaneousTools() // Refresh the list after updating
+        toast.success('Miscellaneous Tool option updated successfully!')
         
     } catch (error) {
-        console.error('Error updating Injector Goosneck option:', error)
-        toast.error('Failed to update Injector Goosneck option.')
+        console.error('Error updating Miscellaneous Tool option:', error)
+        toast.error('Failed to update Miscellaneous Tool option.')
     }
 }
 
 const removeOption = async (index) => {    
     try {
-        await axios.delete(`${baseUrl}/api/job-tracker-master/injector-goosnecks/${listOptions.value[index].id}`)
+        await axios.delete(`${baseUrl}/api/job-tracker-master/miscellaneous-tools/${listOptions.value[index].id}`)
         
-        await fetchAllInjectorGoosnecks() // Refresh the list after removing
-        toast.success('Injector Goosneck option removed successfully!')
+        await fetchAllMiscellaneousTools() // Refresh the list after removing
+        toast.success('Miscellaneous Tool option removed successfully!')
         
     } catch (error) {
-        console.error('Error removing Injector Goosneck option:', error)
-        toast.error('Failed to remove Injector Goosneck option.')
+        console.error('Error removing Miscellaneous Tool option:', error)
+        toast.error('Failed to remove Miscellaneous Tool option.')
     }
 }
 
-const fetchAllInjectorGoosnecks = async () => {
+const fetchAllMiscellaneousTools = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/job-tracker-master/injector-goosnecks`)
+        const response = await axios.get(`${baseUrl}/api/job-tracker-master/miscellaneous-tools`)
         
         if (response.data && Array.isArray(response.data)) {
             // Sort by tank name alphabetically
-            response.data.sort((a, b) => a.injector_goosneck_name.localeCompare(b.injector_goosneck_name))
+            response.data.sort((a, b) => a.miscellaneous_tool_name.localeCompare(b.miscellaneous_tool_name))
             
-            listOptions.value = response.data.map(injector_goosneck => ({
-                id: injector_goosneck.id,
-                value: injector_goosneck.injector_goosneck_name,
-                label: injector_goosneck.injector_goosneck_name
+            listOptions.value = response.data.map(miscellaneous_tool => ({
+                id: miscellaneous_tool.id,
+                value: miscellaneous_tool.miscellaneous_tool_name,
+                label: miscellaneous_tool.miscellaneous_tool_name
             }))
 
             // Clean up selected tank if not in list
-            if (selectedInjectorGoosneck.value && !listOptions.value.some(opt => opt.value === selectedInjectorGoosneck.value)) {
-                selectedInjectorGoosneck.value = ''
+            if (selectedMiscellaneousTool.value && !listOptions.value.some(opt => opt.value === selectedMiscellaneousTool.value)) {
+                selectedMiscellaneousTool.value = ''
             }
 
             // Clean up modelValue - remove any items that are no longer in the options
             if (Array.isArray(props.modelValue) && props.modelValue.length > 0) {
-                const injectorGoosnecks = props.modelValue.filter(injector_goosneck => 
-                    typeof injector_goosneck === 'string' && 
-                    injector_goosneck.trim() !== '' && 
-                    listOptions.value.some(opt => opt.value === injector_goosneck)
+                const miscellaneousTools = props.modelValue.filter(miscellaneous_tool => 
+                    typeof miscellaneous_tool === 'string' && 
+                    miscellaneous_tool.trim() !== '' && 
+                    listOptions.value.some(opt => opt.value === miscellaneous_tool)
                 )
                 
                 // Only emit if there are changes
-                if (injectorGoosnecks.length !== props.modelValue.length || 
-                    !injectorGoosnecks.every((injector_goosneck, index) => injector_goosneck === props.modelValue[index])) {
-                    emit('update:modelValue', injectorGoosnecks)
+                if (miscellaneousTools.length !== props.modelValue.length || 
+                    !miscellaneousTools.every((miscellaneous_tool, index) => miscellaneous_tool === props.modelValue[index])) {
+                    emit('update:modelValue', miscellaneousTools)
                 }
             }
         }
     } catch (error) {
-        console.error('Error fetching Injector Goosnecks:', error)
-        toast.error('Failed to fetch Injector Goosnecks.')
+        console.error('Error fetching Miscellaneous Tool:', error)
+        toast.error('Failed to fetch Miscellaneous Tool.')
     }
 }
 
 onMounted(async () => {
-    await fetchAllInjectorGoosnecks()
+    await fetchAllMiscellaneousTools()
 })
 </script>

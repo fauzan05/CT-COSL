@@ -166,7 +166,7 @@ const cancelAddOption = () => {
 }
 
 const addContainer = () => {
-    if (selectedContainer.value && !props.modelValue.includes(selectedContainer.value)) {
+    if (selectedContainer.value) {
         const updatedContainers = [...props.modelValue, selectedContainer.value]
         emit('update:modelValue', updatedContainers)
 

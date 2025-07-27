@@ -166,7 +166,7 @@ const cancelAddOption = () => {
 }
 
 const addDescription = () => {
-    if (selectedJobDescription.value && !props.modelValue.includes(selectedJobDescription.value)) {
+    if (selectedJobDescription.value) {
         const updatedDescriptions = [...props.modelValue, selectedJobDescription.value]
         emit('update:modelValue', updatedDescriptions)
 
