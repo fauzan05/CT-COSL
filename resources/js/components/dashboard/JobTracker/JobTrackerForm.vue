@@ -198,6 +198,8 @@
                 <CTStringInput v-model="jobTracker.ct_string" />
                 <N2ConverterInput v-model="jobTracker.n2_converter" />
                 <N2TankInput v-model="jobTracker.n2_tank" />
+                <ContainerInput v-model="jobTracker.container" />
+                <InjectorGoosneckInput v-model="jobTracker.injector_goosneck" />
             </div>
 
             <!-- Personnel Section -->
@@ -439,6 +441,8 @@ import WTInput from "../../forms/JobTrackers/WTInput.vue";
 import CTStringInput from "../../forms/JobTrackers/CTStringInput.vue";
 import N2ConverterInput from "../../forms/JobTrackers/N2ConverterInput.vue";
 import N2TankInput from "../../forms/JobTrackers/N2TankInput.vue";
+import ContainerInput from "../../forms/JobTrackers/ContainerInput.vue";
+import InjectorGoosneckInput from "../../forms/JobTrackers/InjectorGoosneckInput.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -499,6 +503,8 @@ const jobTracker = ref({
     ct_string: "",
     n2_converter: "",
     n2_tank: [],
+    container: [],
+    injector_goosneck: [],
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,

@@ -263,6 +263,18 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/n2-tanks', [JobTrackerController::class, 'storeN2Tank'])->name('storeN2Tank');
     Route::put('/api/job-tracker-master/n2-tanks/{id}', [JobTrackerController::class, 'updateN2Tank'])->name('updateN2Tank');
     Route::delete('/api/job-tracker-master/n2-tanks/{id}', [JobTrackerController::class, 'deleteN2Tank'])->name('deleteN2Tank');
+
+    // Job Tracker Container
+    Route::get('/api/job-tracker-master/containers', [JobTrackerController::class, 'getContainers'])->name('getContainers');
+    Route::post('/api/job-tracker-master/containers', [JobTrackerController::class, 'storeContainer'])->name('storeContainer');
+    Route::put('/api/job-tracker-master/containers/{id}', [JobTrackerController::class, 'updateContainer'])->name('updateContainer');
+    Route::delete('/api/job-tracker-master/containers/{id}', [JobTrackerController::class, 'deleteContainer'])->name('deleteContainer');
+
+    // Job Tracker Injector Goosneck
+    Route::get('/api/job-tracker-master/injector-goosnecks', [JobTrackerController::class, 'getInjectorGoosnecks'])->name('getInjectorGoosnecks');
+    Route::post('/api/job-tracker-master/injector-goosnecks', [JobTrackerController::class, 'storeInjectorGoosneck'])->name('storeInjectorGoosneck');
+    Route::put('/api/job-tracker-master/injector-goosnecks/{id}', [JobTrackerController::class, 'updateInjectorGoosneck'])->name('updateInjectorGoosneck');
+    Route::delete('/api/job-tracker-master/injector-goosnecks/{id}', [JobTrackerController::class, 'deleteInjectorGoosneck'])->name('deleteInjectorGoosneck');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

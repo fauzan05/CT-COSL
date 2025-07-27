@@ -7,6 +7,7 @@ use App\Models\JobTracker\BOPModel;
 use App\Models\JobTracker\CasingLinerSizeModel;
 use App\Models\JobTracker\CJInjectorModel;
 use App\Models\JobTracker\CompletionSizeModel;
+use App\Models\JobTracker\ContainerModel;
 use App\Models\JobTracker\ControlCabinModel;
 use App\Models\JobTracker\CTGradeModel;
 use App\Models\JobTracker\CTSizeModel;
@@ -14,6 +15,7 @@ use App\Models\JobTracker\CTStringModel;
 use App\Models\JobTracker\CustomerModel;
 use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
+use App\Models\JobTracker\InjectorGoosneckModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerModel;
 use App\Models\JobTracker\MaxBHAODModel;
@@ -1501,6 +1503,124 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'N2 Tank deleted successfully.',
+        ], 200);
+    }
+
+    public function getContainers(Request $request)
+    {
+        // Assuming you have a ContainerModel
+        $containers = ContainerModel::select('id', 'container_name')
+            ->orderBy('container_name')
+            ->get();
+
+        return response()->json($containers, 200);
+    }
+
+    public function storeContainer(Request $request)
+    {
+        $request->validate([
+            'container_name' => 'required|string|max:255',
+        ]);
+
+        $container = ContainerModel::create([
+            'container_name' => $request->input('container_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Container created successfully.',
+            'data' => $container,
+        ], 201);
+    }
+
+    public function updateContainer(Request $request, $id)
+    {
+        $request->validate([
+            'container_name' => 'required|string|max:255',
+        ]);
+
+        $container = ContainerModel::findOrFail($id);
+        $container->update([
+            'container_name' => $request->input('container_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Container updated successfully.',
+            'data' => $container,
+        ], 200);
+    }
+
+    public function deleteContainer(Request $request, $id)
+    {
+        $container = ContainerModel::findOrFail($id);
+        $container->delete();
+
+        return response()->json([
+            'message' => 'Container deleted successfully.',
+        ], 200);
+    }
+
+    public function getInjectorGoosnecks(Request $request)
+    {
+        // Assuming you have a InjectorGooseneckModel
+        $injectorGoosenecks = InjectorGoosneckModel::select('id', 'injector_goosneck_name')
+            ->orderBy('injector_goosneck_name')
+            ->get();
+
+        return response()->json($injectorGoosenecks, 200);
+    }
+
+    public function storeInjectorGoosneck(Request $request)
+    {
+        $request->validate([
+            'injector_goosneck_name' => 'required|string|max:255',
+        ]);
+
+        $injectorGoosneck = InjectorGoosneckModel::create([
+            'injector_goosneck_name' => $request->input('injector_goosneck_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Injector Gooseneck created successfully.',
+            'data' => $injectorGoosneck,
+        ], 201);
+    }
+
+    public function updateInjectorGoosneck(Request $request, $id)
+    {
+        $request->validate([
+            'injector_goosneck_name' => 'required|string|max:255',
+        ]);
+
+        $injectorGoosneck = InjectorGoosneckModel::findOrFail($id);
+        $injectorGoosneck->update([
+            'injector_goosneck_name' => $request->input('injector_goosneck_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Injector Gooseneck updated successfully.',
+            'data' => $injectorGoosneck,
+        ], 200);
+    }
+
+    public function deleteInjectorGoosneck(Request $request, $id)
+    {
+        $injectorGoosneck = InjectorGoosneckModel::findOrFail($id);
+        $injectorGoosneck->delete();
+
+        return response()->json([
+            'message' => 'Injector Gooseneck deleted successfully.',
         ], 200);
     }
 }
