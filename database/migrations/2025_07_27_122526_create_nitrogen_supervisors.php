@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ct_personnels', function (Blueprint $table) {
+        Schema::create('nitrogen_supervisors', function (Blueprint $table) {
             $table->id();
-            $table->string('ct_personnel_name');
+            $table->string('nitrogen_supervisor_name');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ct_personnels');
+        Schema::dropIfExists('nitrogen_supervisors');
     }
 };

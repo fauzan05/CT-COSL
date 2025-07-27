@@ -13,9 +13,6 @@ return new class extends Migration
     {
         Schema::create('nitrogen_personnels', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('job_tracker_id')
-                ->constrained('job_trackers')
-                ->onDelete('cascade');
             $table->string('nitrogen_personnel_name');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();

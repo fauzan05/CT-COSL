@@ -10,8 +10,10 @@ use App\Models\JobTracker\CompletionSizeModel;
 use App\Models\JobTracker\ContainerModel;
 use App\Models\JobTracker\ControlCabinModel;
 use App\Models\JobTracker\CTGradeModel;
+use App\Models\JobTracker\CTPersonnelModel;
 use App\Models\JobTracker\CTSizeModel;
 use App\Models\JobTracker\CTStringModel;
+use App\Models\JobTracker\CTSupervisorModel;
 use App\Models\JobTracker\CustomerModel;
 use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
@@ -22,6 +24,8 @@ use App\Models\JobTracker\MaxBHAODModel;
 use App\Models\JobTracker\MiscellaneousToolModel;
 use App\Models\JobTracker\N2ConverterModel;
 use App\Models\JobTracker\N2TankModel;
+use App\Models\JobTracker\NitrogenPersonnelModel;
+use App\Models\JobTracker\NitrogenSupervisorModel;
 use App\Models\JobTracker\NozzleTypeModel;
 use App\Models\JobTracker\PowerPackModel;
 use App\Models\JobTracker\PowerReelModel;
@@ -1681,6 +1685,242 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'Miscellaneous Tool deleted successfully.',
+        ], 200);
+    }
+
+    public function getCTPersonnels(Request $request)
+    {
+        // Assuming you have a CTPersonnelModel
+        $ctPersonnels = CTPersonnelModel::select('id', 'ct_personnel_name')
+            ->orderBy('ct_personnel_name')
+            ->get();
+
+        return response()->json($ctPersonnels, 200);
+    }
+
+    public function storeCTPersonnel(Request $request)
+    {
+        $request->validate([
+            'ct_personnel_name' => 'required|string|max:255',
+        ]);
+
+        $ctPersonnel = CTPersonnelModel::create([
+            'ct_personnel_name' => $request->input('ct_personnel_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT Personnel created successfully.',
+            'data' => $ctPersonnel,
+        ], 201);
+    }
+
+    public function updateCTPersonnel(Request $request, $id)
+    {
+        $request->validate([
+            'ct_personnel_name' => 'required|string|max:255',
+        ]);
+
+        $ctPersonnel = CTPersonnelModel::findOrFail($id);
+        $ctPersonnel->update([
+            'ct_personnel_name' => $request->input('ct_personnel_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT Personnel updated successfully.',
+            'data' => $ctPersonnel,
+        ], 200);
+    }
+
+    public function deleteCTPersonnel(Request $request, $id)
+    {
+        $ctPersonnel = CTPersonnelModel::findOrFail($id);
+        $ctPersonnel->delete();
+
+        return response()->json([
+            'message' => 'CT Personnel deleted successfully.',
+        ], 200);
+    }
+
+    public function getCTSupervisors(Request $request)
+    {
+        // Assuming you have a CTSupervisorModel
+        $ctSupervisors = CTSupervisorModel::select('id', 'ct_supervisor_name')
+            ->orderBy('ct_supervisor_name')
+            ->get();
+
+        return response()->json($ctSupervisors, 200);
+    }
+
+    public function storeCTSupervisor(Request $request)
+    {
+        $request->validate([
+            'ct_supervisor_name' => 'required|string|max:255',
+        ]);
+
+        $ctSupervisor = CTSupervisorModel::create([
+            'ct_supervisor_name' => $request->input('ct_supervisor_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT Supervisor created successfully.',
+            'data' => $ctSupervisor,
+        ], 201);
+    }
+
+    public function updateCTSupervisor(Request $request, $id)
+    {
+        $request->validate([
+            'ct_supervisor_name' => 'required|string|max:255',
+        ]);
+
+        $ctSupervisor = CTSupervisorModel::findOrFail($id);
+        $ctSupervisor->update([
+            'ct_supervisor_name' => $request->input('ct_supervisor_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'CT Supervisor updated successfully.',
+            'data' => $ctSupervisor,
+        ], 200);
+    }
+
+    public function deleteCTSupervisor(Request $request, $id)
+    {
+        $ctSupervisor = CTSupervisorModel::findOrFail($id);
+        $ctSupervisor->delete();
+
+        return response()->json([
+            'message' => 'CT Supervisor deleted successfully.',
+        ], 200);
+    }
+
+    public function getNitrogenSupervisors(Request $request)
+    {
+        // Assuming you have a NitrogenSupervisorModel
+        $nitrogenSupervisors = NitrogenSupervisorModel::select('id', 'nitrogen_supervisor_name')
+            ->orderBy('nitrogen_supervisor_name')
+            ->get();
+
+        return response()->json($nitrogenSupervisors, 200);
+    }
+
+    public function storeNitrogenSupervisor(Request $request)
+    {
+        $request->validate([
+            'nitrogen_supervisor_name' => 'required|string|max:255',
+        ]);
+
+        $nitrogenSupervisor = NitrogenSupervisorModel::create([
+            'nitrogen_supervisor_name' => $request->input('nitrogen_supervisor_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Nitrogen Supervisor created successfully.',
+            'data' => $nitrogenSupervisor,
+        ], 201);
+    }
+
+    public function updateNitrogenSupervisor(Request $request, $id)
+    {
+        $request->validate([
+            'nitrogen_supervisor_name' => 'required|string|max:255',
+        ]);
+
+        $nitrogenSupervisor = NitrogenSupervisorModel::findOrFail($id);
+        $nitrogenSupervisor->update([
+            'nitrogen_supervisor_name' => $request->input('nitrogen_supervisor_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Nitrogen Supervisor updated successfully.',
+            'data' => $nitrogenSupervisor,
+        ], 200);
+    }
+
+    public function deleteNitrogenSupervisor(Request $request, $id)
+    {
+        $nitrogenSupervisor = NitrogenSupervisorModel::findOrFail($id);
+        $nitrogenSupervisor->delete();
+
+        return response()->json([
+            'message' => 'Nitrogen Supervisor deleted successfully.',
+        ], 200);
+    }
+
+    public function getNitrogenPersonnels(Request $request)
+    {
+        // Assuming you have a NitrogenPersonnelModel
+        $nitrogenPersonnels = NitrogenPersonnelModel::select('id', 'nitrogen_personnel_name')
+            ->orderBy('nitrogen_personnel_name')
+            ->get();
+
+        return response()->json($nitrogenPersonnels, 200);
+    }
+
+    public function storeNitrogenPersonnel(Request $request)
+    {
+        $request->validate([
+            'nitrogen_personnel_name' => 'required|string|max:255',
+        ]);
+
+        $nitrogenPersonnel = NitrogenPersonnelModel::create([
+            'nitrogen_personnel_name' => $request->input('nitrogen_personnel_name'),
+            'created_at' => now(),
+            'created_by' => $request->user()->id,
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Nitrogen Personnel created successfully.',
+            'data' => $nitrogenPersonnel,
+        ], 201);
+    }
+
+    public function updateNitrogenPersonnel(Request $request, $id)
+    {
+        $request->validate([
+            'nitrogen_personnel_name' => 'required|string|max:255',
+        ]);
+
+        $nitrogenPersonnel = NitrogenPersonnelModel::findOrFail($id);
+        $nitrogenPersonnel->update([
+            'nitrogen_personnel_name' => $request->input('nitrogen_personnel_name'),
+            'updated_at' => now(),
+            'updated_by' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Nitrogen Personnel updated successfully.',
+            'data' => $nitrogenPersonnel,
+        ], 200);
+    }
+
+    public function deleteNitrogenPersonnel(Request $request, $id)
+    {
+        $nitrogenPersonnel = NitrogenPersonnelModel::findOrFail($id);
+        $nitrogenPersonnel->delete();
+
+        return response()->json([
+            'message' => 'Nitrogen Personnel deleted successfully.',
         ], 200);
     }
 }

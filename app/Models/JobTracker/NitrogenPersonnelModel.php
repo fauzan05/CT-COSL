@@ -11,7 +11,6 @@ class NitrogenPersonnelModel extends Model
     protected $table = 'nitrogen_personnels';
     public $timestamps = false;
     protected $fillable = [
-        'job_tracker_id',
         'nitrogen_personnel_name',
         'created_by',
         'updated_by',

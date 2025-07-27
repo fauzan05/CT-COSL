@@ -184,10 +184,8 @@
                 </h3>
                 <NozzleTypeInput v-model="jobTracker.nozzle_type" />
                 <MaxBHAODInput v-model="jobTracker.max_bha_od" />
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <MaxDepthInput v-model="jobTracker.max_depths" />
-                    <ControlCabinInput v-model="jobTracker.control_cabin" />
-                </div>
+                <MaxDepthInput class="mb-5" v-model="jobTracker.max_depths" />
+                <ControlCabinInput v-model="jobTracker.control_cabin" />
                 <PowerPackInput v-model="jobTracker.power_pack" />
                 <PowerReelInput v-model="jobTracker.power_reel" />
                 <CJInjectorInput v-model="jobTracker.cj_injector" />
@@ -209,9 +207,20 @@
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
                     Personnel
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <CTPersonnelInput v-model="jobTracker.ct_personnels" />
+                <CTSupervisorInput v-model="jobTracker.ct_supervisor" />
+                <CTPersonnelInput class="mb-5" v-model="jobTracker.ct_personnels" />
+                <NitrogenSupervisorInput v-model="jobTracker.nitrogen_supervisor" />
+                <NitrogenPersonnelInput class="mb-5" v-model="jobTracker.nitrogen_personnels" />
+                <!-- Pump Supervisor -->
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Pump Supervisor
+                    </label>
+                    <input v-model="jobTracker.pump_supervisor" type="text" required
+                        class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter pump supervisor" />
                 </div>
+                <PumpPersonnelInput class="mb-5" v-model="jobTracker.pump_personnels" />
             </div>
 
             <!-- Treatment Section -->
@@ -445,6 +454,10 @@ import N2TankInput from "../../forms/JobTrackers/N2TankInput.vue";
 import ContainerInput from "../../forms/JobTrackers/ContainerInput.vue";
 import InjectorGoosneckInput from "../../forms/JobTrackers/InjectorGoosneckInput.vue";
 import MiscellaneousToolInput from "../../forms/JobTrackers/MiscellaneousToolInput.vue";
+import CTSupervisorInput from "../../forms/JobTrackers/CTSupervisorInput.vue";
+import NitrogenSupervisorInput from "../../forms/JobTrackers/NitrogenSupervisorInput.vue";
+import NitrogenPersonnelInput from "../../forms/JobTrackers/NitrogenPersonnelInput.vue";
+import PumpPersonnelInput from "../../forms/JobTrackers/PumpPersonnelInput.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -467,11 +480,6 @@ const jobTracker = ref({
         {
             value: 0,
             unit: "ft",
-        }
-    ],
-    ct_personnels: [
-        {
-            name: "",
         }
     ],
     customer: "",
@@ -508,6 +516,13 @@ const jobTracker = ref({
     container: [],
     injector_goosneck: [],
     miscellaneous_tool: [],
+    ct_supervisor: "",
+    ct_personnels: [],
+    nitrogen_supervisor: "",
+    nitrogen_personnels: [],
+    pump_supervisor: "",
+    pump_personnels: [
+    ],
     depth_md: null,
     depth_md_unit: "ft",
     depth_tvd: null,

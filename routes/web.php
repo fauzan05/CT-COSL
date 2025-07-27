@@ -281,6 +281,30 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/miscellaneous-tools', [JobTrackerController::class, 'storeMiscellaneousTool'])->name('storeMiscellaneousTool');
     Route::put('/api/job-tracker-master/miscellaneous-tools/{id}', [JobTrackerController::class, 'updateMiscellaneousTool'])->name('updateMiscellaneousTool');
     Route::delete('/api/job-tracker-master/miscellaneous-tools/{id}', [JobTrackerController::class, 'deleteMiscellaneousTool'])->name('deleteMiscellaneousTool');
+
+    // Job Tracker CT Supervisor
+    Route::get('/api/job-tracker-master/ct-supervisors', [JobTrackerController::class, 'getCTSupervisors'])->name('getCTSupervisors');
+    Route::post('/api/job-tracker-master/ct-supervisors', [JobTrackerController::class, 'storeCTSupervisor'])->name('storeCTSupervisor');
+    Route::put('/api/job-tracker-master/ct-supervisors/{id}', [JobTrackerController::class, 'updateCTSupervisor'])->name('updateCTSupervisor');
+    Route::delete('/api/job-tracker-master/ct-supervisors/{id}', [JobTrackerController::class, 'deleteCTSupervisor'])->name('deleteCTSupervisor');
+
+    // Job Tracker CT Personnel
+    Route::get('/api/job-tracker-master/ct-personnels', [JobTrackerController::class, 'getCTPersonnels'])->name('getCTPersonnels');
+    Route::post('/api/job-tracker-master/ct-personnels', [JobTrackerController::class, 'storeCTPersonnel'])->name('storeCTPersonnel');
+    Route::put('/api/job-tracker-master/ct-personnels/{id}', [JobTrackerController::class, 'updateCTPersonnel'])->name('updateCTPersonnel');
+    Route::delete('/api/job-tracker-master/ct-personnels/{id}', [JobTrackerController::class, 'deleteCTPersonnel'])->name('deleteCTPersonnel');
+
+    // Job Tracker Nitrogen Supervisor
+    Route::get('/api/job-tracker-master/nitrogen-supervisors', [JobTrackerController::class, 'getNitrogenSupervisors'])->name('getNitrogenSupervisors');
+    Route::post('/api/job-tracker-master/nitrogen-supervisors', [JobTrackerController::class, 'storeNitrogenSupervisor'])->name('storeNitrogenSupervisor');
+    Route::put('/api/job-tracker-master/nitrogen-supervisors/{id}', [JobTrackerController::class, 'updateNitrogenSupervisor'])->name('updateNitrogenSupervisor');
+    Route::delete('/api/job-tracker-master/nitrogen-supervisors/{id}', [JobTrackerController::class, 'deleteNitrogenSupervisor'])->name('deleteNitrogenSupervisor');
+
+    // Job Tracker Nitrogen Personnel
+    Route::get('/api/job-tracker-master/nitrogen-personnels', [JobTrackerController::class, 'getNitrogenPersonnels'])->name('getNitrogenPersonnels');
+    Route::post('/api/job-tracker-master/nitrogen-personnels', [JobTrackerController::class, 'storeNitrogenPersonnel'])->name('storeNitrogenPersonnel');
+    Route::put('/api/job-tracker-master/nitrogen-personnels/{id}', [JobTrackerController::class, 'updateNitrogenPersonnel'])->name('updateNitrogenPersonnel');
+    Route::delete('/api/job-tracker-master/nitrogen-personnels/{id}', [JobTrackerController::class, 'deleteNitrogenPersonnel'])->name('deleteNitrogenPersonnel');
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route
