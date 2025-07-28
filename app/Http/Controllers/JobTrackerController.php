@@ -752,6 +752,60 @@ class JobTrackerController extends Controller
         }
     }
 
+    public function deleteJobTracker(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $ids = $request->input('ids', []);
+            if (empty($ids)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No Job Tracker IDs provided for deletion',
+                ], 400);
+            }
+
+            // Delete job trackers and their related data
+            JobTrackerModel::whereIn('id', $ids)->each(function ($jobTracker) {
+                // Delete related models
+                $jobTracker->jobDescriptions()->delete();
+                $jobTracker->maxDepths()->delete();
+                $jobTracker->n2Tanks()->delete();
+                $jobTracker->containers()->delete();
+                $jobTracker->injectorGoosnecks()->delete();
+                $jobTracker->miscellaneousTools()->delete();
+                $jobTracker->ctPersonnels()->delete();
+                $jobTracker->nitrogenPersonnels()->delete();
+                $jobTracker->pumpPersonnels()->delete();
+                $jobTracker->acidTypes()->delete();
+                $jobTracker->acidVolumes()->delete();
+
+                // Finally delete the job tracker itself
+                $jobTracker->delete();
+            });
+            
+            // Commit transaction if everything is successful
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Job Tracker deleted successfully',
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Job Tracker deletion failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete Job Tracker',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function getJobDescriptions(Request $request)
     {

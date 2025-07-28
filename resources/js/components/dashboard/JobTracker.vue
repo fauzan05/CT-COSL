@@ -2,6 +2,89 @@
     <head>
         <Title>Job Tracker</Title>
     </head>
+    <!-- Delete Confirmation Modal -->
+    <TransitionRoot appear :show="isDeleteModalOpen" as="template">
+        <Dialog as="div" @close="closeModal" class="relative z-50">
+            <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100"
+                leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
+                <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+            </TransitionChild>
+
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                    <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95"
+                        enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100"
+                        leave-to="opacity-0 scale-95">
+                        <DialogPanel
+                            class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800/80 p-6 text-left align-middle shadow-xl transition-all">
+                            <!-- Close Button -->
+                            <button @click="closeModal"
+                                class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                aria-label="Close modal">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                            <!-- Modal Title -->
+                            <DialogTitle as="h3"
+                                class="text-lg font-medium leading-6 text-gray-900 mb-4 dark:text-white flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Confirm Delete
+                            </DialogTitle>
+
+                            <!-- Modal Content -->
+                            <div class="mt-4 text-center space-y-4">
+                                <p class="text-gray-700 dark:text-gray-200">
+                                    Are you sure you want to delete the following job tracker form?
+                                </p>
+
+                                <div class="text-red-600 font-semibold space-y-1">
+                                    <p>{{ selectedJobTracker.well_name }}</p>
+                                    <p>{{ formatDateWithoutTime(selectedJobTracker.job_start_date) }} – {{
+                                        formatDateWithoutTime(selectedJobTracker.job_finish_date) }}</p>
+                                </div>
+
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    This action cannot be undone.
+                                </p>
+                            </div>
+
+                            <!-- Modal Actions -->
+                            <div class="mt-6 flex justify-center space-x-3">
+                                <button type="button"
+                                    class="inline-flex justify-center cursor-pointer rounded-md border dark:text-white/75 border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                                    @click="closeModal">
+                                    Cancel
+                                </button>
+                                <button type="button" :disabled="isDeleting" @click="handleDeleteJobTracker"
+                                    class="inline-flex justify-center cursor-pointer rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2">
+                                    <span v-if="!isDeleting">Delete</span>
+                                    <span v-else class="flex items-center">
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                            </path>
+                                        </svg>
+                                        Deleting...
+                                    </span>
+                                </button>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
+
     <!-- Main Content -->
     <div class="p-6 bg-gray-50 min-h-screen dark:bg-slate-900/50 dark:text-gray-100 rounded-xl">
         <!-- Header Section with improved styling -->
@@ -460,6 +543,8 @@ import { useCurrentUserStore } from '@/stores/CurrentUser';
 import {
     Listbox, ListboxButton, ListboxOptions, ListboxOption,
     Switch, SwitchGroup, SwitchLabel,
+    Dialog, DialogPanel, DialogTitle, TransitionRoot,
+    TransitionChild
 } from '@headlessui/vue';
 import {
     ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
@@ -487,7 +572,6 @@ const titleModalButton = ref('Save JobTracker');
 const addSizeLoading = ref(false);
 const editingSizeIndex = ref(null);
 const editingRowIndex = ref(null);
-const loading = ref(false);
 const isDeleteModalOpen = ref(false);
 const isDeleting = ref(false);
 const showMobileFilters = ref(false);
@@ -540,15 +624,7 @@ function closeModal() {
 }
 
 function resetForm() {
-    jobTrackerForm.value = { type: '' };
-    jobTrackerFormSize.value = { top_connection: '', bottom_connection: '' };
-    listJobTrackerSizes.value = [];
-    selectedJobTracker.value = null;
-    editingSizeIndex.value = null;
-    editingRowIndex.value = null;
-    addSizeLoading.value = false;
-    isJobTrackerModalOpen.value = false;
-    isDeleteModalOpen.value = false;
+
 }
 
 const confirmDeleteModal = (jobTracker) => {
@@ -584,7 +660,7 @@ function handleDeleteJobTracker() {
     const toast = useToast();
 
     let ids = [selectedJobTracker.value.id];
-    axios.delete(`${baseUrl}/api/jobTrackers`, {
+    axios.delete(`${baseUrl}/api/job-trackers`, {
         data: { ids }
     })
         .then(response => {
