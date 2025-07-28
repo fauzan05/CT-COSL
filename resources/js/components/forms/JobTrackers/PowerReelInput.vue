@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,12 +206,16 @@ const fetchAllPowerReels = async () => {
         }
     } catch (error) {
         console.error('Error fetching power reel:', error)
-        toast.error('Failed to fetch power reel.')
     }
 }
 
 onMounted(async () => {
     await fetchAllPowerReels()
+})
+
+watch(() => props.modelValue, (newValue) => {
+    // Update selectedPowerReel when modelValue changes
+    selectedPowerReel.value = newValue
 })
 
 watch(selectedPowerReel, (newValue) => {

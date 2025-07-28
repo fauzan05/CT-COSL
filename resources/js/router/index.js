@@ -46,6 +46,11 @@ const routes = [
                 path: "create",
                 component: JobTrackerForm,
                 name: 'create-job-tracker'
+            },
+            {
+                path: "edit/:id",
+                component: JobTrackerForm,
+                name: 'edit-job-tracker'
             }
         ]
     },

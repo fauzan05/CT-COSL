@@ -5,14 +5,15 @@ namespace App\Models\JobTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PumpPersonnelModel extends Model
+class JobTrackerAcidVolumeModel extends Model
 {
     use SoftDeletes;
-    protected $table = 'pump_personnels';
+    protected $table = 'job_tracker_acid_volumes';
     public $timestamps = false;
     protected $fillable = [
         'job_tracker_id',
-        'pump_personnel_name',
+        'volume',
+        'volume_unit',
         'created_by',
         'updated_by',
     ];
@@ -23,7 +24,7 @@ class PumpPersonnelModel extends Model
     ];
 
     /**
-     * Get the job tracker associated with the pump personnel.
+     * Get the job tracker associated with the acid volume.
      */
     public function jobTracker()
     {

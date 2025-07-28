@@ -269,7 +269,6 @@ const fetchAllJobDescriptions = async () => {
         }
     } catch (error) {
         console.error('Error fetching job descriptions:', error)
-        toast.error('Failed to fetch job descriptions.')
     }
 }
 

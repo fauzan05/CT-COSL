@@ -36,7 +36,7 @@
                     General Information
                 </h3>
                 <!-- Job Description -->
-                <JobDescriptionInput v-model="jobTracker.job_description" />
+                <JobDescriptionInput v-model="jobTracker.job_descriptions" />
                 <CustomerInput v-model="jobTracker.customer" />
                 <BJDistrictInput v-model="jobTracker.bj_district" />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -45,7 +45,7 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Well Name
                         </label>
-                        <input v-model="jobTracker.well_name" type="text" required
+                        <input v-model="jobTracker.well_name" type="text"
                             class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter well name" />
                     </div>
@@ -111,7 +111,7 @@
                 <WellStatusInput v-model="jobTracker.well_status" />
                 <WellTypeInput v-model="jobTracker.well_type" />
                 <WellheadXOverInput v-model="jobTracker.wellhead_x_over" />
-                <CasingLinerSizeInput v-model="jobTracker.casing_linear_size" />
+                <CasingLinerSizeInput v-model="jobTracker.casing_liner_size" />
                 <CompletionSizeInput v-model="jobTracker.completion_size" />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     <!-- Max Deviation -->
@@ -195,10 +195,10 @@
                 <WTInput v-model="jobTracker.wt" />
                 <CTStringInput v-model="jobTracker.ct_string" />
                 <N2ConverterInput v-model="jobTracker.n2_converter" />
-                <N2TankInput v-model="jobTracker.n2_tank" />
-                <ContainerInput v-model="jobTracker.container" />
-                <InjectorGoosneckInput v-model="jobTracker.injector_goosneck" />
-                <MiscellaneousToolInput v-model="jobTracker.miscellaneous_tool" />
+                <N2TankInput v-model="jobTracker.n2_tanks" />
+                <ContainerInput v-model="jobTracker.containers" />
+                <InjectorGoosneckInput v-model="jobTracker.injector_goosnecks" />
+                <MiscellaneousToolInput v-model="jobTracker.miscellaneous_tools" />
             </div>
 
             <!-- Personnel Section -->
@@ -216,7 +216,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Pump Supervisor
                     </label>
-                    <input v-model="jobTracker.pump_supervisor" type="text" required
+                    <input v-model="jobTracker.pump_supervisor" type="text"
                         class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter pump supervisor" />
                 </div>
@@ -229,7 +229,7 @@
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
                     Treatment
                 </h3>
-                <div class="bg-white mb-5 dark:bg-slate-800 rounded-xl shadow-sm p-6">
+                <div class="bg-white mb-5 dark:bg-slate-700 rounded-xl shadow-sm p-6">
                     <!-- Main Title -->
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                         Acid Treatment
@@ -352,18 +352,45 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Currency
                     </label>
-                    <select v-model="jobTracker.revenue_currency"
-                        class="w-32 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="USD">USD</option>
-                        <option value="EUR">EUR</option>
-                        <option value="GBP">GBP</option>
-                        <option value="IDR">IDR</option>
-                    </select>
+                    <Listbox v-model="jobTracker.revenue_currency">
+                        <div class="relative w-32">
+                            <ListboxButton
+                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm border border-gray-300 dark:border-gray-600 dark:text-white">
+                                <span class="block truncate">{{ jobTracker.revenue_currency }}</span>
+                                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                    <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                </span>
+                            </ListboxButton>
+
+                            <transition leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
+                                leave-to-class="opacity-0">
+                                <ListboxOptions
+                                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                    <ListboxOption v-slot="{ active, selected }" v-for="currency in revenueCurrencies"
+                                        :key="currency.value" :value="currency.value" as="template">
+                                        <li :class="[
+                                            active ? 'bg-blue-100 text-blue-900 dark:bg-gray-600 dark:text-white' : 'text-gray-900 dark:text-gray-100',
+                                            'relative cursor-default select-none py-2 pl-10 pr-4',
+                                        ]">
+                                            <span :class="[
+                                                selected ? 'font-medium' : 'font-normal',
+                                                'block truncate',
+                                            ]">{{ currency.label }}</span>
+                                            <span v-if="selected"
+                                                class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-blue-400">
+                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                            </span>
+                                        </li>
+                                    </ListboxOption>
+                                </ListboxOptions>
+                            </transition>
+                        </div>
+                    </Listbox>
                 </div>
 
                 <!-- Revenue Fields -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3">
-                    <div class="bg-white mb-5 dark:bg-slate-800 rounded-xl shadow-sm p-6">
+                    <div class="bg-white mb-5 dark:bg-slate-700 rounded-xl shadow-sm p-6">
                         <!-- Main Title -->
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                             Equipment
@@ -384,7 +411,8 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Nitrogen Revenue
                                 </label>
-                                <input v-model.number="jobTracker.revenue_nitrogen_equipment" type="number" step="0.01" min="0"
+                                <input v-model.number="jobTracker.revenue_nitrogen_equipment" type="number" step="0.01"
+                                    min="0"
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="0.00" />
                             </div>
@@ -408,7 +436,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white mb-5 dark:bg-slate-800 rounded-xl shadow-sm p-6">
+                    <div class="bg-white mb-5 dark:bg-slate-700 rounded-xl shadow-sm p-6">
                         <!-- Main Title -->
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
                             Products
@@ -429,7 +457,8 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Nitrogen Revenue
                                 </label>
-                                <input v-model.number="jobTracker.revenue_nitrogen_product" type="number" step="0.01" min="0"
+                                <input v-model.number="jobTracker.revenue_nitrogen_product" type="number" step="0.01"
+                                    min="0"
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="0.00" />
                             </div>
@@ -514,8 +543,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 import {
     Listbox,
     ListboxButton,
@@ -523,9 +552,9 @@ import {
     ListboxOptions
 } from '@headlessui/vue'
 import {
-    ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
-    ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CheckIcon
+    ChevronUpDownIcon, CheckIcon
 } from '@heroicons/vue/20/solid';
+import { useToast } from 'vue-toastification'
 import JobDescriptionInput from "../../forms/JobTrackers/JobDescriptionInput.vue";
 import MaxDepthInput from "../../forms/JobTrackers/MaxDepthInput.vue";
 import CTPersonnelInput from "../../forms/JobTrackers/CTPersonnelInput.vue";
@@ -561,23 +590,24 @@ import PumpPersonnelInput from "../../forms/JobTrackers/PumpPersonnelInput.vue";
 import AcidTypeInput from "../../forms/JobTrackers/AcidTypeInput.vue";
 import AcidVolumeInput from "../../forms/JobTrackers/AcidVolumeInput.vue";
 
-const router = useRouter();
 const route = useRoute();
-
 // Form state
 const isSubmitting = ref(false);
 const isEdit = computed(() => !!route.params.id);
+const baseUrl = import.meta.env.VITE_API_URL
+// toast
+const toast = useToast();
 
 // Form data
 const jobTracker = ref({
-    job_description: [],
+    job_descriptions: [],
     well_name: "",
     company_man: "",
     bj_representative: "",
     job_start_date: "",
     job_finish_date: "",
-    job_days: null,
-    max_deviation: null,
+    job_days: 0,
+    max_deviation: 0,
     max_depths: [
         {
             value: 0,
@@ -591,17 +621,17 @@ const jobTracker = ref({
     well_status: "",
     well_type: "",
     wellhead_x_over: "",
-    casing_linear_size: {
-        size: "",
+    casing_liner_size: {
+        size: '',
         unit: "in",
     },
     completion_size: {
-        size: "",
+        size: '',
         unit: "in",
     },
     nozzle_type: "",
     max_bha_od: {
-        value: null,
+        size: '',
         unit: "in",
     },
     control_cabin: "",
@@ -609,46 +639,62 @@ const jobTracker = ref({
     power_reel: "",
     cj_injector: "",
     bop: "",
-    ct_size: "",
+    ct_size: {
+        size: '',
+        unit: "in",
+    },
     ct_grade: "",
-    wt: "",
+    wt: {
+        size: '',
+        unit: "in",
+    },
     ct_string: "",
     n2_converter: "",
-    n2_tank: [],
-    container: [],
-    injector_goosneck: [],
-    miscellaneous_tool: [],
+    n2_tanks: [],
+    containers: [],
+    injector_goosnecks: [],
+    miscellaneous_tools: [],
     ct_supervisor: "",
     ct_personnels: [],
     nitrogen_supervisor: "",
     nitrogen_personnels: [],
     pump_supervisor: "",
     pump_personnels: [],
-    acid_types: [],
-    acid_volumes: [],
-    depth_md: null,
+    acid_types: [
+        {
+            value: ''
+        }
+    ],
+    acid_volumes: [
+        {
+            value: 0,
+            unit: "Gals",
+        }
+    ],
+    depth_md: 0,
     depth_md_unit: "ft",
-    depth_tvd: null,
+    depth_tvd: 0,
     depth_tvd_unit: "ft",
-    bh_pressure: null,
+    bh_pressure: 0,
     bh_pressure_unit: "psi",
-    bh_temp: null,
+    bh_temp: 0,
     bh_temp_unit: "°F",
-    nitrogen_volume: null,
+    nitrogen_volume: 0,
     nitrogen_volume_unit: "Gals",
-    cement_volume: null,
+    cement_volume: 0,
     cement_volume_unit: "Bbls",
     revenue_currency: "USD",
-    revenue_coiled_tubing: null,
-    revenue_pumping: null,
-    revenue_special_tools: null,
-    revenue_acid: null,
-    revenue_nitrogen_equipment: null,
-    revenue_nitrogen_product: null,
-    revenue_cement: null,
-    personnel_charges: null,
-    service_charges: null,
-    other_charges: null,
+    revenue_coiled_tubing: 0,
+    revenue_pumping: 0,
+    revenue_special_tools: 0,
+    revenue_acid: 0,
+    revenue_nitrogen_equipment: 0,
+    revenue_nitrogen_product: 0,
+    revenue_cement: 0,
+    personnel_charges: 0,
+    service_charges: 0,
+    other_charges: 0,
+    total_revenue: 0
 });
 
 // Fields configuration
@@ -704,6 +750,13 @@ const cementVolumeUnits = [
     { value: 'Liters', label: 'Liters' },
 ]
 
+const revenueCurrencies = [
+    { value: 'USD', label: 'USD' },
+    { value: 'EUR', label: 'EUR' },
+    { value: 'GBP', label: 'GBP' },
+    { value: 'IDR', label: 'IDR' },
+]
+
 // Computed properties
 const totalRevenue = computed(() => {
     const revenues = [
@@ -732,35 +785,21 @@ const formatCurrency = (amount) => {
 const handleSubmit = async () => {
     try {
         isSubmitting.value = true;
-
-        // Add total revenue to form data
-        const formData = {
-            ...jobTracker.value,
-            total_revenue: totalRevenue.value,
-        };
-
+        // cek apakah ini edit atau create
+        console.log("Submitting job tracker data:", jobTracker.value);
         if (isEdit.value) {
             // Update existing job tracker
-            console.log("Updating job tracker:", formData);
-            // await updateJobTracker(route.params.id, formData);
+            await axios.put(`${baseUrl}/api/job-trackers/${route.params.id}`, jobTracker.value);
+            toast.success("Job tracker updated successfully!");
         } else {
             // Create new job tracker
-            console.log("Creating job tracker:", formData);
-            // await createJobTracker(formData);
+            // use csrf
+            await axios.post(`${baseUrl}/api/job-trackers`, jobTracker.value);
+            toast.success("Job tracker created successfully!");
         }
-
-        // Success feedback
-        alert(
-            isEdit.value
-                ? "Job tracker updated successfully!"
-                : "Job tracker created successfully!"
-        );
-
-        // Navigate back to list
-        router.push({ name: "job-tracker-list" });
     } catch (error) {
         console.error("Error saving job tracker:", error);
-        alert("Error saving job tracker. Please try again.");
+        toast.error("Failed to save job tracker data.");
     } finally {
         isSubmitting.value = false;
     }
@@ -768,20 +807,61 @@ const handleSubmit = async () => {
 
 const loadJobTracker = async (id) => {
     try {
-        // Load existing job tracker data for editing
-        console.log("Loading job tracker:", id);
-        // const data = await getJobTracker(id);
-        // Object.assign(jobTracker.value, data);
+        // load from api
+        let response = await axios.get(`${baseUrl}/api/job-trackers/${id}`);
+        jobTracker.value = response.data;
+        // remove time in job_start_date and job_finish_date and matching the timezone
+        jobTracker.value.job_start_date = new Date(jobTracker.value.job_start_date).toISOString().split('T')[0];
+        jobTracker.value.job_finish_date = new Date(jobTracker.value.job_finish_date).toISOString().split('T')[0];
+
+        // set max_bha_od to jobTracker
+        // jobTracker.value.max_bha_od = {
+        //     size: jobTracker.value.max_bha_od.size,
+        //     unit: jobTracker.value.max_bha_od.unit
+        // };
+
+        // console.log(jobTracker.value.max_bha_od);
+
+        // set ct_size to jobTracker
+        // jobTracker.value.ct_size = {
+        //     size: jobTracker.value.ct_size.size,
+        //     unit: jobTracker.value.ct_size.unit
+        // };
+
+        // // set wt to jobTracker
+        // jobTracker.value.wt = {
+        //     size: jobTracker.value.wt.size,
+        //     unit: jobTracker.value.wt.unit
+        // };
+
+        console.log(jobTracker.value.casing_liner_size)
+        console.log(jobTracker.value.ct_size)
+
+        // set acid types to jobTracker
+        jobTracker.value.acid_types = jobTracker.value.acid_types.map(acid => ({
+            value: acid.value
+        }));
+
     } catch (error) {
         console.error("Error loading job tracker:", error);
-        alert("Error loading job tracker data.");
     }
 };
 
 // Lifecycle
-onMounted(() => {
-    if (isEdit.value && route.params.id) {
-        loadJobTracker(route.params.id);
+// onMounted(async () => {
+//     if (isEdit.value && route.params.id) {
+//         await loadJobTracker(route.params.id);
+//     }
+// });
+
+watch(
+  () => route.params.id,
+  async (newId) => {
+    if (isEdit.value && newId) {
+      await loadJobTracker(newId);
     }
-});
+  },
+  { immediate: true } // agar langsung jalan saat pertama kali mount juga
+);
+
 </script>

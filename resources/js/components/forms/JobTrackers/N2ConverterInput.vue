@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,12 +206,16 @@ const fetchAllN2Converters = async () => {
         }
     } catch (error) {
         console.error('Error fetching N2 Converter:', error)
-        toast.error('Failed to fetch N2 Converter.')
     }
 }
 
 onMounted(async () => {
     await fetchAllN2Converters()
+})
+
+watch(props, (newProps) => {
+    // Update selectedN2Converter when modelValue changes
+    selectedN2Converter.value = newProps.modelValue
 })
 
 watch(selectedN2Converter, (newValue) => {

@@ -110,24 +110,34 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
+
 const baseUrl = import.meta.env.VITE_API_URL
 const emit = defineEmits(['update:modelValue'])
 const toast = useToast()
 
 // Dropdown options - hanya satu list
-const placeholder = ref('Select district')
+const placeholder = ref('Select District')
 const listOptions = ref([])
-
 const selectedDistrict = ref('')
 
 // UI States
 const showAddOption = ref(false)
 const showManageOptions = ref(false)
 const newOption = ref('')
+
+watch(() => props.modelValue, (newValue) => {
+    // Update selectedDistrict when modelValue changes
+    selectedDistrict.value = newValue
+}, { immediate: true })
+
+watch(selectedDistrict, (newValue) => {
+    // Emit the selected district value to the parent component
+    emit('update:modelValue', newValue)
+})
 
 // Methods
 const addNewOption = async () => {
@@ -209,22 +219,11 @@ const fetchAllDistricts = async () => {
         }
     } catch (error) {
         console.error('Error fetching districts:', error)
-        toast.error('Failed to fetch districts.')
     }
 }
 
 onMounted(async () => {
     // Fetch all districts from the API first
     await fetchAllDistricts()
-    
-    // Initialize selectedDistrict with the first option if available
-    if (listOptions.value.length > 0) {
-        selectedDistrict.value = listOptions.value[0].value
-    }
-})
-
-watch(selectedDistrict, (newValue) => {
-    // Emit the selected district value to the parent component
-    emit('update:modelValue', newValue)
 })
 </script>

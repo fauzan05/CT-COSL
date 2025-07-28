@@ -22,7 +22,7 @@
         <!-- Container for multiple inputs -->
         <div class="space-y-2 w-auto">
             <div v-for="(depth, index) in maxDepths" :key="index" class="flex items-center gap-2 w-auto">
-                <input v-model.number="maxDepths[index].value" type="number" step="0.1" min="0"
+                <input v-model.number="maxDepths[index].value" type="number" step="0.01" min="0"
                     class="flex-1 px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     :placeholder="`Enter max depth ${index + 1}`" @input="emitValues" />
 

@@ -16,9 +16,7 @@ return new class extends Migration
             $table->foreignId('job_tracker_id')
                 ->constrained('job_trackers')
                 ->onDelete('cascade');
-            $table->foreignId('n2_tank_id')
-                ->constrained('n2_tanks')
-                ->onDelete('cascade');
+            $table->string('n2_tank_name');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,12 +206,17 @@ const fetchAllCTSupervisors = async () => {
         }
     } catch (error) {
         console.error('Error fetching CT Supervisor:', error)
-        toast.error('Failed to fetch CT Supervisor.')
     }
 }
 
 onMounted(async () => {
     await fetchAllCTSupervisors()
+})
+
+// Watch for changes in selectedCTSupervisor and emit to parent component
+watch(() => props.modelValue, (newValue) => {
+    // Update selectedCTSupervisor when modelValue changes
+    selectedCTSupervisor.value = newValue
 })
 
 watch(selectedCTSupervisor, (newValue) => {

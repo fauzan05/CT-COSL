@@ -161,7 +161,7 @@ const props = defineProps({
     modelValue: {
         type: Object,
         default: () => ({
-            size: '',
+            size: 0,
             unit: '',
             label: ''
         })
@@ -204,7 +204,7 @@ const completeSelection = computed(() => {
         }
     }
     return {
-        size: '',
+        size: 0,
         unit: unitOptions.value[0].value, // Default to first unit
         label: ''
     }
@@ -289,32 +289,32 @@ const fetchAllWTs = async () => {
 
             sizeOptions.value = response.data.map(cas => ({
                 id: cas.id,
-                value: parseFloat(cas.size),
+                value: cas.size,
                 unit: cas.unit || '',
                 label: cas.size
             }))
 
             // Reset selection if current selection is not in the updated list
-            if (sizeOptions.value.length < 1 || !sizeOptions.value.some(opt => opt.value === selectedWT.value)) {
+            if (sizeOptions.value.length < 1 || (!sizeOptions.value.some(opt => opt.value === selectedWT.value) && !props.modelValue?.size)) {
                 selectedWT.value = ''
+            } else if (props.modelValue?.size && sizeOptions.value.some(opt => opt.value === props.modelValue.size)) {
+                selectedWT.value = props.modelValue.size
             }
         }
     } catch (error) {
         console.error('Error fetching WT sizes:', error)
-        toast.error('Failed to fetch WT sizes.')
     }
 }
 
 onMounted(async () => {
     await fetchAllWTs()
 
-    if (props.modelValue?.unit) {
-        selectedUnit.value = props.modelValue.unit
+    if (props.modelValue?.size && sizeOptions.value.some(opt => opt.value === props.modelValue.size)) {
+        selectedWT.value = props.modelValue.size
     }
 
-    // Set default unit if not specified
-    if (!selectedUnit.value) {
-        selectedUnit.value = unitOptions.value[0].value // Default to first unit
+    if (props.modelValue?.unit) {
+        selectedUnit.value = props.modelValue.unit
     }
 })
 
@@ -326,7 +326,7 @@ watch(completeSelection, (newValue) => {
 // Watch for external prop changes
 watch(() => props.modelValue, (newValue) => {
     if (newValue?.size !== selectedWT.value) {
-        selectedWT.value = newValue?.size || ''
+        selectedWT.value = newValue?.size || 0
     }
     if (newValue?.unit !== selectedUnit.value) {
         selectedUnit.value = newValue?.unit || ''

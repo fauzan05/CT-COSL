@@ -301,7 +301,6 @@ const fetchAllCompletionSizes = async () => {
         }
     } catch (error) {
         console.error('Error fetching completion sizes:', error)
-        toast.error('Failed to fetch completion sizes.')
     }
 }
 

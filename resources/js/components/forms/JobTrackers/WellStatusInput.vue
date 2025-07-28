@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -128,6 +128,16 @@ const selectedWellStatus = ref('')
 const showAddOption = ref(false)
 const showManageOptions = ref(false)
 const newOption = ref('')
+
+watch(() => props.modelValue, (newValue) => {
+    // Update selectedWellStatus when modelValue changes
+    selectedWellStatus.value = newValue || ''
+}, { immediate: true })
+
+watch(selectedWellStatus, (newValue) => {
+    // Emit the selected value to parent component
+    emit('update:modelValue', newValue)
+})
 
 // Methods
 const addNewOption = async () => {
@@ -206,16 +216,10 @@ const fetchAllWellStatuses = async () => {
         }
     } catch (error) {
         console.error('Error fetching well statuses:', error)
-        toast.error('Failed to fetch well statuses.')
     }
 }
 
 onMounted(async () => {
     await fetchAllWellStatuses()
-})
-
-watch(selectedWellStatus, (newValue) => {
-    // Emit the selected value to parent component
-    emit('update:modelValue', newValue)
 })
 </script>

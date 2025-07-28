@@ -269,7 +269,6 @@ const fetchAllCtPersonnel = async () => {
         }
     } catch (error) {
         console.error('Error fetching CT personnel:', error)
-        toast.error('Failed to fetch CT personnel.')
     }
 }
 

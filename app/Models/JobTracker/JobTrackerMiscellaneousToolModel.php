@@ -13,7 +13,7 @@ class JobTrackerMiscellaneousToolModel extends Model
     public $timestamps = false;
     protected $fillable = [
         'job_tracker_id',
-        'miscellaneous_tool_id',
+        'miscellaneous_tool_name',
         'created_by',
         'updated_by',
     ];
@@ -29,13 +29,6 @@ class JobTrackerMiscellaneousToolModel extends Model
     public function jobTracker()
     {
         return $this->belongsTo(JobTrackerModel::class, 'job_tracker_id');
-    }
-    /**
-     * Get the miscellaneous tool associated with the job tracker.
-     */
-    public function miscellaneousTool()
-    {
-        return $this->belongsTo(MiscellaneousToolModel::class, 'miscellaneous_tool_id');
     }
     /**
      * Get the user who created the record.

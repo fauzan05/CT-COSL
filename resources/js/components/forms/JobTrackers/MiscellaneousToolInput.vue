@@ -247,7 +247,6 @@ const fetchAllMiscellaneousTools = async () => {
         }
     } catch (error) {
         console.error('Error fetching Miscellaneous Tool:', error)
-        toast.error('Failed to fetch Miscellaneous Tool.')
     }
 }
 

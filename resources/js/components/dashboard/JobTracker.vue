@@ -5,7 +5,7 @@
     <!-- Main Content -->
     <div class="p-6 bg-gray-50 min-h-screen dark:bg-slate-900/50 dark:text-gray-100 rounded-xl">
         <!-- Header Section with improved styling -->
-        <div v-if="!isCreate" class="mb-8 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm">
+        <div v-if="!isCreate && !isEdit" class="mb-8 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm">
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Job Tracker Management</h1>
@@ -33,7 +33,7 @@
         </div>
 
         <!-- Search and Filter Section -->
-        <div v-if="!isCreate"
+        <div v-if="!isCreate && !isEdit"
             class="bg-white rounded-xl shadow-md p-4 sm:p-6 border border-gray-100 mb-6 dark:bg-slate-800/50 dark:border-slate-700/50">
             <!-- Mobile: Stack everything vertically -->
             <div class="space-y-4">
@@ -252,7 +252,7 @@
         </div>
 
         <!-- Table Section with improved styling -->
-        <div v-if="!isCreate" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm">
+        <div v-if="!isCreate && !isEdit" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h4 class="text-lg font-semibold text-gray-800 dark:text-white">Job Tracker List</h4>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1"></p>
@@ -288,7 +288,7 @@
                     <table class="min-w-full">
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
-                                <th v-for="header in ['No', 'Type', 'Total Size', 'Updated At', 'Updated By', 'Action']"
+                                <th v-for="header in ['No', 'Well Name', 'Company Man', 'Job Start Date', 'Job Finish Date', 'Job Days', 'Updated At', 'Updated By', 'Action']"
                                     :key="header"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ header }}
@@ -302,10 +302,19 @@
                                     {{ (pagination.current_page - 1) * perPage + index + 1 }}
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                                    {{ jobTracker.well_name }}
+                                    {{ jobTracker.well_name || '-' }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                    {{ jobTracker.company_man }}
+                                    {{ jobTracker.company_man || '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                    {{ formatDateWithoutTime(jobTracker.job_start_date) || '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                    {{ formatDateWithoutTime(jobTracker.job_finish_date) || '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                    {{ jobTracker.job_days || '-' }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {{ formatDate(jobTracker.updated_at) }}
@@ -314,27 +323,31 @@
                                     {{ jobTracker.updated_by_name }}
                                 </td>
                                 <td class="px-6 py-4 text-sm">
-                                    <!-- Edit -->
-                                    <button @click="openJobTrackerModal(jobTracker)"
-                                        class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
-                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                        Edit
-                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <!-- Edit -->
+                                        <button @click="editForm(jobTracker)"
+                                            class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
+                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                            Edit
+                                        </button>
 
-                                    <!-- Delete -->
-                                    <button @click="confirmDeleteModal(jobTracker)"
-                                        class="inline-flex items-center ms-2 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
-                                        <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110" fill="none"
-                                            stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                        <span class="text-sm font-medium">Delete</span>
-                                    </button>
+                                        <!-- Delete -->
+                                        <button @click="confirmDeleteModal(jobTracker)"
+                                            class="inline-flex items-center px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
+                                            <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            <span class="text-sm font-medium">Delete</span>
+                                        </button>
+                                    </div>
                                 </td>
+
                             </tr>
                         </tbody>
                     </table>
@@ -442,9 +455,9 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useCurrentUserStore } from '@/stores/CurrentUser';
 import {
-    TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle,
     Listbox, ListboxButton, ListboxOptions, ListboxOption,
     Switch, SwitchGroup, SwitchLabel,
 } from '@headlessui/vue';
@@ -456,7 +469,9 @@ import {
 /* ----------------------------- STATE & STORES ----------------------------- */
 const baseUrl = import.meta.env.VITE_API_URL;
 const route = useRoute();
+const router = useRouter();
 const isCreate = computed(() => route.name === 'create-job-tracker');
+const isEdit = computed(() => route.name === 'edit-job-tracker');
 
 const listJobTrackers = ref([]);
 const pagination = ref({ current_page: 1, last_page: 1 });
@@ -473,7 +488,6 @@ const addSizeLoading = ref(false);
 const editingSizeIndex = ref(null);
 const editingRowIndex = ref(null);
 const loading = ref(false);
-const loadingAllSizes = ref(false);
 const isDeleteModalOpen = ref(false);
 const isDeleting = ref(false);
 const showMobileFilters = ref(false);
@@ -509,6 +523,15 @@ const formatDate = (utcDateString) => {
     return date.toLocaleString('en-US', options).replace(',', '').replace(',', ' at');
 };
 
+
+const formatDateWithoutTime = (utcDateString) => {
+    const date = new Date(utcDateString);
+    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+    return date
+        .toLocaleDateString('en-US', options)
+        .replace(',', '');  // hapus koma
+};
+
 /* ------------------------------ MODAL HANDLERS ------------------------------ */
 function closeModal() {
     isJobTrackerModalOpen.value = false;
@@ -520,77 +543,24 @@ function resetForm() {
     jobTrackerForm.value = { type: '' };
     jobTrackerFormSize.value = { top_connection: '', bottom_connection: '' };
     listJobTrackerSizes.value = [];
+    selectedJobTracker.value = null;
     editingSizeIndex.value = null;
     editingRowIndex.value = null;
+    addSizeLoading.value = false;
+    isJobTrackerModalOpen.value = false;
+    isDeleteModalOpen.value = false;
 }
-
-const openJobTrackerModal = async (jobTracker) => {
-    if (jobTracker) {
-        isJobTrackerModalOpen.value = true;
-        titleModal.value = 'Edit JobTracker';
-        titleModalButton.value = 'Update JobTracker';
-        selectedJobTracker.value = jobTracker;
-        jobTrackerForm.value.type = jobTracker.type;
-        fetchJobTrackerSizes(jobTracker.id);
-    } else {
-        isJobTrackerModalOpen.value = true;
-        titleModal.value = 'Add JobTracker';
-    }
-};
 
 const confirmDeleteModal = (jobTracker) => {
     selectedJobTracker.value = jobTracker;
     isDeleteModalOpen.value = true;
 };
 
-/* ----------------------------- SIZE HANDLERS ----------------------------- */
-function editJobTrackerSize(_, index) {
-    editingRowIndex.value = index;
-}
-
-function saveJobTrackerSize(index) {
-    editingRowIndex.value = null;
-}
-
-function addSize() {
-    if (!jobTrackerFormSize.value.top_connection || !jobTrackerFormSize.value.bottom_connection) return;
-
-    addSizeLoading.value = true;
-
-    setTimeout(() => {
-        const now = new Date().toISOString();
-        const userName = currentUserStore.user ? currentUserStore.user.fullname : 'Current User';
-
-        if (editingSizeIndex.value !== null) {
-            // Update existing size
-            listJobTrackerSizes.value[editingSizeIndex.value] = {
-                ...listJobTrackerSizes.value[editingSizeIndex.value],
-                top_connection: jobTrackerFormSize.value.top_connection,
-                bottom_connection: jobTrackerFormSize.value.bottom_connection,
-                updated_at: now,
-                updated_by_name: userName,
-            };
-        } else {
-            // Add new size
-            listJobTrackerSizes.value.push({
-                id: 0,
-                top_connection: jobTrackerFormSize.value.top_connection,
-                bottom_connection: jobTrackerFormSize.value.bottom_connection,
-                updated_at: now,
-                updated_by_name: userName,
-            });
-        }
-
-        // Clear input
-        jobTrackerFormSize.value = { top_connection: '', bottom_connection: '' };
-        editingSizeIndex.value = null;
-        addSizeLoading.value = false;
-    }, 500);
-}
-
-function deleteJobTrackerSize(index) {
-    listJobTrackerSizes.value.splice(index, 1);
-}
+const editForm = (jobTracker) => {
+    // redirect to the edit page with the jobTracker ID using vue router
+    isEdit.value = true;
+    router.push({ name: 'edit-job-tracker', params: { id: jobTracker.id } });
+};
 
 /* ----------------------------- API HANDLERS ----------------------------- */
 async function fetchJobTrackers(page = 1) {
@@ -608,10 +578,6 @@ async function fetchJobTrackers(page = 1) {
         isLoading.value = false;
     }
 }
-
-const saveJobTracker = async () => {
-    console.log('Saving JobTracker:', jobTrackerForm.value, listJobTrackerSizes.value);
-};
 
 function handleDeleteJobTracker() {
     isDeleting.value = true;
@@ -671,6 +637,20 @@ const displayedPages = computed(() => {
 /* ------------------------------ FILTERS ------------------------------ */
 watch([selectedSortByFilter, perPage, search, isDesc], () => {
     fetchJobTrackers(pagination.value.current_page || 1);
+});
+
+watch([isCreate, isEdit], () => {
+    // saat create, reset form
+    if (isCreate.value) {
+        resetForm();
+        titleModal.value = 'Add JobTracker';
+        titleModalButton.value = 'Save JobTracker';
+    } else if (isEdit.value) {
+        titleModal.value = 'Edit JobTracker';
+        titleModalButton.value = 'Update JobTracker';
+    }
+    // fetch job trackers when the route changes to create or edit
+    fetchJobTrackers(1);
 });
 
 /* ------------------------------ ON MOUNT ------------------------------ */

@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('max_depths', function (Blueprint $table) {
+        Schema::create('job_tracker_acid_types', function (Blueprint $table) {
             $table->id();
             $table->foreignId('job_tracker_id')
                 ->constrained('job_trackers')
                 ->onDelete('cascade');
-            $table->decimal('max_depth', 8, 2);
-            $table->string('max_depth_unit')->nullable();
+            $table->string('acid_type');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('max_depths');
+        Schema::dropIfExists('job_tracker_acid_types');
     }
 };

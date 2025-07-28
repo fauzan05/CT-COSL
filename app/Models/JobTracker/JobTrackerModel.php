@@ -12,40 +12,69 @@ class JobTrackerModel extends Model
     protected $table = 'job_trackers';
     public $timestamps = false;
     protected $fillable = [
-        'well_name',
-        'company_man',
-        'bj_representative',
-        'job_start_date',
-        'job_finish_date',
-        'job_days',
-        'max_deviation',
-        'depth_md',
-        'depth_md_unit',
-        'depth_tvd',
-        'depth_tvd_unit',
         'bh_pressure',
         'bh_pressure_unit',
         'bh_temp',
         'bh_temp_unit',
-        'nitrogen_volume',
-        'nitrogen_volume_unit',
+        'bj_district',
+        'bj_representative',
+        'bop',
+        'casing_liner_size',
+        'casing_liner_size_unit',
         'cement_volume',
         'cement_volume_unit',
-        'revenue_currency',
+        'company_man',
+        'completion_size',
+        'completion_size_unit',
+        'control_cabin',
+        'created_by',
+        'ct_grade',
+        'ct_size',
+        'ct_size_unit',
+        'ct_string',
+        'ct_supervisor',
+        'cj_injector',
+        'customer',
+        'depth_md',
+        'depth_md_unit',
+        'depth_tvd',
+        'depth_tvd_unit',
+        'field_location',
+        'field_type',
+        'job_days',
+        'job_finish_date',
+        'job_start_date',
+        'max_bha_od',
+        'max_bha_od_unit',
+        'max_deviation',
+        'n2_converter',
+        'nitrogen_supervisor',
+        'nitrogen_volume',
+        'nitrogen_volume_unit',
+        'nozzle_type',
+        'other_charges',
+        'personnel_charges',
+        'power_pack',
+        'power_reel',
+        'pump_supervisor',
+        'revenue_acid',
+        'revenue_cement',
         'revenue_coiled_tubing',
-        'revenue_nitrogen',
+        'revenue_currency',
+        'revenue_nitrogen_equipment',
+        'revenue_nitrogen_product',
         'revenue_pumping',
         'revenue_special_tools',
-        'revenue_acid',
-        'revenue_nitrogen',
-        'revenue_cement',
-        'personnel_charges',
         'service_charges',
-        'other_charges',
         'total_revenue',
-        'created_by',
         'updated_by',
+        'well_name',
+        'well_status',
+        'well_type',
+        'wellhead_x_over',
+        'wt',
     ];
+    
 
     protected $casts = [
         'job_start_date' => 'datetime',
@@ -56,33 +85,13 @@ class JobTrackerModel extends Model
     ];
 
     /**
-     * Get the pump personnel associated with the job tracker.
+     * Get the updated by user.
      */
-    public function pumpPersonnels()
+    public function updatedBy()
     {
-        return $this->hasMany(PumpPersonnelModel::class, 'job_tracker_id');
+        return $this->belongsTo(User::class, 'updated_by');
     }
-    /**
-     * Get the nitrogen personnel associated with the job tracker.
-     */
-    public function nitrogenPersonnels()
-    {
-        return $this->hasMany(NitrogenPersonnelModel::class, 'job_tracker_id');
-    }
-     /**
-     * Get the ct personnel associated with the job tracker.
-     */
-    public function ctPersonnels()
-    {
-        return $this->hasMany(CtPersonnelModel::class, 'job_tracker_id');
-    }
-    /**
-     * Get the volume acids associated with the job tracker.
-     */
-    public function volumeAcids()
-    {
-        return $this->hasMany(VolumeAcidModel::class, 'job_tracker_id');
-    }
+
     /**
      * Get the created by user.
      */
@@ -92,51 +101,76 @@ class JobTrackerModel extends Model
     }
 
     /**
-     * Get the updated by user.
-     */
-    public function updatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_by');
-    }
-
-    /**
      * Get the job descriptions associated with the job tracker.
      */
     public function jobDescriptions()
     {
         return $this->hasMany(JobTrackerJobDescriptionModel::class, 'job_tracker_id');
     }
-    
 
     /**
-     * Get the n2 tank associated with the job tracker.
+     * Get the maximum depth associated with the job tracker.
+     */
+    public function maxDepths()
+    {
+        return $this->hasMany(JobTrackerMaxDepthModel::class, 'job_tracker_id');
+    }
+
+    /**
+     * Get the N2 tanks associated with the job tracker.
      */
     public function n2Tanks()
     {
         return $this->hasMany(JobTrackerN2TankModel::class, 'job_tracker_id');
     }
 
-    /**
-     * Get the containers associated with the job tracker.
-     */
+    // containers
     public function containers()
     {
         return $this->hasMany(JobTrackerContainerModel::class, 'job_tracker_id');
     }
 
-    /**
-     * Get the injector goosenecks associated with the job tracker.
-     */
-    public function injectorGoosenecks()
+    // injector goosneck
+    public function injectorGoosnecks()
     {
         return $this->hasMany(JobTrackerInjectorGoosneckModel::class, 'job_tracker_id');
     }
 
-    /**
-     * Get the miscellaneous tools associated with the job tracker.
-     */
+    // miscellaneous tools
     public function miscellaneousTools()
     {
         return $this->hasMany(JobTrackerMiscellaneousToolModel::class, 'job_tracker_id');
+    }
+
+    // ct personnels
+    public function ctPersonnels()
+    {
+        return $this->hasMany(JobTrackerCTPersonnelModel::class, 'job_tracker_id');
+    }
+
+    // nitrogen personnels
+    public function nitrogenPersonnels()
+    {
+        return $this->hasMany(JobTrackerNitrogenPersonnelModel::class, 'job_tracker_id');
+    }
+
+    // acid types
+    public function acidTypes()
+    {
+        return $this->hasMany(JobTrackerAcidTypeModel::class, 'job_tracker_id');
+    }
+
+    // acid volumes
+    public function acidVolumes()
+    {
+        return $this->hasMany(JobTrackerAcidVolumeModel::class, 'job_tracker_id');
+    }
+
+    /**
+     * Get the pump personnel associated with the job tracker.
+     */
+    public function pumpPersonnels()
+    {
+        return $this->hasMany(JobTrackerPumpPersonnelModel::class, 'job_tracker_id');
     }
 }

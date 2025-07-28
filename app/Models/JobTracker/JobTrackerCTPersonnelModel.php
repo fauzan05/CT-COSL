@@ -5,15 +5,14 @@ namespace App\Models\JobTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MaxDepthModel extends Model
+class JobTrackerCTPersonnelModel extends Model
 {
     use SoftDeletes;
-    protected $table = 'max_depths';
+    protected $table = 'job_tracker_ct_personnels';
     public $timestamps = false;
     protected $fillable = [
         'job_tracker_id',
-        'max_depth',
-        'max_depth_unit',
+        'ct_personnel_name',
         'created_by',
         'updated_by',
     ];
@@ -24,7 +23,7 @@ class MaxDepthModel extends Model
     ];
 
     /**
-     * Get the job tracker associated with the max depth.
+     * Get the job tracker associated with the CT personnel.
      */
     public function jobTracker()
     {

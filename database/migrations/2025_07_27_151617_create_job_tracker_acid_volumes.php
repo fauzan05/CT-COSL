@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pump_personnels', function (Blueprint $table) {
+        Schema::create('job_tracker_acid_volumes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('job_tracker_id')
                 ->constrained('job_trackers')
                 ->onDelete('cascade');
-            $table->string('pump_personnel_name');
+            $table->decimal('volume', 8, 2);
+            $table->string('volume_unit');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pump_personnels');
+        Schema::dropIfExists('job_tracker_acid_volumes');
     }
 };

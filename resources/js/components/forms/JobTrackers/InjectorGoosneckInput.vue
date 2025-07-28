@@ -247,7 +247,6 @@ const fetchAllInjectorGoosnecks = async () => {
         }
     } catch (error) {
         console.error('Error fetching Injector Goosnecks:', error)
-        toast.error('Failed to fetch Injector Goosnecks.')
     }
 }
 

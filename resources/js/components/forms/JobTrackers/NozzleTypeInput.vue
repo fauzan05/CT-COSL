@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,13 +206,17 @@ const fetchAllNozzleTypes = async () => {
         }
     } catch (error) {
         console.error('Error fetching nozzle types:', error)
-        toast.error('Failed to fetch nozzle types.')
     }
 }
 
 onMounted(async () => {
     await fetchAllNozzleTypes()
 })
+
+// Watch for changes in selectedNozzleType and emit to parent component
+watch(() => props.modelValue, (newValue) => {
+    selectedNozzleType.value = newValue
+}, { immediate: true })
 
 watch(selectedNozzleType, (newValue) => {
     // Emit the selected value to parent component

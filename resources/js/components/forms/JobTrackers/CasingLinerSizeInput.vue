@@ -161,7 +161,7 @@ const props = defineProps({
     modelValue: {
         type: Object,
         default: () => ({
-            size: '',
+            size: 0,
             unit: '',
             label: ''
         })
@@ -204,11 +204,26 @@ const completeSelection = computed(() => {
         }
     }
     return {
-        size: '',
+        size: 0,
         unit: unitOptions.value[0].value, // Default to first unit
         label: ''
     }
 })
+
+// Watch for changes and emit to parent
+watch(completeSelection, (newValue) => {
+    emit('update:modelValue', newValue)
+}, { deep: true })
+
+// Watch for external prop changes
+watch(() => props.modelValue, (newValue) => {
+    if (newValue?.size !== selectedCasingLinerSize.value) {
+        selectedCasingLinerSize.value = newValue?.size || 0
+    }
+    if (newValue?.unit !== selectedUnit.value) {
+        selectedUnit.value = newValue?.unit || ''
+    }
+}, { deep: true })
 
 // Methods
 const resetSelection = () => {
@@ -301,7 +316,6 @@ const fetchAllCasingLinerSizes = async () => {
         }
     } catch (error) {
         console.error('Error fetching casing/liner sizes:', error)
-        toast.error('Failed to fetch casing/liner sizes.')
     }
 }
 
@@ -312,28 +326,9 @@ onMounted(async () => {
     if (props.modelValue?.size) {
         selectedCasingLinerSize.value = props.modelValue.size
     }
+
     if (props.modelValue?.unit) {
         selectedUnit.value = props.modelValue.unit
     }
-
-    // Set default unit if not specified
-    if (!selectedUnit.value) {
-        selectedUnit.value = unitOptions.value[0].value // Default to first unit
-    }
 })
-
-// Watch for changes and emit to parent
-watch(completeSelection, (newValue) => {
-    emit('update:modelValue', newValue)
-}, { deep: true })
-
-// Watch for external prop changes
-watch(() => props.modelValue, (newValue) => {
-    if (newValue?.size !== selectedCasingLinerSize.value) {
-        selectedCasingLinerSize.value = newValue?.size || ''
-    }
-    if (newValue?.unit !== selectedUnit.value) {
-        selectedUnit.value = newValue?.unit || ''
-    }
-}, { deep: true })
 </script>

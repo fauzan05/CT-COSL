@@ -121,7 +121,7 @@
         <!-- Add Option Input -->
         <div v-if="showAddOption" class="mt-2">
             <div class="grid grid-cols-3 gap-2 mb-2">
-                <input v-model="newOptionSize" type="text" placeholder="Enter (e.g., 9 5/8)"
+                <input v-model.number="newOptionSize" type="text" placeholder="Enter (e.g., 9 5/8)" step="0.01" min="0"
                     class="col-span-2 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     @keyup.enter="addNewOption">
                 <div class="flex gap-2">
@@ -289,7 +289,7 @@ const fetchAllMaxBHAODSizes = async () => {
 
             sizeOptions.value = response.data.map(cas => ({
                 id: cas.id,
-                value: parseFloat(cas.size),
+                value: cas.size,
                 unit: cas.unit || '',
                 label: cas.size
             }))
@@ -301,7 +301,6 @@ const fetchAllMaxBHAODSizes = async () => {
         }
     } catch (error) {
         console.error('Error fetching completion sizes:', error)
-        toast.error('Failed to fetch completion sizes.')
     }
 }
 
@@ -310,11 +309,6 @@ onMounted(async () => {
 
     if (props.modelValue?.unit) {
         selectedUnit.value = props.modelValue.unit
-    }
-
-    // Set default unit if not specified
-    if (!selectedUnit.value) {
-        selectedUnit.value = unitOptions.value[0].value // Default to first unit
     }
 })
 

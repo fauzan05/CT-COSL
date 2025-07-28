@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -128,6 +128,16 @@ const selectedFieldLocation = ref('')
 const showAddOption = ref(false)
 const showManageOptions = ref(false)
 const newOption = ref('')
+
+// Watch for modelValue prop changes to update selectedFieldLocation
+watch(() => props.modelValue, (newValue) => {
+    selectedFieldLocation.value = newValue
+}, { immediate: true })
+
+watch(selectedFieldLocation, (newValue) => {
+    // Emit the selected value to the parent component
+    emit('update:modelValue', newValue)
+})
 
 // Methods
 const addNewOption = async () => {
@@ -206,17 +216,11 @@ const fetchAllFieldLocations = async () => {
         }
     } catch (error) {
         console.error('Error fetching districts:', error)
-        toast.error('Failed to fetch districts.')
     }
 }
 
 onMounted(async () => {
     // Fetch all districts from the API first
     await fetchAllFieldLocations()
-})
-
-watch(selectedFieldLocation, (newValue) => {
-    // Emit the selected value to the parent component
-    emit('update:modelValue', newValue)
 })
 </script>

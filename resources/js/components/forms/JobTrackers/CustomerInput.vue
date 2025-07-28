@@ -6,7 +6,7 @@
             </label>
             <div class="flex items-center gap-2">
                 <!-- reset button -->
-                <button @click="selectedJobCustomer = ''" type="button"
+                <button @click="selectedCustomer = ''" type="button"
                     class="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -31,12 +31,12 @@
         </div>
 
         <!-- Headless UI Listbox (Dropdown) -->
-        <Listbox v-model="selectedJobCustomer">
+        <Listbox v-model="selectedCustomer">
             <div class="relative">
                 <ListboxButton
                     class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                     <span class="block truncate text-gray-900 dark:text-white">
-                        {{ selectedJobCustomer || placeholder }}
+                        {{ selectedCustomer || placeholder }}
                     </span>
                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -107,27 +107,37 @@ import ManageOptionsPanel from './ManageOptionsPanel.vue'
 import { useToast } from 'vue-toastification'
 import axios from 'axios'
 
-// Props & Emits
+// Props & Emits - FIXED: Ubah dari Array ke String
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,  // ← UBAH DARI Array KE String
+        default: ''
     }
 })
+
 const baseUrl = import.meta.env.VITE_API_URL
 const emit = defineEmits(['update:modelValue'])
 const toast = useToast()
 
-// Dropdown options - hanya satu list
-const placeholder = ref('Select customer')
+// Dropdown options
+const placeholder = ref('Select Customer')
 const listOptions = ref([])
-
-const selectedJobCustomer = ref('')
+const selectedCustomer = ref('')
 
 // UI States
 const showAddOption = ref(false)
 const showManageOptions = ref(false)
 const newOption = ref('')
+
+// TAMBAHKAN: Watch untuk menerima nilai dari parent
+watch(() => props.modelValue, (newValue) => {
+    selectedCustomer.value = newValue || ''
+}, { immediate: true })
+
+// TAMBAHKAN: Watch untuk mengirim nilai ke parent
+watch(selectedCustomer, (newValue) => {
+    emit('update:modelValue', newValue)
+})
 
 // Methods
 const addNewOption = async () => {
@@ -155,7 +165,6 @@ const cancelAddOption = () => {
 }
 
 const updateOption = async ({ index, oldValue, newValue }) => {
-    // Extract customer name from newValue object or use it directly if it's a string
     const newCustomerName = typeof newValue === 'object' ? newValue.customer_name : newValue
         
     try {
@@ -163,20 +172,17 @@ const updateOption = async ({ index, oldValue, newValue }) => {
             customer_name: newCustomerName
         })
         
-        // Update the option
         listOptions.value[index] = {
             id: listOptions.value[index].id,
             value: newCustomerName,
             label: newCustomerName
         }
         
-        // Update selected if it matches
-        if (selectedJobCustomer.value === oldValue) {
-            selectedJobCustomer.value = newCustomerName
+        if (selectedCustomer.value === oldValue) {
+            selectedCustomer.value = newCustomerName
         }
 
-        fetchAllCustomers() // Refresh the list options from the API
-
+        fetchAllCustomers()
         toast.success('Customer option updated successfully!')
     } catch (error) {
         console.error('Error updating customer option:', error)
@@ -190,15 +196,10 @@ const removeOption = async (index) => {
     try {
         await axios.delete(`${baseUrl}/api/job-tracker-master/customers/${listOptions.value[index].id}`)
         
-        // Remove from parent's customers
-        emit('update:modelValue', listOptions.value.filter(cust => cust !== optionToRemove))
-        
-        // Remove from list options
         listOptions.value.splice(index, 1)
         
-        // Clear selected if it matches
-        if (selectedJobCustomer.value === optionToRemove) {
-            selectedJobCustomer.value = ''
+        if (selectedCustomer.value === optionToRemove) {
+            selectedCustomer.value = ''
         }
         
         toast.success('Customer option removed successfully!')
@@ -212,9 +213,7 @@ const fetchAllCustomers = async () => {
     try {
         const response = await axios.get(`${baseUrl}/api/job-tracker-master/customers`)
         if (response.data && Array.isArray(response.data)) {
-            // reset listOptions
             listOptions.value = []
-            // Sort by customer_name alphabetically
             response.data.sort((a, b) => a.customer_name.localeCompare(b.customer_name))
             
             listOptions.value = response.data.map(cust => ({
@@ -223,22 +222,19 @@ const fetchAllCustomers = async () => {
                 label: cust.customer_name
             }))
 
-            if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedJobCustomer.value)) {
-                selectedJobCustomer.value = ''
+            // PERBAIKI: Pastikan selectedCustomer tetap valid setelah fetch
+            if (props.modelValue && listOptions.value.some(opt => opt.value === props.modelValue)) {
+                selectedCustomer.value = props.modelValue
+            } else if (!listOptions.value.some(opt => opt.value === selectedCustomer.value)) {
+                selectedCustomer.value = ''
             }
         }
     } catch (error) {
         console.error('Error fetching customers:', error)
-        toast.error('Failed to fetch customers.')
     }
 }
 
 onMounted(async () => {
-    // Fetch all customers from the API first
     await fetchAllCustomers()
-})
-
-watch(selectedJobCustomer, (newValue) => {
-    emit('update:modelValue', newValue)
 })
 </script>

@@ -12,7 +12,7 @@ class JobTrackerInjectorGoosneckModel extends Model
     public $timestamps = false;
     protected $fillable = [
         'job_tracker_id',
-        'injector_goosneck_id',
+        'injector_goosneck_name',
         'created_by',
         'updated_by',
     ];
@@ -28,12 +28,5 @@ class JobTrackerInjectorGoosneckModel extends Model
     public function jobTracker()
     {
         return $this->belongsTo(JobTrackerModel::class, 'job_tracker_id');
-    }
-    /**
-     * Get the injector goosneck associated with the job tracker.
-     */
-    public function injectorGoosneck()
-    {
-        return $this->belongsTo(InjectorGoosneckModel::class, 'injector_goosneck_id');
     }
 }

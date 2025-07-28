@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,12 +206,16 @@ const fetchAllNitrogenSupervisors = async () => {
         }
     } catch (error) {
         console.error('Error fetching Nitrogen Supervisor:', error)
-        toast.error('Failed to fetch Nitrogen Supervisor.')
     }
 }
 
 onMounted(async () => {
     await fetchAllNitrogenSupervisors()
+})
+
+watch(() => props.modelValue, (newValue) => {
+    // Update selectedNitrogenSupervisor when modelValue changes
+    selectedNitrogenSupervisor.value = newValue
 })
 
 watch(selectedNitrogenSupervisor, (newValue) => {

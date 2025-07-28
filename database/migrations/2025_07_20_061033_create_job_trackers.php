@@ -10,27 +10,27 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
+    {   
         Schema::create('job_trackers', function (Blueprint $table) {
             $table->id();
             
             // General Information
             $table->string('well_name')->nullable();
-            $table->string('customer_name')->nullable();
             $table->string('company_man')->nullable();
-            $table->string('bj_district')->nullable();
             $table->string('bj_representative')->nullable();
             $table->date('job_start_date')->nullable();
             $table->date('job_finish_date')->nullable();
             $table->integer('job_days')->nullable();
+            $table->string('customer')->nullable();
+            $table->string('bj_district')->nullable();
 
             // Well Information
-            $table->string('field_location')->nullable();
             $table->string('field_type')->nullable();
+            $table->string('wellhead_x_over')->nullable();
+            $table->string('field_location')->nullable();
             $table->string('well_status')->nullable();
             $table->string('well_type')->nullable();
             $table->decimal('max_deviation', 8, 2)->nullable();
-            $table->string('wellhead_x_over')->nullable();
             $table->decimal('depth_md', 10, 2)->nullable();
             $table->string('depth_md_unit')->default('ft');
             $table->decimal('depth_tvd', 10, 2)->nullable();
@@ -60,6 +60,7 @@ return new class extends Migration
             $table->string('wt_unit')->default('lb/ft');
             $table->string('ct_string')->nullable();
             $table->string('ct_converter')->nullable();
+            $table->string('n2_converter')->nullable();
 
             // Personnel
             $table->string('ct_supervisor')->nullable();
@@ -72,19 +73,21 @@ return new class extends Migration
             $table->decimal('cement_volume', 10, 2)->nullable();
             $table->string('cement_volume_unit')->default('Bbls');
             
-            // Revenue
+            // Revenue - Fix the field names to match controller
             $table->string('revenue_currency')->default('USD');
             $table->decimal('revenue_coiled_tubing', 10, 2)->nullable();
             $table->decimal('revenue_pumping', 10, 2)->nullable();
             $table->decimal('revenue_special_tools', 10, 2)->nullable();
             $table->decimal('revenue_acid', 10, 2)->nullable();
-            $table->decimal('revenue_nitrogen', 10, 2)->nullable();
+            $table->decimal('revenue_nitrogen_equipment', 10, 2)->nullable(); // Added
+            $table->decimal('revenue_nitrogen_product', 10, 2)->nullable();   // Added
             $table->decimal('revenue_cement', 10, 2)->nullable();
             $table->decimal('personnel_charges', 10, 2)->nullable();
             $table->decimal('service_charges', 10, 2)->nullable();
             $table->decimal('other_charges', 10, 2)->nullable();
             $table->decimal('total_revenue', 10, 2)->nullable();
 
+            // Timestamps and audit fields
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

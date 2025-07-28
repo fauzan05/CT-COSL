@@ -269,7 +269,6 @@ const fetchAllNitrogenPersonnel = async () => {
         }
     } catch (error) {
         console.error('Error fetching Nitrogen personnel:', error)
-        toast.error('Failed to fetch Nitrogen personnel.')
     }
 }
 

@@ -19,7 +19,20 @@ use App\Models\JobTracker\FieldLocationModel;
 use App\Models\JobTracker\FieldTypeModel;
 use App\Models\JobTracker\InjectorGoosneckModel;
 use App\Models\JobTracker\JobDescriptionModel;
+use App\Models\JobTracker\JobTrackerAcidTypeModel;
+use App\Models\JobTracker\JobTrackerAcidVolumeModel;
+use App\Models\JobTracker\JobTrackerCompletionSizeModel;
+use App\Models\JobTracker\JobTrackerContainerModel;
+use App\Models\JobTracker\JobTrackerCTPersonnelModel;
+use App\Models\JobTracker\JobTrackerInjectorGoosneckModel;
+use App\Models\JobTracker\JobTrackerJobDescriptionModel;
+use App\Models\JobTracker\JobTrackerMaxBHAODModel;
+use App\Models\JobTracker\JobTrackerMaxDepthModel;
+use App\Models\JobTracker\JobTrackerMiscellaneousToolModel;
 use App\Models\JobTracker\JobTrackerModel;
+use App\Models\JobTracker\JobTrackerN2TankModel;
+use App\Models\JobTracker\JobTrackerNitrogenPersonnelModel;
+use App\Models\JobTracker\JobTrackerPumpPersonnelModel;
 use App\Models\JobTracker\MaxBHAODModel;
 use App\Models\JobTracker\MiscellaneousToolModel;
 use App\Models\JobTracker\N2ConverterModel;
@@ -31,8 +44,12 @@ use App\Models\JobTracker\PowerPackModel;
 use App\Models\JobTracker\PowerReelModel;
 use App\Models\JobTracker\WellheadXOverModel;
 use App\Models\JobTracker\WellStatusModel;
+use App\Models\JobTracker\WellTypeModel;
 use App\Models\JobTracker\WTSModel;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class JobTrackerController extends Controller
 {
@@ -42,16 +59,6 @@ class JobTrackerController extends Controller
 
         // Query builder
         $query = JobTrackerModel::with([
-            'pumpPersonnels',
-            'nitrogenPersonnels',
-            'ctPersonnels',
-            'volumeAcids',
-            'createdBy',
-            'jobDescriptions',
-            'n2Tanks',
-            'miscellaneousTools',
-            'containers',
-            'injectorGoosnecks',
             'updatedBy'
         ]);
 
@@ -81,72 +88,670 @@ class JobTrackerController extends Controller
                 'job_start_date' => $jobTracker->job_start_date,
                 'job_finish_date' => $jobTracker->job_finish_date,
                 'job_days' => $jobTracker->job_days,
-                'max_deviation' => $jobTracker->max_deviation,
-                'depth_md' => $jobTracker->depth_md,
-                'depth_md_unit' => $jobTracker->depth_md_unit,
-                'depth_tvd' => $jobTracker->depth_tvd,
-                'depth_tvd_unit' => $jobTracker->depth_tvd_unit,
-                'bh_pressure' => $jobTracker->bh_pressure,
-                'bh_pressure_unit' => $jobTracker->bh_pressure_unit,
-                'bh_temp' => $jobTracker->bh_temp,
-                'bh_temp_unit' => $jobTracker->bh_temp_unit,
-                'nitrogen_volume' => $jobTracker->nitrogen_volume,
-                'nitrogen_volume_unit' => $jobTracker->nitrogen_volume_unit,
-                'cement_volume' => $jobTracker->cement_volume,
-                'cement_volume_unit' => $jobTracker->cement_volume_unit,
-                'revenue_currency' => $jobTracker->revenue_currency,
-                'revenue_coiled_tubing' => $jobTracker->revenue_coiled_tubing,
-                'revenue_nitrogen' => $jobTracker->revenue_nitrogen,
-                'revenue_pumping' => $jobTracker->revenue_pumping,
-                'revenue_special_tools' => $jobTracker->revenue_special_tools,
-                'revenue_acid' => $jobTracker->revenue_acid,
-                'revenue_nitrogen' => $jobTracker->revenue_nitrogen,
-                'revenue_cement' => $jobTracker->revenue_cement,
-                'personnel_charges' => $jobTracker->personnel_charges,
-                'service_charges' => $jobTracker->service_charges,
-                'other_charges' => $jobTracker->other_charges,
-                'total_revenue' => $jobTracker->total_revenue,
-                'created_by' => $jobTracker->created_by,
-                'updated_by_name' => $jobTracker->updatedBy ? $jobTracker->updatedBy->fullname : null,
-                'pump_personnels' => $jobTracker->pumpPersonnels->map(function ($pumpPersonnel) {
-                    return [
-                        'id' => $pumpPersonnel->id,
-                        'name' => $pumpPersonnel->name,
-                        'created_by' => $pumpPersonnel->created_by,
-                        'updated_by' => $pumpPersonnel->updated_by,
-                    ];
-                }),
-                'nitrogen_personnels' => $jobTracker->nitrogenPersonnels->map(function ($nitrogenPersonnel) {
-                    return [
-                        'id' => $nitrogenPersonnel->id,
-                        'name' => $nitrogenPersonnel->name,
-                        'created_by' => $nitrogenPersonnel->created_by,
-                        'updated_by' => $nitrogenPersonnel->updated_by,
-                    ];
-                }),
-                'ct_personnels' => $jobTracker->ctPersonnels->map(function ($ctPersonnel) {
-                    return [
-                        'id' => $ctPersonnel->id,
-                        'name' => $ctPersonnel->name,
-                        'created_by' => $ctPersonnel->created_by,
-                        'updated_by' => $ctPersonnel->updated_by,
-                    ];
-                }),
-                'volume_acids' => $jobTracker->volumeAcids->map(function ($volumeAcid) {
-                    return [
-                        'id' => $volumeAcid->id,
-                        'volume' => $volumeAcid->volume,
-                        'volume_unit' => $volumeAcid->volume_unit,
-                        'created_by' => $volumeAcid->created_by,
-                        'updated_by' => $volumeAcid->updated_by,
-                    ];
-                }),
+                'updated_at' => $jobTracker->updated_at,
+                'updated_by_name' => $jobTracker->updatedBy ? $jobTracker->updatedBy->fullname : null
             ];
         });
 
         // Return the full paginator object as JSON
         return response()->json($jobTrackers, 200);
     }
+
+    public function storeJobTracker(Request $request)
+    {
+        try {
+            // Start database transaction
+            DB::beginTransaction();
+
+            // Prepare main job tracker data
+            $data = [
+                'well_name' => $request->well_name,
+                'company_man' => $request->company_man,
+                'bj_representative' => $request->bj_representative,
+                'job_start_date' => $request->job_start_date,
+                'job_finish_date' => $request->job_finish_date,
+                'job_days' => $request->job_days,
+                'max_deviation' => $request->max_deviation,
+                'customer' => $request->customer,
+                'bj_district' => $request->bj_district,
+                'field_location' => $request->field_location,
+                'casing_liner_size' => $request->casing_liner_size['size'] ?? 0,
+                'casing_liner_size_unit' => $request->casing_liner_size['unit'] ?? null,
+                'max_bha_od' => $request->max_bha_od['size'] ?? 0,
+                'max_bha_od_unit' => $request->max_bha_od['unit'] ?? 0,
+                'completion_size' => $request->completion_size['size'] ?? 0,
+                'completion_size_unit' => $request->completion_size['unit'] ?? null,
+                'field_type' => $request->field_type,
+                'wellhead_x_over' => $request->wellhead_x_over,
+                'well_status' => $request->well_status,
+                'well_type' => $request->well_type,
+                'nozzle_type' => $request->nozzle_type,
+                'control_cabin' => $request->control_cabin,
+                'power_pack' => $request->power_pack,
+                'power_reel' => $request->power_reel,
+                'cj_injector' => $request->cj_injector,
+                'bop' => $request->bop,
+                'ct_size' => $request->ct_size['size'] ?? 0,
+                'ct_size_unit' => $request->ct_size['unit'] ?? null,
+                'ct_grade' => $request->ct_grade,
+                'wt' => $request->wt['size'] ?? 0,
+                'wt_unit' => $request->wt['unit'],
+                'ct_string' => $request->ct_string,
+                'n2_converter' => $request->n2_converter,
+                'ct_supervisor' => $request->ct_supervisor,
+                'nitrogen_supervisor' => $request->nitrogen_supervisor,
+                'pump_supervisor' => $request->pump_supervisor,
+                'depth_md' => $request->depth_md,
+                'depth_md_unit' => $request->depth_md_unit,
+                'depth_tvd' => $request->depth_tvd,
+                'depth_tvd_unit' => $request->depth_tvd_unit,
+                'bh_pressure' => $request->bh_pressure,
+                'bh_pressure_unit' => $request->bh_pressure_unit,
+                'bh_temp' => $request->bh_temp,
+                'bh_temp_unit' => $request->bh_temp_unit,
+                'nitrogen_volume' => $request->nitrogen_volume,
+                'nitrogen_volume_unit' => $request->nitrogen_volume_unit,
+                'cement_volume' => $request->cement_volume,
+                'cement_volume_unit' => $request->cement_volume_unit,
+                'revenue_currency' => $request->revenue_currency,
+                'revenue_coiled_tubing' => floatval($request->revenue_coiled_tubing),
+                'revenue_pumping' => floatval($request->revenue_pumping),
+                'revenue_special_tools' => floatval($request->revenue_special_tools),
+                'revenue_acid' => floatval($request->revenue_acid),
+                'revenue_nitrogen_equipment' => floatval($request->revenue_nitrogen_equipment),
+                'revenue_nitrogen_product' => floatval($request->revenue_nitrogen_product),
+                'revenue_cement' => floatval($request->revenue_cement),
+                'personnel_charges' => floatval($request->personnel_charges),
+                'service_charges' => floatval($request->service_charges),
+                'other_charges' => floatval($request->other_charges),
+                'total_revenue' => floatval($request->total_revenue),
+                'updated_at' => now(),
+                'updated_by' => $request->user()->id,
+            ];
+
+            // Create main job tracker record
+            $jobTracker = JobTrackerModel::create($data + [
+                'created_at' => now(),
+                'created_by' => $request->user()->id,
+                'updated_at' => now(),
+                'updated_by' => $request->user()->id,
+            ]);
+
+            // Handle job descriptions
+            if ($request->has('job_descriptions') && is_array($request->job_descriptions)) {
+                foreach ($request->job_descriptions as $description) {
+                    JobTrackerJobDescriptionModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'description' => $description,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle max depths
+            if ($request->has('max_depths') && is_array($request->max_depths)) {
+                foreach ($request->max_depths as $maxDepth) {
+                    if (isset($maxDepth['value']) && isset($maxDepth['unit'])) {
+                        JobTrackerMaxDepthModel::create([
+                            'job_tracker_id' => $jobTracker->id,
+                            'max_depth' => $maxDepth['value'] ?? 0,
+                            'max_depth_unit' => $maxDepth['unit'] ?? null,
+                            'created_at' => now(),
+                            'created_by' => $request->user()->id,
+                            'updated_at' => now(),
+                            'updated_by' => $request->user()->id,
+                        ]);
+                    }
+                }
+            }
+
+            // Handle N2 Tanks (array)
+            if ($request->has('n2_tanks') && is_array($request->n2_tanks)) {
+                foreach ($request->n2_tanks as $tank_name) {
+                    JobTrackerN2TankModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'n2_tank_name' => $tank_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Containers (array)
+            if ($request->has('containers') && is_array($request->containers)) {
+                foreach ($request->containers as $container_name) {
+                    JobTrackerContainerModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'container_name' => $container_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Injector Goosnecks (array)
+            if ($request->has('injector_goosnecks') && is_array($request->injector_goosnecks)) {
+                foreach ($request->injector_goosnecks as $injector_goosneck_name) {
+                    JobTrackerInjectorGoosneckModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'injector_goosneck_name' => $injector_goosneck_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Miscellaneous Tools (array)
+            if ($request->has('miscellaneous_tools') && is_array($request->miscellaneous_tools)) {
+                foreach ($request->miscellaneous_tools as $miscellaneous_tool_name) {
+                    JobTrackerMiscellaneousToolModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'miscellaneous_tool_name' => $miscellaneous_tool_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle CT Personnel (array)
+            if ($request->has('ct_personnels') && is_array($request->ct_personnels)) {
+                foreach ($request->ct_personnels as $ct_personnel_name) {
+                    JobTrackerCTPersonnelModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'ct_personnel_name' => $ct_personnel_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Nitrogen Personnels (array)
+            if ($request->has('nitrogen_personnels') && is_array($request->nitrogen_personnels)) {
+                foreach ($request->nitrogen_personnels as $nitrogen_personnel_name) {
+                    JobTrackerNitrogenPersonnelModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'nitrogen_personnel_name' => $nitrogen_personnel_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Pump Personnels (array)
+            if ($request->has('pump_personnels') && is_array($request->pump_personnels)) {
+                foreach ($request->pump_personnels as $pump_personnel_name) {
+                    JobTrackerPumpPersonnelModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'pump_personnel_name' => $pump_personnel_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Acid Types (array)
+            if ($request->has('acid_types') && is_array($request->acid_types)) {
+                foreach ($request->acid_types as $acid_type) {
+                    JobTrackerAcidTypeModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'acid_type' => $acid_type['value'] ?? 0,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Acid Volume (array)
+            if ($request->has('acid_volumes') && is_array($request->acid_volumes)) {
+                foreach ($request->acid_volumes as $acid_volume) {
+                    JobTrackerAcidVolumeModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'volume' => $acid_volume['value'] ?? 0,
+                        'volume_unit' => $acid_volume['unit'] ?? null,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Commit transaction if everything is successful
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Job Tracker created successfully',
+                'data' => $jobTracker->fresh() // Fresh instance to get latest data
+            ], 201);
+        } catch (Exception $e) {
+            // Rollback transaction on any error
+            DB::rollBack();
+
+            // Log the error for debugging
+            Log::error('Job Tracker creation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create Job Tracker',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getJobTracker(Request $request, $id)
+    {
+        // Fetch the job tracker with related models
+        $jobTracker = JobTrackerModel::with([
+            'updatedBy',
+            'jobDescriptions',
+            'maxDepths',
+            'n2Tanks',
+            'containers',
+            'injectorGoosnecks',
+            'miscellaneousTools',
+            'ctPersonnels',
+            'nitrogenPersonnels',
+            'pumpPersonnels',
+            'acidTypes',
+            'acidVolumes',
+        ])->findOrFail($id);
+
+        // Transform the job tracker data dan ubah propertinya
+        $jobTracker->jobDescriptions->transform(function ($description) {
+            return $description->description;
+        });
+
+        $jobTracker->maxDepths->transform(function ($maxDepth) {
+            return [
+                'value' => $maxDepth->max_depth,
+                'unit' => $maxDepth->max_depth_unit,
+            ];
+        });
+
+        $jobTracker->casing_liner_size = [
+            'size' => number_format(floatval($jobTracker->casing_liner_size), 2),
+            'unit' => $jobTracker->casing_liner_size_unit,
+        ];
+
+        $jobTracker->completion_size = [
+            'size' => number_format(floatval($jobTracker->completion_size), 2),
+            'unit' => $jobTracker->completion_size_unit,
+        ];
+
+        $jobTracker->max_bha_od = [
+            'size' => number_format(floatval($jobTracker->max_bha_od), 2),
+            'unit' => $jobTracker->max_bha_od_unit,
+        ];
+
+        $jobTracker->ct_size = [
+            'size' => number_format(floatval($jobTracker->ct_size), 2),
+            'unit' => $jobTracker->ct_size_unit,
+        ];
+
+        $jobTracker->wt = [
+            'size' => number_format(floatval($jobTracker->wt), 2),
+            'unit' => $jobTracker->wt_unit,
+        ];
+
+        $jobTracker->n2Tanks->transform(function ($tank) {
+            return $tank->n2_tank_name;
+        });
+
+        $jobTracker->containers->transform(function ($container) {
+            return $container->container_name;
+        });
+
+        $jobTracker->injectorGoosnecks->transform(function ($injectorGoosneck) {
+            return $injectorGoosneck->injector_goosneck_name;
+        });
+
+        $jobTracker->miscellaneousTools->transform(function ($miscellaneousTool) {
+            return $miscellaneousTool->miscellaneous_tool_name;
+        });
+
+        $jobTracker->ctPersonnels->transform(function ($ctPersonnel) {
+            return $ctPersonnel->ct_personnel_name;
+        });
+
+        $jobTracker->nitrogenPersonnels->transform(function ($nitrogenPersonnel) {
+            return $nitrogenPersonnel->nitrogen_personnel_name;
+        });
+
+        $jobTracker->pumpPersonnels->transform(function ($pumpPersonnel) {
+            return $pumpPersonnel->pump_personnel_name;
+        });
+
+        $jobTracker->acidTypes->transform(function ($acidType) {
+            return [
+                'value' => $acidType->acid_type,
+            ];
+        });
+
+        $jobTracker->acidVolumes->transform(function ($acidVolume) {
+            return [
+                'value' => number_format(floatval($acidVolume->volume), 2),
+                'unit' => $acidVolume->volume_unit,
+            ];
+        });
+
+        $jobTracker->max_deviation = number_format(floatval($jobTracker->max_deviation), 2);
+        $jobTracker->depth_md = number_format(floatval($jobTracker->depth_md), 2);
+        $jobTracker->depth_tvd = number_format(floatval($jobTracker->depth_tvd), 2);
+        $jobTracker->bh_pressure = number_format(floatval($jobTracker->bh_pressure), 2);
+        $jobTracker->bh_temp = number_format(floatval($jobTracker->bh_temp), 2);
+        $jobTracker->nitrogen_volume = number_format(floatval($jobTracker->nitrogen_volume), 2);
+        $jobTracker->cement_volume = number_format(floatval($jobTracker->cement_volume), 2);
+        $jobTracker->revenue_coiled_tubing = number_format(floatval($jobTracker->revenue_coiled_tubing), 2);
+        $jobTracker->revenue_pumping = number_format(floatval($jobTracker->revenue_pumping), 2);
+        $jobTracker->revenue_special_tools = number_format(floatval($jobTracker->revenue_special_tools), 2);
+        $jobTracker->revenue_acid = number_format(floatval($jobTracker->revenue_acid), 2);
+        $jobTracker->revenue_nitrogen_equipment = number_format(floatval($jobTracker->revenue_nitrogen_equipment), 2);
+        $jobTracker->revenue_nitrogen_product = number_format(floatval($jobTracker->revenue_nitrogen_product), 2);
+        $jobTracker->revenue_cement = number_format(floatval($jobTracker->revenue_cement), 2);
+        $jobTracker->personnel_charges = number_format(floatval($jobTracker->personnel_charges), 2);
+        $jobTracker->service_charges = number_format(floatval($jobTracker->service_charges), 2);
+        $jobTracker->other_charges = number_format(floatval($jobTracker->other_charges), 2);
+        $jobTracker->total_revenue = number_format(floatval($jobTracker->total_revenue), 2);
+
+        // dd($jobTracker);
+        return response()->json($jobTracker, 200);
+    }
+
+    public function updateJobTracker(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $jobTracker = JobTrackerModel::findOrFail($id);
+            // Update main data
+            $data = [
+                'well_name' => $request->well_name,
+                'company_man' => $request->company_man,
+                'bj_representative' => $request->bj_representative,
+                'job_start_date' => $request->job_start_date,
+                'job_finish_date' => $request->job_finish_date,
+                'job_days' => $request->job_days,
+                'max_deviation' => $request->max_deviation,
+                'customer' => $request->customer,
+                'bj_district' => $request->bj_district,
+                'field_location' => $request->field_location,
+                'casing_liner_size' => $request->casing_liner_size['size'] ?? 0,
+                'casing_liner_size_unit' => $request->casing_liner_size['unit'] ?? null,
+                'max_bha_od' => $request->max_bha_od['size'] ?? 0,
+                'max_bha_od_unit' => $request->max_bha_od['unit'] ?? 0,
+                'completion_size' => $request->completion_size['size'] ?? 0,
+                'completion_size_unit' => $request->completion_size['unit'] ?? null,
+                'field_type' => $request->field_type,
+                'wellhead_x_over' => $request->wellhead_x_over,
+                'well_status' => $request->well_status,
+                'well_type' => $request->well_type,
+                'nozzle_type' => $request->nozzle_type,
+                'control_cabin' => $request->control_cabin,
+                'power_pack' => $request->power_pack,
+                'power_reel' => $request->power_reel,
+                'cj_injector' => $request->cj_injector,
+                'bop' => $request->bop,
+                'ct_size' => $request->ct_size['size'] ?? 0,
+                'ct_size_unit' => $request->ct_size['unit'] ?? null,
+                'ct_grade' => $request->ct_grade,
+                'wt' => $request->wt['size'] ?? 0,
+                'wt_unit' => $request->wt['unit'],
+                'ct_string' => $request->ct_string,
+                'n2_converter' => $request->n2_converter,
+                'ct_supervisor' => $request->ct_supervisor,
+                'nitrogen_supervisor' => $request->nitrogen_supervisor,
+                'pump_supervisor' => $request->pump_supervisor,
+                'depth_md' => $request->depth_md,
+                'depth_md_unit' => $request->depth_md_unit,
+                'depth_tvd' => $request->depth_tvd,
+                'depth_tvd_unit' => $request->depth_tvd_unit,
+                'bh_pressure' => $request->bh_pressure,
+                'bh_pressure_unit' => $request->bh_pressure_unit,
+                'bh_temp' => $request->bh_temp,
+                'bh_temp_unit' => $request->bh_temp_unit,
+                'nitrogen_volume' => $request->nitrogen_volume,
+                'nitrogen_volume_unit' => $request->nitrogen_volume_unit,
+                'cement_volume' => $request->cement_volume,
+                'cement_volume_unit' => $request->cement_volume_unit,
+                'revenue_currency' => $request->revenue_currency,
+                'revenue_coiled_tubing' => floatval($request->revenue_coiled_tubing),
+                'revenue_pumping' => floatval($request->revenue_pumping),
+                'revenue_special_tools' => floatval($request->revenue_special_tools),
+                'revenue_acid' => floatval($request->revenue_acid),
+                'revenue_nitrogen_equipment' => floatval($request->revenue_nitrogen_equipment),
+                'revenue_nitrogen_product' => floatval($request->revenue_nitrogen_product),
+                'revenue_cement' => floatval($request->revenue_cement),
+                'personnel_charges' => floatval($request->personnel_charges),
+                'service_charges' => floatval($request->service_charges),
+                'other_charges' => floatval($request->other_charges),
+                'total_revenue' => floatval($request->total_revenue),
+                'updated_at' => now(),
+                'updated_by' => $request->user()->id,
+            ];
+
+            // dd($data);
+
+            $jobTracker->update($data);
+
+            // Clear all related data (bisa diganti jadi selective update kalau mau lebih optimal)
+            $jobTracker->jobDescriptions()->delete();
+            $jobTracker->maxDepths()->delete();
+            $jobTracker->n2Tanks()->delete();
+            $jobTracker->containers()->delete();
+            $jobTracker->injectorGoosnecks()->delete();
+            $jobTracker->miscellaneousTools()->delete();
+            $jobTracker->ctPersonnels()->delete();
+            $jobTracker->nitrogenPersonnels()->delete();
+            $jobTracker->pumpPersonnels()->delete();
+            $jobTracker->acidTypes()->delete();
+            $jobTracker->acidVolumes()->delete();
+
+            // Lanjutkan dengan insert ulang data terkait seperti di storeJobTracker
+            // Handle job descriptions
+            if ($request->has('job_descriptions') && is_array($request->job_descriptions)) {
+                foreach ($request->job_descriptions as $description) {
+                    JobTrackerJobDescriptionModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'description' => $description,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle max depths
+            if ($request->has('max_depths') && is_array($request->max_depths)) {
+                foreach ($request->max_depths as $maxDepth) {
+                    if (isset($maxDepth['value']) && isset($maxDepth['unit'])) {
+                        JobTrackerMaxDepthModel::create([
+                            'job_tracker_id' => $jobTracker->id,
+                            'max_depth' => $maxDepth['value'] ?? 0,
+                            'max_depth_unit' => $maxDepth['unit'] ?? null,
+                            'created_at' => now(),
+                            'created_by' => $request->user()->id,
+                            'updated_at' => now(),
+                            'updated_by' => $request->user()->id,
+                        ]);
+                    }
+                }
+            }
+
+            // Handle N2 Tanks (array)
+            if ($request->has('n2_tanks') && is_array($request->n2_tanks)) {
+                foreach ($request->n2_tanks as $tank_name) {
+                    JobTrackerN2TankModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'n2_tank_name' => $tank_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Containers (array)
+            if ($request->has('containers') && is_array($request->containers)) {
+                foreach ($request->containers as $container_name) {
+                    JobTrackerContainerModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'container_name' => $container_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Injector Goosnecks (array)
+            if ($request->has('injector_goosnecks') && is_array($request->injector_goosnecks)) {
+                foreach ($request->injector_goosnecks as $injector_goosneck_name) {
+                    JobTrackerInjectorGoosneckModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'injector_goosneck_name' => $injector_goosneck_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Miscellaneous Tools (array)
+            if ($request->has('miscellaneous_tools') && is_array($request->miscellaneous_tools)) {
+                foreach ($request->miscellaneous_tools as $miscellaneous_tool_name) {
+                    JobTrackerMiscellaneousToolModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'miscellaneous_tool_name' => $miscellaneous_tool_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle CT Personnel (array)
+            if ($request->has('ct_personnels') && is_array($request->ct_personnels)) {
+                foreach ($request->ct_personnels as $ct_personnel_name) {
+                    JobTrackerCTPersonnelModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'ct_personnel_name' => $ct_personnel_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Nitrogen Personnels (array)
+            if ($request->has('nitrogen_personnels') && is_array($request->nitrogen_personnels)) {
+                foreach ($request->nitrogen_personnels as $nitrogen_personnel_name) {
+                    JobTrackerNitrogenPersonnelModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'nitrogen_personnel_name' => $nitrogen_personnel_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Pump Personnels (array)
+            if ($request->has('pump_personnels') && is_array($request->pump_personnels)) {
+                foreach ($request->pump_personnels as $pump_personnel_name) {
+                    JobTrackerPumpPersonnelModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'pump_personnel_name' => $pump_personnel_name,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Acid Types (array)
+            if ($request->has('acid_types') && is_array($request->acid_types)) {
+                foreach ($request->acid_types as $acid_type) {
+                    JobTrackerAcidTypeModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'acid_type' => $acid_type['value'] ?? 0,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            // Handle Acid Volume (array)
+            if ($request->has('acid_volumes') && is_array($request->acid_volumes)) {
+                foreach ($request->acid_volumes as $acid_volume) {
+                    JobTrackerAcidVolumeModel::create([
+                        'job_tracker_id' => $jobTracker->id,
+                        'volume' => $acid_volume['value'] ?? 0,
+                        'volume_unit' => $acid_volume['unit'] ?? null,
+                        'created_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'updated_at' => now(),
+                        'updated_by' => $request->user()->id,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Job Tracker updated successfully',
+                'data' => $jobTracker->fresh()
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Job Tracker update failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update Job Tracker',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function getJobDescriptions(Request $request)
     {
@@ -511,7 +1116,7 @@ class JobTrackerController extends Controller
     public function getWellTypes(Request $request)
     {
         // Assuming you have a WellTypeModel
-        $wellTypes = FieldTypeModel::select('id', 'type_name')
+        $wellTypes = WellTypeModel::select('id', 'type_name')
             ->orderBy('type_name')
             ->get();
 
@@ -524,7 +1129,7 @@ class JobTrackerController extends Controller
             'type_name' => 'required|string|max:255',
         ]);
 
-        $wellType = FieldTypeModel::create([
+        $wellType = WellTypeModel::create([
             'type_name' => $request->input('type_name'),
             'created_at' => now(),
             'created_by' => $request->user()->id,
@@ -544,7 +1149,7 @@ class JobTrackerController extends Controller
             'type_name' => 'required|string|max:255',
         ]);
 
-        $wellType = FieldTypeModel::findOrFail($id);
+        $wellType = WellTypeModel::findOrFail($id);
         $wellType->update([
             'type_name' => $request->input('type_name'),
             'updated_at' => now(),
@@ -559,7 +1164,7 @@ class JobTrackerController extends Controller
 
     public function deleteWellType(Request $request, $id)
     {
-        $wellType = FieldTypeModel::findOrFail($id);
+        $wellType = WellTypeModel::findOrFail($id);
         $wellType->delete();
 
         return response()->json([

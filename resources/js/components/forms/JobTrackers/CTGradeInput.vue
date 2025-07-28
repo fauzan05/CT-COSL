@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,12 +206,16 @@ const fetchAllCTGrades = async () => {
         }
     } catch (error) {
         console.error('Error fetching CT Grade:', error)
-        toast.error('Failed to fetch CT Grade.')
     }
 }
 
 onMounted(async () => {
     await fetchAllCTGrades()
+})
+
+watch(() => props.modelValue, (newValue) => {
+    // Update selectedCTGrade when modelValue changes
+    selectedCTGrade.value = newValue
 })
 
 watch(selectedCTGrade, (newValue) => {

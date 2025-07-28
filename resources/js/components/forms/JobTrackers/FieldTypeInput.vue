@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -128,6 +128,14 @@ const selectedFieldType = ref('')
 const showAddOption = ref(false)
 const showManageOptions = ref(false)
 const newOption = ref('')
+
+watch(() => props.modelValue, (newValue) => {
+    selectedFieldType.value = newValue
+}, { immediate: true })
+
+watch(selectedFieldType, (newValue) => {
+    emit('update:modelValue', newValue)
+})
 
 // Methods
 const addNewOption = async () => {
@@ -204,15 +212,10 @@ const fetchAllFieldTypes = async () => {
         }
     } catch (error) {
         console.error('Error fetching field types:', error)
-        toast.error('Failed to fetch field types.')
     }
 }
 
 onMounted(async () => {
     await fetchAllFieldTypes()
-})
-
-watch(selectedFieldType, (newValue) => {
-    emit('update:modelValue', newValue)
 })
 </script>

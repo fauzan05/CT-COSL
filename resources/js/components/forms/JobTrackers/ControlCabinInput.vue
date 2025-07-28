@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,12 +206,16 @@ const fetchAllControlCabins = async () => {
         }
     } catch (error) {
         console.error('Error fetching control cabin:', error)
-        toast.error('Failed to fetch control cabin.')
     }
 }
 
 onMounted(async () => {
     await fetchAllControlCabins()
+})
+
+watch(() => props.modelValue, (newValue) => {
+    // Update selectedControlCabin when modelValue changes
+    selectedControlCabin.value = newValue
 })
 
 watch(selectedControlCabin, (newValue) => {

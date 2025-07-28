@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,12 +206,16 @@ const fetchAllPowerPacks = async () => {
         }
     } catch (error) {
         console.error('Error fetching power pack:', error)
-        toast.error('Failed to fetch power pack.')
     }
 }
 
 onMounted(async () => {
     await fetchAllPowerPacks()
+})
+
+watch(() => props.modelValue, (newValue) => {
+    // Update selectedPowerPack when modelValue changes
+    selectedPowerPack.value = newValue
 })
 
 watch(selectedPowerPack, (newValue) => {

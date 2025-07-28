@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,12 +206,16 @@ const fetchAllCJInjectors = async () => {
         }
     } catch (error) {
         console.error('Error fetching CJ Injector:', error)
-        toast.error('Failed to fetch CJ Injector.')
     }
 }
 
 onMounted(async () => {
     await fetchAllCJInjectors()
+})
+
+watch(() => props.modelValue, (newValue) => {
+    // Set the selected value from modelValue prop
+    selectedCJInjector.value = newValue
 })
 
 watch(selectedCJInjector, (newValue) => {

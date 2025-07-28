@@ -161,7 +161,7 @@ const props = defineProps({
     modelValue: {
         type: Object,
         default: () => ({
-            size: '',
+            size: 0,
             unit: '',
             label: ''
         })
@@ -204,11 +204,26 @@ const completeSelection = computed(() => {
         }
     }
     return {
-        size: '',
+        size: 0,
         unit: unitOptions.value[0].value, // Default to first unit
         label: ''
     }
 })
+
+// Watch for changes and emit to parent
+watch(completeSelection, (newValue) => {
+    emit('update:modelValue', newValue)
+}, { deep: true })
+
+// Watch for external prop changes
+watch(() => props.modelValue, (newValue) => {
+    if (newValue?.size !== selectedCTSize.value) {
+        selectedCTSize.value = newValue?.size || 0
+    }
+    if (newValue?.unit !== selectedUnit.value) {
+        selectedUnit.value = newValue?.unit || ''
+    }
+}, { deep: true })
 
 // Methods
 const resetSelection = () => {
@@ -278,6 +293,9 @@ const fetchAllCTSizes = async () => {
     try {
         const response = await axios.get(`${baseUrl}/api/job-tracker-master/ct-sizes`)
         if (response.data && Array.isArray(response.data)) {
+            // Store current selection before reset
+            const currentSelection = selectedCTSize.value
+
             sizeOptions.value = [] // Reset options before populating
 
             // Sort by numbering
@@ -289,47 +307,34 @@ const fetchAllCTSizes = async () => {
 
             sizeOptions.value = response.data.map(cas => ({
                 id: cas.id,
-                value: parseFloat(cas.size),
+                value: cas.size,
                 unit: cas.unit || '',
                 label: cas.size
             }))
 
-            // Reset selection if current selection is not in the updated list
-            if (sizeOptions.value.length < 1 || !sizeOptions.value.some(opt => opt.value === selectedCTSize.value)) {
+            // Only reset selection if current selection is not in the updated list AND no props value exists
+            if (sizeOptions.value.length < 1 || (!sizeOptions.value.some(opt => opt.value === currentSelection) && !props.modelValue?.size)) {
                 selectedCTSize.value = ''
+            } else if (props.modelValue?.size && sizeOptions.value.some(opt => opt.value === props.modelValue.size)) {
+                // Re-apply props value if it exists in options
+                selectedCTSize.value = props.modelValue.size
             }
         }
     } catch (error) {
         console.error('Error fetching CT Size sizes:', error)
-        toast.error('Failed to fetch CT Size sizes.')
     }
 }
 
 onMounted(async () => {
     await fetchAllCTSizes()
 
+    // Apply props values after options are loaded
+    if (props.modelValue?.size && sizeOptions.value.some(opt => opt.value === props.modelValue.size)) {
+        selectedCTSize.value = props.modelValue.size
+    }
+
     if (props.modelValue?.unit) {
         selectedUnit.value = props.modelValue.unit
     }
-
-    // Set default unit if not specified
-    if (!selectedUnit.value) {
-        selectedUnit.value = unitOptions.value[0].value // Default to first unit
-    }
 })
-
-// Watch for changes and emit to parent
-watch(completeSelection, (newValue) => {
-    emit('update:modelValue', newValue)
-}, { deep: true })
-
-// Watch for external prop changes
-watch(() => props.modelValue, (newValue) => {
-    if (newValue?.size !== selectedCTSize.value) {
-        selectedCTSize.value = newValue?.size || ''
-    }
-    if (newValue?.unit !== selectedUnit.value) {
-        selectedUnit.value = newValue?.unit || ''
-    }
-}, { deep: true })
 </script>

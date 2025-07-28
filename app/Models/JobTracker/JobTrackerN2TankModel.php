@@ -13,7 +13,7 @@ class JobTrackerN2TankModel extends Model
     public $timestamps = false;
     protected $fillable = [
         'job_tracker_id',
-        'n2_tank_id',
+        'n2_tank_name',
         'created_by',
         'updated_by',
     ];
@@ -29,13 +29,6 @@ class JobTrackerN2TankModel extends Model
     public function jobTracker()
     {
         return $this->belongsTo(JobTrackerModel::class, 'job_tracker_id');
-    }
-    /**
-     * Get the N2 tank associated with the job tracker.
-     */
-    public function n2Tank()
-    {
-        return $this->belongsTo(N2TankModel::class, 'n2_tank_id');
     }
     /**
      * Get the user who created the record.

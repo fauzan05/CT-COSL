@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -128,6 +128,16 @@ const selectedWellheadXOver = ref('')
 const showAddOption = ref(false)
 const showManageOptions = ref(false)
 const newOption = ref('')
+
+watch(() => props.modelValue, (newValue) => {
+    // Update selected value when modelValue changes
+    selectedWellheadXOver.value = newValue || ''
+}, { immediate: true })
+
+watch(selectedWellheadXOver, (newValue) => {
+    // Emit the selected value to parent component
+    emit('update:modelValue', newValue)
+})
 
 // Methods
 const addNewOption = async () => {
@@ -206,16 +216,10 @@ const fetchAllWellheadXOvers = async () => {
         }
     } catch (error) {
         console.error('Error fetching wellhead x-over:', error)
-        toast.error('Failed to fetch wellhead x-over.')
     }
 }
 
 onMounted(async () => {
     await fetchAllWellheadXOvers()
-})
-
-watch(selectedWellheadXOver, (newValue) => {
-    // Emit the selected value to parent component
-    emit('update:modelValue', newValue)
 })
 </script>

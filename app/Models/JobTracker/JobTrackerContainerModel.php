@@ -12,7 +12,7 @@ class JobTrackerContainerModel extends Model
     public $timestamps = false;
     protected $fillable = [
         'job_tracker_id',
-        'container_id',
+        'container_name',
         'created_by',
         'updated_by',
     ];
@@ -21,18 +21,12 @@ class JobTrackerContainerModel extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+    
     /**
      * Get the job tracker associated with the container.
      */
     public function jobTracker()
     {
         return $this->belongsTo(JobTrackerModel::class, 'job_tracker_id');
-    }
-    /**
-     * Get the container associated with the job tracker.
-     */
-    public function container()
-    {
-        return $this->belongsTo(ContainerModel::class, 'container_id');
     }
 }

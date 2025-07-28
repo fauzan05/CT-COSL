@@ -247,7 +247,6 @@ const fetchAllN2Tanks = async () => {
         }
     } catch (error) {
         console.error('Error fetching N2 Tanks:', error)
-        toast.error('Failed to fetch N2 Tanks.')
     }
 }
 

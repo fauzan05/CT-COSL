@@ -20,12 +20,4 @@ class NitrogenPersonnelModel extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
-
-    /**
-     * Get the job tracker associated with the nitrogen personnel.
-     */
-    public function jobTracker()
-    {
-        return $this->belongsTo(JobTrackerModel::class, 'job_tracker_id');
-    }
 }

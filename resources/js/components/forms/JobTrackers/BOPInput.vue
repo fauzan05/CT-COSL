@@ -110,8 +110,8 @@ import axios from 'axios'
 // Props & Emits
 const props = defineProps({
     modelValue: {
-        type: Array,
-        default: () => []
+        type: String,
+        default: ''
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL
@@ -206,12 +206,16 @@ const fetchAllBOPs = async () => {
         }
     } catch (error) {
         console.error('Error fetching BOP:', error)
-        toast.error('Failed to fetch BOP.')
     }
 }
 
 onMounted(async () => {
     await fetchAllBOPs()
+})
+
+watch(() => props.modelValue, (newValue) => {
+    // Update selectedBOP when modelValue changes
+    selectedBOP.value = newValue
 })
 
 watch(selectedBOP, (newValue) => {
