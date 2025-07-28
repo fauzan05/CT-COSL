@@ -428,9 +428,16 @@
                                             </svg>
                                             <span class="text-sm font-medium">Delete</span>
                                         </button>
+
+                                        <!-- Export PDF -->
+                                        <!-- Export PDF -->
+                                        <button @click="exportPDF(jobTracker)"
+                                            class="inline-flex items-center px-3 py-1.5 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-md hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors duration-150">
+                                            <i class="fas fa-file-pdf mr-1.5"></i>
+                                            Export PDF
+                                        </button>
                                     </div>
                                 </td>
-
                             </tr>
                         </tbody>
                     </table>
@@ -561,17 +568,10 @@ const isEdit = computed(() => route.name === 'edit-job-tracker');
 const listJobTrackers = ref([]);
 const pagination = ref({ current_page: 1, last_page: 1 });
 
-const jobTrackerForm = ref({ type: '' });
-const jobTrackerFormSize = ref({ top_connection: '', bottom_connection: '' });
-const listJobTrackerSizes = ref([]);
-
 const isLoading = ref(false);
 const isJobTrackerModalOpen = ref(false);
 const titleModal = ref('Add JobTracker');
 const titleModalButton = ref('Save JobTracker');
-const addSizeLoading = ref(false);
-const editingSizeIndex = ref(null);
-const editingRowIndex = ref(null);
 const isDeleteModalOpen = ref(false);
 const isDeleting = ref(false);
 const showMobileFilters = ref(false);
