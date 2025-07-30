@@ -68,13 +68,12 @@ class JobTrackerController extends Controller
 
         // Apply sorting
         $query->orderBy($sortBy, $sortOrder);
-
         // Apply filters if any
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('job_name', 'like', '%' . $search . '%')
-                    ->orWhere('job_number', 'like', '%' . $search . '%');
+                $q->where('well_name', 'like', '%' . $search . '%')
+                    ->orWhere('company_man', 'like', '%' . $search . '%');
             });
         }
         // Paginate the results
@@ -165,6 +164,8 @@ class JobTrackerController extends Controller
                 'personnel_charges' => floatval($request->personnel_charges),
                 'service_charges' => floatval($request->service_charges),
                 'other_charges' => floatval($request->other_charges),
+                'mobilization_charges' => $request->mobilization_charges ?? 0,
+                'material_charges' => $request->material_charges ?? 0,
                 'total_revenue' => floatval($request->total_revenue),
                 'updated_at' => now(),
                 'updated_by' => $request->user()->id,
@@ -394,27 +395,27 @@ class JobTrackerController extends Controller
         });
 
         $jobTracker->casing_liner_size = [
-            'size' => number_format(floatval($jobTracker->casing_liner_size), 2),
+            'size' => $jobTracker->casing_liner_size,
             'unit' => $jobTracker->casing_liner_size_unit,
         ];
 
         $jobTracker->completion_size = [
-            'size' => number_format(floatval($jobTracker->completion_size), 2),
+            'size' => $jobTracker->completion_size,
             'unit' => $jobTracker->completion_size_unit,
         ];
 
         $jobTracker->max_bha_od = [
-            'size' => number_format(floatval($jobTracker->max_bha_od), 2),
+            'size' => $jobTracker->max_bha_od,
             'unit' => $jobTracker->max_bha_od_unit,
         ];
 
         $jobTracker->ct_size = [
-            'size' => number_format(floatval($jobTracker->ct_size), 2),
+            'size' => $jobTracker->ct_size,
             'unit' => $jobTracker->ct_size_unit,
         ];
 
         $jobTracker->wt = [
-            'size' => number_format(floatval($jobTracker->wt), 2),
+            'size' => $jobTracker->wt,
             'unit' => $jobTracker->wt_unit,
         ];
 
@@ -456,30 +457,32 @@ class JobTrackerController extends Controller
 
         $jobTracker->acidVolumes->transform(function ($acidVolume) {
             return [
-                'value' => number_format(floatval($acidVolume->volume), 2),
+                'value' => $acidVolume->volume,
                 'unit' => $acidVolume->volume_unit,
             ];
         });
 
-        $jobTracker->max_deviation = number_format(floatval($jobTracker->max_deviation), 2);
-        $jobTracker->depth_md = number_format(floatval($jobTracker->depth_md), 2);
-        $jobTracker->depth_tvd = number_format(floatval($jobTracker->depth_tvd), 2);
-        $jobTracker->bh_pressure = number_format(floatval($jobTracker->bh_pressure), 2);
-        $jobTracker->bh_temp = number_format(floatval($jobTracker->bh_temp), 2);
-        $jobTracker->nitrogen_volume = number_format(floatval($jobTracker->nitrogen_volume), 2);
-        $jobTracker->cement_volume = number_format(floatval($jobTracker->cement_volume), 2);
-        $jobTracker->revenue_coiled_tubing = number_format(floatval($jobTracker->revenue_coiled_tubing), 2);
-        $jobTracker->revenue_pumping = number_format(floatval($jobTracker->revenue_pumping), 2);
-        $jobTracker->revenue_special_tools = number_format(floatval($jobTracker->revenue_special_tools), 2);
-        $jobTracker->revenue_acid = number_format(floatval($jobTracker->revenue_acid), 2);
-        $jobTracker->revenue_nitrogen_equipment = number_format(floatval($jobTracker->revenue_nitrogen_equipment), 2);
-        $jobTracker->revenue_nitrogen_product = number_format(floatval($jobTracker->revenue_nitrogen_product), 2);
-        $jobTracker->revenue_cement = number_format(floatval($jobTracker->revenue_cement), 2);
-        $jobTracker->personnel_charges = number_format(floatval($jobTracker->personnel_charges), 2);
-        $jobTracker->service_charges = number_format(floatval($jobTracker->service_charges), 2);
-        $jobTracker->other_charges = number_format(floatval($jobTracker->other_charges), 2);
-        $jobTracker->total_revenue = number_format(floatval($jobTracker->total_revenue), 2);
-
+        $jobTracker->max_deviation = $jobTracker->max_deviation;
+        $jobTracker->depth_md = $jobTracker->depth_md;
+        $jobTracker->depth_tvd = $jobTracker->depth_tvd;
+        $jobTracker->bh_pressure = $jobTracker->bh_pressure;
+        $jobTracker->bh_temp = $jobTracker->bh_temp;
+        $jobTracker->nitrogen_volume = $jobTracker->nitrogen_volume;
+        $jobTracker->cement_volume = $jobTracker->cement_volume;
+        $jobTracker->revenue_coiled_tubing = $jobTracker->revenue_coiled_tubing;
+        $jobTracker->revenue_pumping = $jobTracker->revenue_pumping;
+        $jobTracker->revenue_special_tools = $jobTracker->revenue_special_tools;
+        $jobTracker->revenue_acid = $jobTracker->revenue_acid;
+        $jobTracker->revenue_nitrogen_equipment = $jobTracker->revenue_nitrogen_equipment;
+        $jobTracker->revenue_nitrogen_product = $jobTracker->revenue_nitrogen_product;
+        $jobTracker->revenue_cement = $jobTracker->revenue_cement;
+        $jobTracker->personnel_charges = $jobTracker->personnel_charges;
+        $jobTracker->service_charges = $jobTracker->service_charges;
+        $jobTracker->other_charges = $jobTracker->other_charges;
+        $jobTracker->mobilization_charges = $jobTracker->mobilization_charges;
+        $jobTracker->material_charges = $jobTracker->material_charges;
+        $jobTracker->total_revenue = $jobTracker->total_revenue;
+        
         $jobTracker->job_start_date = $jobTracker->job_start_date ?? '';
         $jobTracker->job_finish_date = $jobTracker->job_finish_date ?? '';
 
@@ -553,6 +556,8 @@ class JobTrackerController extends Controller
                 'personnel_charges' => floatval($request->personnel_charges),
                 'service_charges' => floatval($request->service_charges),
                 'other_charges' => floatval($request->other_charges),
+                'mobilization_charges' => floatval($request->mobilization_charges) ?? 0,
+                'material_charges' => floatval($request->material_charges) ?? 0,
                 'total_revenue' => floatval($request->total_revenue),
                 'updated_at' => now(),
                 'updated_by' => $request->user()->id,
@@ -561,22 +566,22 @@ class JobTrackerController extends Controller
             $jobTracker->update($data);
 
             // Clear all related data (bisa diganti jadi selective update kalau mau lebih optimal)
-            $jobTracker->maxDepths()->delete();
-            $jobTracker->n2Tanks()->delete();
-            $jobTracker->containers()->delete();
-            $jobTracker->injectorGoosnecks()->delete();
-            $jobTracker->miscellaneousTools()->delete();
-            $jobTracker->ctPersonnels()->delete();
-            $jobTracker->nitrogenPersonnels()->delete();
-            $jobTracker->pumpPersonnels()->delete();
-            $jobTracker->acidTypes()->delete();
-            $jobTracker->acidVolumes()->delete();
+            $jobTracker->jobDescriptions()->forceDelete();
+            $jobTracker->maxDepths()->forceDelete();
+            $jobTracker->n2Tanks()->forceDelete();
+            $jobTracker->containers()->forceDelete();
+            $jobTracker->injectorGoosnecks()->forceDelete();
+            $jobTracker->miscellaneousTools()->forceDelete();
+            $jobTracker->ctPersonnels()->forceDelete();
+            $jobTracker->nitrogenPersonnels()->forceDelete();
+            $jobTracker->pumpPersonnels()->forceDelete();
+            $jobTracker->acidTypes()->forceDelete();
+            $jobTracker->acidVolumes()->forceDelete();
 
             // Lanjutkan dengan insert ulang data terkait seperti di storeJobTracker
             // Handle job descriptions
             if ($request->has('job_descriptions') && is_array($request->job_descriptions)) {
                 // cek apakah ada description yang sudah ada, jika salah satu ada yang berbeda maka hapus semua dulu
-                $jobTracker->jobDescriptions()->delete();
                 foreach ($request->job_descriptions as $description) {
                     JobTrackerJobDescriptionModel::create([
                         'job_tracker_id' => $jobTracker->id,
@@ -2660,6 +2665,33 @@ class JobTrackerController extends Controller
             'currentAcidVolumes' => $current_acid_volumes,
         ])->render();
 
+        $format = null;
+        $height = $request->get('height', 0);
+        $width = $request->get('width', 0);
+        $orientation = $request->get('orientation', 'P');
+        $size = $request->get('size', 'A4');
+        if ($size === 'Custom' && $height > 0 && $width > 0) {
+            $format = [$width, $height];
+        } else {
+            if ($size === 'F4') {
+                $format = [210, 330]; // F4 size in mm
+            } elseif ($size === 'F5') {
+                $format = [176, 250]; // F5 size in mm
+            } elseif ($size === 'Legal') {
+                $format = [216, 356]; // Legal size in mm
+            } elseif ($size === 'Letter') {
+                $format = [216, 279]; // Letter size in mm
+            } elseif ($size === 'A3') {
+                $format = [297, 420]; // A3 size in mm
+            } elseif ($size === 'A4') {
+                $format = [210, 297]; // A4 size in mm
+            } elseif ($size === 'A5') {
+                $format = [148, 210]; // A5 size in mm
+            } else {
+                $format = $size;
+            }
+        }
+
         $mpdfConfig = [
             'mode' => 'utf-8',
             'margin_left' => 10,
@@ -2668,12 +2700,11 @@ class JobTrackerController extends Controller
             'margin_bottom' => 15,
             'margin_header' => 5,
             'margin_footer' => 5,
-            'orientation' => 'P',
+            'orientation' => $orientation,
             'default_font_size' => 10,
             'default_font' => 'sans-serif',
-            'format' => [210, 500], // A4 size in mm
-            'tempDir' => storage_path('app/temp'), // Laravel
-            // atau 'tempDir' => public_path('temp'), // untuk direktori public
+            'format' => $format, 
+            'tempDir' => storage_path('app/temp'),
             'simpleTables' => false,
         ];
 

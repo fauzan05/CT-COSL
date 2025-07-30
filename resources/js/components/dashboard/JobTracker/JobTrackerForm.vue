@@ -494,17 +494,17 @@
                 </div>
                 <div class="mb-5">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Service Charges
+                        Mobilization Charges
                     </label>
-                    <input v-model.number="jobTracker.service_charges" type="number" step="0.01" min="0"
+                    <input v-model.number="jobTracker.mobilization_charges" type="number" step="0.01" min="0"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="0.00" />
                 </div>
                 <div class="mb-5">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Service Charges
+                        Material Charges
                     </label>
-                    <input v-model.number="jobTracker.service_charges" type="number" step="0.01" min="0"
+                    <input v-model.number="jobTracker.material_charges" type="number" step="0.01" min="0"
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="0.00" />
                 </div>
@@ -714,7 +714,9 @@ const jobTracker = ref({
     personnel_charges: 0,
     service_charges: 0,
     other_charges: 0,
-    total_revenue: 0
+    total_revenue: 0,
+    mobilization_charges: 0,
+    material_charges: 0,
 });
 
 // Fields configuration
@@ -790,6 +792,8 @@ const totalRevenue = computed(() => {
         jobTracker.value.personnel_charges || 0,
         jobTracker.value.service_charges || 0,
         jobTracker.value.other_charges || 0,
+        jobTracker.value.mobilization_charges || 0,
+        jobTracker.value.material_charges || 0
     ];
     return revenues.reduce((sum, value) => sum + Number(value), 0);
 });

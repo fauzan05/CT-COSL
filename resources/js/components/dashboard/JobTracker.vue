@@ -84,6 +84,8 @@
             </div>
         </Dialog>
     </TransitionRoot>
+    <PDFPaperSizeConfiguration :isPaperSizeModalOpen="showPaperModal" @close-modal="showPaperModal = false"
+        @export-pdf="handleExportPDF" />
 
     <!-- Main Content -->
     <div class="p-6 bg-gray-50 min-h-screen dark:bg-slate-900/50 dark:text-gray-100 rounded-xl">
@@ -348,7 +350,7 @@
                     <table class="min-w-full">
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
-                                <th v-for="header in ['No', 'Type', 'Total Size', 'Updated At', 'Updated By', 'Action']"
+                                <th v-for="header in ['No', 'Well Name', 'Company Man', 'Job Start Date', 'Job Finish Date', 'Job Days', 'Updated At', 'Updated By', 'Action']"
                                     :key="header"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ header }}
@@ -357,7 +359,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="i in 5" :key="i" class="animate-pulse">
-                                <td v-for="(width, index) in ['w-8', 'w-32', 'w-16', 'w-24', 'w-28', 'w-12']" :key="index"
+                                <td v-for="(width, index) in ['w-8', 'w-25', 'w-16', 'w-16', 'w-16', 'w-16', 'w-24', 'w-28', 'w-12']" :key="index"
                                     class="px-6 py-4">
                                     <div :class="['h-4 bg-gray-200 dark:bg-gray-700 rounded', width]"></div>
                                 </td>
@@ -556,6 +558,7 @@ import {
     ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
     ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CheckIcon
 } from '@heroicons/vue/20/solid';
+import PDFPaperSizeConfiguration from '@/components/modals/PDFPaperSizeConfiguration.vue';
 
 /* ----------------------------- STATE & STORES ----------------------------- */
 const baseUrl = import.meta.env.VITE_API_URL;
@@ -566,7 +569,7 @@ const isEdit = computed(() => route.name === 'edit-job-tracker');
 
 const listJobTrackers = ref([]);
 const pagination = ref({ current_page: 1, last_page: 1 });
-
+const showPaperModal = ref(false)
 const isLoading = ref(false);
 const isJobTrackerModalOpen = ref(false);
 const titleModal = ref('Add JobTracker');
@@ -578,7 +581,6 @@ const showMobileFilters = ref(false);
 const sortByItems = ref([
     { name: 'Updated At', value: 'updated_at' },
     { name: 'Updated By', value: 'updated_by_name' },
-    { name: 'Type', value: 'type' },
 ]);
 
 const selectedSortByFilter = ref(sortByItems.value[0]);
@@ -619,11 +621,6 @@ const formatDateWithoutTime = (utcDateString) => {
 function closeModal() {
     isJobTrackerModalOpen.value = false;
     isDeleteModalOpen.value = false;
-    resetForm();
-}
-
-function resetForm() {
-
 }
 
 const confirmDeleteModal = (jobTracker) => {
@@ -638,10 +635,20 @@ const editForm = (jobTracker) => {
 };
 
 const exportPDF = (jobTracker) => {
-    // redirect to the export PDF page with js new page
-    const url = baseUrl + '/backend/job-tracker-form/export-pdf/' + jobTracker.id;
-    window.open(url, '_blank');
+    selectedJobTracker.value = jobTracker;
+    console.log(selectedJobTracker.value);
+    showPaperModal.value = true;
 };
+
+const handleExportPDF = (paperConfig) => {
+    let height = paperConfig.customSize?.height || 0;
+    let width = paperConfig.customSize?.width || 0;
+    let orientation = paperConfig.orientation;
+    let size = paperConfig.size;
+    // redirect to the export PDF page with js new page
+    const url = baseUrl + '/backend/job-tracker-form/export-pdf/' + selectedJobTracker.value.id + '?height=' + height + '&width=' + width + '&orientation=' + orientation + '&size=' + size;
+    window.open(url, '_blank');
+}
 
 /* ----------------------------- API HANDLERS ----------------------------- */
 async function fetchJobTrackers(page = 1) {
@@ -723,7 +730,6 @@ watch([selectedSortByFilter, perPage, search, isDesc], () => {
 watch([isCreate, isEdit], () => {
     // saat create, reset form
     if (isCreate.value) {
-        resetForm();
         titleModal.value = 'Add JobTracker';
         titleModalButton.value = 'Save JobTracker';
     } else if (isEdit.value) {
