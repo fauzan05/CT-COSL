@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('is_admin')->default(false);
             $table->boolean('download_access')->default(false);
+            $table->boolean('modification_job_tracker_master_access')->default(false);
             $table->string('profile_image')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();

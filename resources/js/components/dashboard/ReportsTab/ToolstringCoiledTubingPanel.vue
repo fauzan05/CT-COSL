@@ -1799,7 +1799,6 @@ const handleExportPDF = () => {
     window.open(url, '_blank');
 }
 
-
 /* ------------------------------- WATCHERS ---------------------------------- */
 watch(queryTypes, (newQuery) => {
     filteredTypes.value = !newQuery

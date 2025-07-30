@@ -70,8 +70,8 @@
         .button {
             display: inline-block;
             padding: 12px 24px;
-            background-color: #2563eb;
-            color: #ffffff;
+            background-color: #2563EB;
+            color: #ffffff !important;
             text-decoration: none;
             border-radius: 6px;
             font-weight: 600;
@@ -89,7 +89,7 @@
 
         .support {
             background-color: #fff8f1;
-            border-left: 4px solid #f97316;
+            border-left: 4px solid #2563EB;
             padding: 15px;
             margin: 20px 0;
         }

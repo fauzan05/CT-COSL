@@ -47,6 +47,8 @@ class JobTrackerModel extends Model
         'max_bha_od',
         'max_bha_od_unit',
         'max_deviation',
+        'material_charges',
+        'mobilization_charges',
         'n2_converter',
         'nitrogen_supervisor',
         'nitrogen_volume',
@@ -74,11 +76,8 @@ class JobTrackerModel extends Model
         'wellhead_x_over',
         'wt',
     ];
-    
 
     protected $casts = [
-        'job_start_date' => 'datetime',
-        'job_finish_date' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',

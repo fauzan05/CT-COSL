@@ -430,7 +430,6 @@
                                         </button>
 
                                         <!-- Export PDF -->
-                                        <!-- Export PDF -->
                                         <button @click="exportPDF(jobTracker)"
                                             class="inline-flex items-center px-3 py-1.5 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-md hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors duration-150">
                                             <i class="fas fa-file-pdf mr-1.5"></i>
@@ -636,6 +635,12 @@ const editForm = (jobTracker) => {
     // redirect to the edit page with the jobTracker ID using vue router
     isEdit.value = true;
     router.push({ name: 'edit-job-tracker', params: { id: jobTracker.id } });
+};
+
+const exportPDF = (jobTracker) => {
+    // redirect to the export PDF page with js new page
+    const url = baseUrl + '/backend/job-tracker-form/export-pdf/' + jobTracker.id;
+    window.open(url, '_blank');
 };
 
 /* ----------------------------- API HANDLERS ----------------------------- */

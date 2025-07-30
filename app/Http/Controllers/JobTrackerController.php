@@ -21,12 +21,10 @@ use App\Models\JobTracker\InjectorGoosneckModel;
 use App\Models\JobTracker\JobDescriptionModel;
 use App\Models\JobTracker\JobTrackerAcidTypeModel;
 use App\Models\JobTracker\JobTrackerAcidVolumeModel;
-use App\Models\JobTracker\JobTrackerCompletionSizeModel;
 use App\Models\JobTracker\JobTrackerContainerModel;
 use App\Models\JobTracker\JobTrackerCTPersonnelModel;
 use App\Models\JobTracker\JobTrackerInjectorGoosneckModel;
 use App\Models\JobTracker\JobTrackerJobDescriptionModel;
-use App\Models\JobTracker\JobTrackerMaxBHAODModel;
 use App\Models\JobTracker\JobTrackerMaxDepthModel;
 use App\Models\JobTracker\JobTrackerMiscellaneousToolModel;
 use App\Models\JobTracker\JobTrackerModel;
@@ -46,10 +44,13 @@ use App\Models\JobTracker\WellheadXOverModel;
 use App\Models\JobTracker\WellStatusModel;
 use App\Models\JobTracker\WellTypeModel;
 use App\Models\JobTracker\WTSModel;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Mpdf\Mpdf;
 
 class JobTrackerController extends Controller
 {
@@ -297,7 +298,7 @@ class JobTrackerController extends Controller
                 foreach ($request->pump_personnels as $pump_personnel_name) {
                     JobTrackerPumpPersonnelModel::create([
                         'job_tracker_id' => $jobTracker->id,
-                        'pump_personnel_name' => $pump_personnel_name,
+                        'pump_personnel_name' => $pump_personnel_name['value'] ?? '',
                         'created_at' => now(),
                         'created_by' => $request->user()->id,
                         'updated_at' => now(),
@@ -442,7 +443,9 @@ class JobTrackerController extends Controller
         });
 
         $jobTracker->pumpPersonnels->transform(function ($pumpPersonnel) {
-            return $pumpPersonnel->pump_personnel_name;
+            return [
+                'value' => $pumpPersonnel->pump_personnel_name,
+            ];
         });
 
         $jobTracker->acidTypes->transform(function ($acidType) {
@@ -477,7 +480,9 @@ class JobTrackerController extends Controller
         $jobTracker->other_charges = number_format(floatval($jobTracker->other_charges), 2);
         $jobTracker->total_revenue = number_format(floatval($jobTracker->total_revenue), 2);
 
-        // dd($jobTracker);
+        $jobTracker->job_start_date = $jobTracker->job_start_date ?? '';
+        $jobTracker->job_finish_date = $jobTracker->job_finish_date ?? '';
+
         return response()->json($jobTracker, 200);
     }
 
@@ -553,12 +558,9 @@ class JobTrackerController extends Controller
                 'updated_by' => $request->user()->id,
             ];
 
-            // dd($data);
-
             $jobTracker->update($data);
 
             // Clear all related data (bisa diganti jadi selective update kalau mau lebih optimal)
-            $jobTracker->jobDescriptions()->delete();
             $jobTracker->maxDepths()->delete();
             $jobTracker->n2Tanks()->delete();
             $jobTracker->containers()->delete();
@@ -573,6 +575,8 @@ class JobTrackerController extends Controller
             // Lanjutkan dengan insert ulang data terkait seperti di storeJobTracker
             // Handle job descriptions
             if ($request->has('job_descriptions') && is_array($request->job_descriptions)) {
+                // cek apakah ada description yang sudah ada, jika salah satu ada yang berbeda maka hapus semua dulu
+                $jobTracker->jobDescriptions()->delete();
                 foreach ($request->job_descriptions as $description) {
                     JobTrackerJobDescriptionModel::create([
                         'job_tracker_id' => $jobTracker->id,
@@ -691,7 +695,7 @@ class JobTrackerController extends Controller
                 foreach ($request->pump_personnels as $pump_personnel_name) {
                     JobTrackerPumpPersonnelModel::create([
                         'job_tracker_id' => $jobTracker->id,
-                        'pump_personnel_name' => $pump_personnel_name,
+                        'pump_personnel_name' => $pump_personnel_name['value'] ?? '',
                         'created_at' => now(),
                         'created_by' => $request->user()->id,
                         'updated_at' => now(),
@@ -783,7 +787,7 @@ class JobTrackerController extends Controller
                 // Finally delete the job tracker itself
                 $jobTracker->delete();
             });
-            
+
             // Commit transaction if everything is successful
             DB::commit();
 
@@ -826,7 +830,7 @@ class JobTrackerController extends Controller
     public function storeJobDescription(Request $request)
     {
         $request->validate([
-            'description' => 'required|string|max:255',
+            'description' => 'required|string',
         ]);
 
         $jobDescription = JobDescriptionModel::create([
@@ -846,7 +850,7 @@ class JobTrackerController extends Controller
     public function updateJobDescription(Request $request, $id)
     {
         $request->validate([
-            'description' => 'required|string|max:255',
+            'description' => 'required|string',
         ]);
 
         $jobDescription = JobDescriptionModel::findOrFail($id);
@@ -2581,5 +2585,115 @@ class JobTrackerController extends Controller
         return response()->json([
             'message' => 'Nitrogen Personnel deleted successfully.',
         ], 200);
+    }
+
+    public function exportJobTrackerPdf(Request $request, $id)
+    {
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', 300);
+        ini_set('pcre.backtrack_limit', 3000000);
+
+        // Assuming you have a JobTrackerModel and a PDF generation logic
+        $jobTracker = JobTrackerModel::with([
+            'updatedBy',
+            'jobDescriptions',
+            'maxDepths',
+            'n2Tanks',
+            'containers',
+            'injectorGoosnecks',
+            'miscellaneousTools',
+            'ctPersonnels',
+            'nitrogenPersonnels',
+            'pumpPersonnels',
+            'acidTypes',
+            'acidVolumes',
+        ])->findOrFail($id);
+
+        $jobTracker->job_start_date = $jobTracker->job_start_date ? Carbon::parse($jobTracker->job_start_date)->format('d-m-Y') : null;
+        $jobTracker->job_end_date = $jobTracker->job_end_date ? Carbon::parse($jobTracker->job_finish_date)->format('d-m-Y') : null;
+
+        $field_locations = FieldLocationModel::select('id', 'location_name')
+            ->orderBy('location_name')
+            ->get();
+
+        $field_types = FieldTypeModel::select('id', 'type_name')
+            ->orderBy('type_name')
+            ->get();
+
+        $well_statuses = WellStatusModel::select('id', 'status_name')
+            ->orderBy('status_name')
+            ->get();
+
+        $well_types = WellTypeModel::select('id', 'type_name')
+            ->orderBy('type_name')
+            ->get();
+
+        $nozzle_types = NozzleTypeModel::select('id', 'type_name')
+            ->orderBy('type_name')
+            ->get();
+
+        $current_max_depths = $jobTracker->maxDepths ?? [];
+        $current_n2_tanks = $jobTracker->n2Tanks ?? [];
+        $current_containers = $jobTracker->containers ?? [];
+        $current_miscellaneous_tools = $jobTracker->miscellaneousTools ?? [];
+        $current_ct_personnels = $jobTracker->ctPersonnels ?? [];
+        $current_n2_personnels = $jobTracker->nitrogenPersonnels ?? [];
+        $current_pump_personnels = $jobTracker->pumpPersonnels ?? [];
+        $current_acid_types = $jobTracker->acidTypes ?? [];
+        $current_acid_volumes = $jobTracker->acidVolumes ?? [];
+
+        $html = view('pdf.job-tracker-form', [
+            'jobTracker' => $jobTracker,
+            'fieldLocations' => $field_locations,
+            'fieldTypes' => $field_types,
+            'wellStatuses' => $well_statuses,
+            'wellTypes' => $well_types,
+            'nozzleTypes' => $nozzle_types,
+            'currentMaxDepths' => $current_max_depths,
+            'currentN2Tanks' => $current_n2_tanks,
+            'currentContainers' => $current_containers,
+            'currentMiscellaneousTools' => $current_miscellaneous_tools,
+            'currentCTPersonnels' => $current_ct_personnels,
+            'currentN2Personnels' => $current_n2_personnels,
+            'currentPumpPersonnels' => $current_pump_personnels,
+            'currentAcidTypes' => $current_acid_types,
+            'currentAcidVolumes' => $current_acid_volumes,
+        ])->render();
+
+        $mpdfConfig = [
+            'mode' => 'utf-8',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 15,
+            'margin_bottom' => 15,
+            'margin_header' => 5,
+            'margin_footer' => 5,
+            'orientation' => 'P',
+            'default_font_size' => 10,
+            'default_font' => 'sans-serif',
+            'format' => [210, 500], // A4 size in mm
+            'tempDir' => storage_path('app/temp'), // Laravel
+            // atau 'tempDir' => public_path('temp'), // untuk direktori public
+            'simpleTables' => false,
+        ];
+
+        // Inisialisasi mPDF
+        $mpdf = new Mpdf($mpdfConfig);
+        $mpdf->SetAutoPageBreak(false);
+        if (strlen($html) > 500000) { // 500KB
+            $chunks = str_split($html, 200000); // 200KB per chunk
+            foreach ($chunks as $index => $chunk) {
+                if ($index > 0) $mpdf->AddPage();
+                $mpdf->WriteHTML($chunk);
+            }
+        } else {
+            $mpdf->WriteHTML($html);
+        }
+
+        // Output PDF
+        $timestamp = time();
+        $fullname = Auth::user() ? Auth::user()->fullname : 'Unknown_User';
+        $filename = "Job_Tracker_Form_{$fullname}_{$timestamp}.pdf";
+        return $mpdf->Output($filename, \Mpdf\Output\Destination::INLINE);
     }
 }

@@ -65,6 +65,8 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::prefix('backend')->group(function () {
         Route::get('/toolstring-reporting-histories/export-pdf/{templateId}', [ToolstringController::class, 'exportReportingHistoryPdf'])->name('exportReportingHistoryPdf');
         Route::get('/wellstack-reporting-histories/export-pdf/{templateId}', [WellstackController::class, 'exportReportingHistoryPdf'])->name('exportWellstackReportingHistoryPdf');
+        // Job Tracker Export PDF
+        Route::get('/job-tracker-form/export-pdf/{formId}', [JobTrackerController::class, 'exportJobTrackerPdf'])->name('exportJobTrackerPdf');
     });
     
     // Thread management

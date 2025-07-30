@@ -659,7 +659,11 @@ const jobTracker = ref({
     nitrogen_supervisor: "",
     nitrogen_personnels: [],
     pump_supervisor: "",
-    pump_personnels: [],
+    pump_personnels: [
+        {
+            value: ''
+        }
+    ],
     acid_types: [
         {
             value: ''
@@ -813,29 +817,6 @@ const loadJobTracker = async (id) => {
         // remove time in job_start_date and job_finish_date and matching the timezone
         jobTracker.value.job_start_date = new Date(jobTracker.value.job_start_date).toISOString().split('T')[0];
         jobTracker.value.job_finish_date = new Date(jobTracker.value.job_finish_date).toISOString().split('T')[0];
-
-        // set max_bha_od to jobTracker
-        // jobTracker.value.max_bha_od = {
-        //     size: jobTracker.value.max_bha_od.size,
-        //     unit: jobTracker.value.max_bha_od.unit
-        // };
-
-        // console.log(jobTracker.value.max_bha_od);
-
-        // set ct_size to jobTracker
-        // jobTracker.value.ct_size = {
-        //     size: jobTracker.value.ct_size.size,
-        //     unit: jobTracker.value.ct_size.unit
-        // };
-
-        // // set wt to jobTracker
-        // jobTracker.value.wt = {
-        //     size: jobTracker.value.wt.size,
-        //     unit: jobTracker.value.wt.unit
-        // };
-
-        console.log(jobTracker.value.casing_liner_size)
-        console.log(jobTracker.value.ct_size)
 
         // set acid types to jobTracker
         jobTracker.value.acid_types = jobTracker.value.acid_types.map(acid => ({

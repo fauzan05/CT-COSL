@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('job_descriptions', function (Blueprint $table) {
             $table->id();
-            $table->string('description');
+            $table->text('description');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

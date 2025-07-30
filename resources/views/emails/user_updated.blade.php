@@ -70,7 +70,7 @@
         .button {
             display: inline-block;
             padding: 12px 24px;
-            background-color: #2563eb;
+            background-color: #2563EB;
             color: #ffffff;
             text-decoration: none;
             border-radius: 6px;
@@ -89,7 +89,7 @@
 
         .support {
             background-color: #fff8f1;
-            border-left: 4px solid #f97316;
+            border-left: 4px solid #2563EB;
             padding: 15px;
             margin: 20px 0;
         }
@@ -112,7 +112,7 @@
         }
 
         .old-value {
-            color: #ef4444;
+            color: #2563EB;
             text-decoration: line-through;
         }
 
@@ -123,7 +123,7 @@
 
         .alert {
             background-color: #fee2e2;
-            border-left: 4px solid #ef4444;
+            border-left: 4px solid #2563EB;
             padding: 15px;
             margin: 20px 0;
         }

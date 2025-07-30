@@ -86,6 +86,8 @@ return new class extends Migration
             $table->decimal('service_charges', 10, 2)->nullable();
             $table->decimal('other_charges', 10, 2)->nullable();
             $table->decimal('total_revenue', 10, 2)->nullable();
+            $table->decimal('material_charges', 10, 2)->nullable();
+            $table->decimal('mobilization_charges', 10, 2)->nullable();
 
             // Timestamps and audit fields
             $table->timestamp('created_at')->useCurrent();
