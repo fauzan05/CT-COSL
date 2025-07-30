@@ -5,13 +5,13 @@ namespace App\Models\JobTracker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BJDistrictModel extends Model
+class COSLBaseModel extends Model
 {
     use SoftDeletes;
-    protected $table = 'bj_districts';
+    protected $table = 'cosl_bases';
     public $timestamps = false;
     protected $fillable = [
-        'district_name',
+        'base_name',
         'created_by',
         'updated_by',
     ];

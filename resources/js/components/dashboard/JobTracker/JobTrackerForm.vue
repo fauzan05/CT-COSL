@@ -38,7 +38,7 @@
                 <!-- Job Description -->
                 <JobDescriptionInput v-model="jobTracker.job_descriptions" />
                 <CustomerInput v-model="jobTracker.customer" />
-                <BJDistrictInput v-model="jobTracker.bj_district" />
+                <COSLBaseInput v-model="jobTracker.cosl_base" />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Well Name -->
                     <div>
@@ -60,14 +60,14 @@
                             placeholder="Enter company man name" />
                     </div>
 
-                    <!-- BJ Representative -->
+                    <!-- COSL OCD Representative -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            BJ Representative
+                            COSL OCD Representative
                         </label>
-                        <input v-model="jobTracker.bj_representative" type="text"
+                        <input v-model="jobTracker.cosl_ocd_representative" type="text"
                             class="w-full px-3 py-2 h-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Enter BJ representative name" />
+                            placeholder="Enter COSL OCD representative name" />
                     </div>
 
                     <!-- Job Start Date -->
@@ -492,6 +492,22 @@
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="0.00" />
                 </div>
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Service Charges
+                    </label>
+                    <input v-model.number="jobTracker.service_charges" type="number" step="0.01" min="0"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="0.00" />
+                </div>
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Service Charges
+                    </label>
+                    <input v-model.number="jobTracker.service_charges" type="number" step="0.01" min="0"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="0.00" />
+                </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -543,7 +559,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import {
     Listbox,
@@ -559,7 +575,7 @@ import JobDescriptionInput from "../../forms/JobTrackers/JobDescriptionInput.vue
 import MaxDepthInput from "../../forms/JobTrackers/MaxDepthInput.vue";
 import CTPersonnelInput from "../../forms/JobTrackers/CTPersonnelInput.vue";
 import CustomerInput from "../../forms/JobTrackers/CustomerInput.vue";
-import BJDistrictInput from "../../forms/JobTrackers/BJDistrictInput.vue";
+import COSLBaseInput from "../../forms/JobTrackers/COSLBaseInput.vue";
 import FieldLocationInput from "../../forms/JobTrackers/FieldLocationInput.vue";
 import FieldTypeInput from "../../forms/JobTrackers/FieldTypeInput.vue";
 import WellStatusInput from "../../forms/JobTrackers/WellStatusInput.vue";
@@ -603,7 +619,7 @@ const jobTracker = ref({
     job_descriptions: [],
     well_name: "",
     company_man: "",
-    bj_representative: "",
+    cosl_ocd_representative: "",
     job_start_date: "",
     job_finish_date: "",
     job_days: 0,
@@ -615,7 +631,7 @@ const jobTracker = ref({
         }
     ],
     customer: "",
-    bj_district: "",
+    cosl_base: "",
     field_location: "",
     field_type: "",
     well_status: "",
@@ -790,7 +806,6 @@ const handleSubmit = async () => {
     try {
         isSubmitting.value = true;
         // cek apakah ini edit atau create
-        console.log("Submitting job tracker data:", jobTracker.value);
         if (isEdit.value) {
             // Update existing job tracker
             await axios.put(`${baseUrl}/api/job-trackers/${route.params.id}`, jobTracker.value);
@@ -827,13 +842,6 @@ const loadJobTracker = async (id) => {
         console.error("Error loading job tracker:", error);
     }
 };
-
-// Lifecycle
-// onMounted(async () => {
-//     if (isEdit.value && route.params.id) {
-//         await loadJobTracker(route.params.id);
-//     }
-// });
 
 watch(
   () => route.params.id,

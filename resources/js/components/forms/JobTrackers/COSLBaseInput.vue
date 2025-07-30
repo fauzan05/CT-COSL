@@ -2,11 +2,11 @@
     <div class="mb-5">
         <div class="flex justify-between items-center mb-2">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                BJ District
+                COSL Base
             </label>
             <div class="flex items-center gap-2">
                 <!-- reset button -->
-                <button @click="selectedDistrict = ''" type="button"
+                <button @click="selectedBase = ''" type="button"
                     class="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -31,12 +31,12 @@
         </div>
 
         <!-- Headless UI Listbox (Dropdown) -->
-        <Listbox v-model="selectedDistrict">
+        <Listbox v-model="selectedBase">
             <div class="relative">
                 <ListboxButton
                     class="relative w-full cursor-default rounded-lg bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                     <span class="block truncate text-gray-900 dark:text-white">
-                        {{ selectedDistrict || placeholder }}
+                        {{ selectedBase || placeholder }}
                     </span>
                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -75,7 +75,7 @@
 
         <!-- Add Option Input -->
         <div v-if="showAddOption" class="mt-2 flex gap-2">
-            <input v-model="newOption" type="text" placeholder="Enter new district"
+            <input v-model="newOption" type="text" placeholder="Enter new base"
                 class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 @keyup.enter="addNewOption">
             <button @click="addNewOption" type="button"
@@ -120,9 +120,9 @@ const emit = defineEmits(['update:modelValue'])
 const toast = useToast()
 
 // Dropdown options - hanya satu list
-const placeholder = ref('Select District')
+const placeholder = ref('Select COSL Base')
 const listOptions = ref([])
-const selectedDistrict = ref('')
+const selectedBase = ref('')
 
 // UI States
 const showAddOption = ref(false)
@@ -130,12 +130,12 @@ const showManageOptions = ref(false)
 const newOption = ref('')
 
 watch(() => props.modelValue, (newValue) => {
-    // Update selectedDistrict when modelValue changes
-    selectedDistrict.value = newValue
+    // Update selectedBase when modelValue changes
+    selectedBase.value = newValue
 }, { immediate: true })
 
-watch(selectedDistrict, (newValue) => {
-    // Emit the selected district value to the parent component
+watch(selectedBase, (newValue) => {
+    // Emit the selectedCOSL Base value to the parent component
     emit('update:modelValue', newValue)
 })
 
@@ -143,20 +143,19 @@ watch(selectedDistrict, (newValue) => {
 const addNewOption = async () => {
     if (newOption.value.trim()) {
         try {
-            const response = await axios.post(`${baseUrl}/api/job-tracker-master/bj-districts`, {
-                district_name: newOption.value.trim()
+            await axios.post(`${baseUrl}/api/job-tracker-master/cosl-bases`, {
+                base_name: newOption.value.trim()
             })
             
-            fetchAllDistricts() // Refresh the list options from the API
+            fetchAllBases() // Refresh the list options from the API
             
-            console.log(`District option "${newOption.value}" added successfully!`)
-            toast.success('District option added successfully!')
+            toast.success('COSL Base option added successfully!')
             
             newOption.value = ''
             showAddOption.value = false
         } catch (error) {
-            console.error('Error adding district option:', error)
-            toast.error('Failed to add district option.')
+            console.error('Error adding COSL Base option:', error)
+            toast.error('Failed to add COSL Base option.')
         }
     }
 }
@@ -167,63 +166,63 @@ const cancelAddOption = () => {
 }
 
 const updateOption = async ({ index, oldValue, newValue }) => {
-    // Extract district name from newValue object or use it directly if it's a string
-    const newDistrictName = typeof newValue === 'object' ? newValue.district_name : newValue
+    // ExtractCOSL Base name from newValue object or use it directly if it's a string
+    const newBaseName = typeof newValue === 'object' ? newValue.base_name : newValue
         
     try {
-        await axios.put(`${baseUrl}/api/job-tracker-master/bj-districts/${listOptions.value[index].id}`, {
-            district_name: newDistrictName.trim()
+        await axios.put(`${baseUrl}/api/job-tracker-master/cosl-bases/${listOptions.value[index].id}`, {
+            base_name: newBaseName.trim()
         })
 
-        fetchAllDistricts() // Refresh the list options from the API
+        fetchAllBases() // Refresh the list options from the API
 
-        toast.success('District option updated successfully!')
+        toast.success('COSL Base option updated successfully!')
     } catch (error) {
-        console.error('Error updating district option:', error)
-        toast.error('Failed to update district option.')
+        console.error('Error updating COSL Base option:', error)
+        toast.error('Failed to update COSL Base option.')
     }
 }
 
 const removeOption = async (index) => {
     try {
-        await axios.delete(`${baseUrl}/api/job-tracker-master/bj-districts/${listOptions.value[index].id}`)
+        await axios.delete(`${baseUrl}/api/job-tracker-master/cosl-bases/${listOptions.value[index].id}`)
         
-        fetchAllDistricts() // Refresh the list options from the API
+        fetchAllBases() // Refresh the list options from the API
         
-        toast.success('District option removed successfully!')
+        toast.success('COSL Base option removed successfully!')
     } catch (error) {
-        console.error('Error removing district option:', error)
-        toast.error('Failed to remove district option.')
+        console.error('Error removing COSL Base option:', error)
+        toast.error('Failed to remove COSL Base option.')
     }
 }
 
-const fetchAllDistricts = async () => {
+const fetchAllBases = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/job-tracker-master/bj-districts`)
+        const response = await axios.get(`${baseUrl}/api/job-tracker-master/cosl-bases`)
         
         if (response.data && Array.isArray(response.data)) {
             // reset listOptions
             listOptions.value = []
-            // Sort by district_name alphabetically
-            response.data.sort((a, b) => a.district_name.localeCompare(b.district_name))
+            // Sort by base_name alphabetically
+            response.data.sort((a, b) => a.base_name.localeCompare(b.base_name))
             
             listOptions.value = response.data.map(cust => ({
                 id: cust.id,
-                value: cust.district_name,
-                label: cust.district_name
+                value: cust.base_name,
+                label: cust.base_name
             }))
 
-            if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedDistrict.value)) {
-                selectedDistrict.value = ''
+            if (listOptions.value.length < 1 || !listOptions.value.some(opt => opt.value === selectedBase.value)) {
+                selectedBase.value = ''
             }
         }
     } catch (error) {
-        console.error('Error fetching districts:', error)
+        console.error('Error fetching cosl bases:', error)
     }
 }
 
 onMounted(async () => {
-    // Fetch all districts from the API first
-    await fetchAllDistricts()
+    // Fetch all bases from the API first
+    await fetchAllBases()
 })
 </script>

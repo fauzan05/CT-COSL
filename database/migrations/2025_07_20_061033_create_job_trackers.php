@@ -17,12 +17,12 @@ return new class extends Migration
             // General Information
             $table->string('well_name')->nullable();
             $table->string('company_man')->nullable();
-            $table->string('bj_representative')->nullable();
+            $table->string('cosl_ocd_representative')->nullable();
             $table->date('job_start_date')->nullable();
             $table->date('job_finish_date')->nullable();
             $table->integer('job_days')->nullable();
             $table->string('customer')->nullable();
-            $table->string('bj_district')->nullable();
+            $table->string('cosl_base')->nullable();
 
             // Well Information
             $table->string('field_type')->nullable();
@@ -35,8 +35,8 @@ return new class extends Migration
             $table->string('depth_md_unit')->default('ft');
             $table->decimal('depth_tvd', 10, 2)->nullable();
             $table->string('depth_tvd_unit')->default('ft');
-            $table->decimal('casing_line_size', 10, 2)->nullable();
-            $table->string('casing_line_size_unit')->default('in');
+            $table->decimal('casing_liner_size', 10, 2)->nullable();
+            $table->string('casing_liner_size_unit')->default('in');
             $table->decimal('completion_size', 10, 2)->nullable();
             $table->string('completion_size_unit')->default('in');
             $table->decimal('bh_pressure', 10, 2)->nullable();

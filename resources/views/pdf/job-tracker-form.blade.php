@@ -267,7 +267,7 @@
                     <tr>
                         <td class="label">COSL Base</td>
                         <td class="content">
-                            : {{ $jobTracker->bj_district ?? '-' }}
+                            : {{ $jobTracker->cosl_base ?? '-' }}
                         </td>
                         <td class="right-label"></td>
                         <td class="right-content"></td>
@@ -275,7 +275,7 @@
                     <tr>
                         <td class="label">COSL OCD Representative</td>
                         <td class="content">
-                            : {{ $jobTracker->bj_representative ?? '-' }}
+                            : {{ $jobTracker->cosl_ocd_representative ?? '-' }}
                         </td>
                         <td class="right-label"></td>
                         <td class="right-content"></td>
@@ -756,7 +756,7 @@
                                     <div class="charge-input-container">
                                         :&nbsp;
                                         {{ $jobTracker->revenue_currency }}
-                                        {{ $jobTracker->other_charges }}
+                                        {{ $jobTracker->material_charges }}
                                     </div>
                                 </td>
                             </tr>
@@ -766,7 +766,7 @@
                                     <div class="charge-input-container">
                                         :&nbsp;
                                         {{ $jobTracker->revenue_currency }}
-                                        {{ $jobTracker->other_charges }}
+                                        {{ $jobTracker->mobilization_charges }}
                                     </div>
                                 </td>
                             </tr>

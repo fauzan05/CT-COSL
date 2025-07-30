@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobTracker\BJDistrictModel;
+use App\Models\JobTracker\COSLBaseModel;
 use App\Models\JobTracker\BOPModel;
 use App\Models\JobTracker\CasingLinerSizeModel;
 use App\Models\JobTracker\CJInjectorModel;
@@ -85,7 +85,7 @@ class JobTrackerController extends Controller
                 'id' => $jobTracker->id,
                 'well_name' => $jobTracker->well_name,
                 'company_man' => $jobTracker->company_man,
-                'bj_representative' => $jobTracker->bj_representative,
+                'cosl_ocd_representative' => $jobTracker->cosl_ocd_representative,
                 'job_start_date' => $jobTracker->job_start_date,
                 'job_finish_date' => $jobTracker->job_finish_date,
                 'job_days' => $jobTracker->job_days,
@@ -108,13 +108,13 @@ class JobTrackerController extends Controller
             $data = [
                 'well_name' => $request->well_name,
                 'company_man' => $request->company_man,
-                'bj_representative' => $request->bj_representative,
+                'cosl_ocd_representative' => $request->cosl_ocd_representative,
                 'job_start_date' => $request->job_start_date,
                 'job_finish_date' => $request->job_finish_date,
                 'job_days' => $request->job_days,
                 'max_deviation' => $request->max_deviation,
                 'customer' => $request->customer,
-                'bj_district' => $request->bj_district,
+                'cosl_base' => $request->cosl_base,
                 'field_location' => $request->field_location,
                 'casing_liner_size' => $request->casing_liner_size['size'] ?? 0,
                 'casing_liner_size_unit' => $request->casing_liner_size['unit'] ?? null,
@@ -496,13 +496,13 @@ class JobTrackerController extends Controller
             $data = [
                 'well_name' => $request->well_name,
                 'company_man' => $request->company_man,
-                'bj_representative' => $request->bj_representative,
+                'cosl_ocd_representative' => $request->cosl_ocd_representative,
                 'job_start_date' => $request->job_start_date,
                 'job_finish_date' => $request->job_finish_date,
                 'job_days' => $request->job_days,
                 'max_deviation' => $request->max_deviation,
                 'customer' => $request->customer,
-                'bj_district' => $request->bj_district,
+                'cosl_base' => $request->cosl_base,
                 'field_location' => $request->field_location,
                 'casing_liner_size' => $request->casing_liner_size['size'] ?? 0,
                 'casing_liner_size_unit' => $request->casing_liner_size['unit'] ?? null,
@@ -935,24 +935,24 @@ class JobTrackerController extends Controller
         ], 200);
     }
 
-    public function getBJDistricts(Request $request)
+    public function getCOSLBases(Request $request)
     {
-        // Assuming you have a BJDistrict model
-        $districts = BJDistrictModel::select('id', 'district_name')
-            ->orderBy('district_name')
+        // Assuming you have a COSLBase model
+        $bases = COSLBaseModel::select('id', 'base_name')
+            ->orderBy('base_name')
             ->get();
 
-        return response()->json($districts, 200);
+        return response()->json($bases, 200);
     }
 
-    public function storeBJDistrict(Request $request)
+    public function storeCOSLBase(Request $request)
     {
         $request->validate([
-            'district_name' => 'required|string|max:255',
+            'base_name' => 'required|string|max:255',
         ]);
 
-        $district = BJDistrictModel::create([
-            'district_name' => $request->input('district_name'),
+        $base = COSLBaseModel::create([
+            'base_name' => $request->input('base_name'),
             'created_at' => now(),
             'created_by' => $request->user()->id,
             'updated_at' => now(),
@@ -961,33 +961,33 @@ class JobTrackerController extends Controller
 
         return response()->json([
             'message' => 'BJ District created successfully.',
-            'data' => $district,
+            'data' => $base,
         ], 201);
     }
 
-    public function updateBJDistrict(Request $request, $id)
+    public function updateCOSLBase(Request $request, $id)
     {
         $request->validate([
-            'district_name' => 'required|string|max:255',
+            'base_name' => 'required|string|max:255',
         ]);
 
-        $district = BJDistrictModel::findOrFail($id);
-        $district->update([
-            'district_name' => $request->input('district_name'),
+        $base = COSLBaseModel::findOrFail($id);
+        $base->update([
+            'base_name' => $request->input('base_name'),
             'updated_at' => now(),
             'updated_by' => $request->user()->id,
         ]);
 
         return response()->json([
             'message' => 'BJ District updated successfully.',
-            'data' => $district,
+            'data' => $base,
         ], 200);
     }
 
-    public function deleteBJDistrict(Request $request, $id)
+    public function deleteCOSLBase(Request $request, $id)
     {
-        $district = BJDistrictModel::findOrFail($id);
-        $district->delete();
+        $base = COSLBaseModel::findOrFail($id);
+        $base->delete();
 
         return response()->json([
             'message' => 'BJ District deleted successfully.',

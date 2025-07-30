@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bj_districts', function (Blueprint $table) {
+        Schema::create('cosl_bases', function (Blueprint $table) {
             $table->id();
-            $table->string('district_name');
+            $table->string('base_name');
             $table->timestamp('created_at')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bj_districts');
+        Schema::dropIfExists('cosl_bases');
     }
 };

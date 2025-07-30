@@ -141,10 +141,10 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::delete('/api/job-tracker-master/customers/{id}', [JobTrackerController::class, 'deleteCustomer'])->name('deleteCustomer');
 
     // Job Tracker BJ District
-    Route::get('/api/job-tracker-master/bj-districts', [JobTrackerController::class, 'getBJDistricts'])->name('getBJDistricts');
-    Route::post('/api/job-tracker-master/bj-districts', [JobTrackerController::class, 'storeBJDistrict'])->name('storeBJDistrict');
-    Route::put('/api/job-tracker-master/bj-districts/{id}', [JobTrackerController::class, 'updateBJDistrict'])->name('updateBJDistrict');
-    Route::delete('/api/job-tracker-master/bj-districts/{id}', [JobTrackerController::class, 'deleteBJDistrict'])->name('deleteBJDistrict');
+    Route::get('/api/job-tracker-master/cosl-bases', [JobTrackerController::class, 'getCOSLBases'])->name('getCOSLBases');
+    Route::post('/api/job-tracker-master/cosl-bases', [JobTrackerController::class, 'storeCOSLBase'])->name('storeCOSLBase');
+    Route::put('/api/job-tracker-master/cosl-bases/{id}', [JobTrackerController::class, 'updateCOSLBase'])->name('updateCOSLBase');
+    Route::delete('/api/job-tracker-master/cosl-bases/{id}', [JobTrackerController::class, 'deleteCOSLBase'])->name('deleteCOSLBase');
 
     // Job Tracker Field Location
     Route::get('/api/job-tracker-master/field-locations', [JobTrackerController::class, 'getFieldLocations'])->name('getFieldLocations');
