@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-3xl font-bold text-white">60%</div>
+                            <div class="text-3xl font-bold text-white">75%</div>
                             <div class="text-orange-200 text-sm">Complete</div>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                     <div class="mt-4">
                         <div class="flex justify-between text-sm text-orange-100 mb-2">
                             <span>Development Progress</span>
-                            <span>60% Complete</span>
+                            <span>75% Complete</span>
                         </div>
                         <div class="w-full bg-white/20 rounded-full h-3">
                             <div class="bg-gradient-to-r from-yellow-400 to-orange-300 h-3 rounded-full transition-all duration-1000 ease-out" 
@@ -108,6 +108,10 @@
                             <span class="mr-2 text-green-400">✅</span> 
                             <span>Job Tracker</span>
                         </li>
+                        <li class="flex items-center">
+                            <span class="mr-2 text-green-400">✅</span> 
+                            <span>Nitrogen</span>
+                        </li>
                     </ul>
                 </div>
 
@@ -122,10 +126,6 @@
                         <h3 class="text-xl font-bold text-orange-100">In Progress</h3>
                     </div>
                     <ul class="space-y-3 text-sm text-orange-200">
-                        <li class="flex items-center">
-                            <span class="mr-2 text-orange-400 animate-pulse">🔄</span> 
-                            <span>Nitrogen</span>
-                        </li>
                         <li class="flex items-center">
                             <span class="mr-2 text-orange-400 animate-pulse">🔄</span> 
                             <span>Coiled Tubing</span>

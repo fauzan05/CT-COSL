@@ -638,9 +638,9 @@ const handleDocumentDownload = (document) => {
 };
 
 const handleDocumentSave = async () => {
-    loading.value = true;
+    isLoading.value = true;
     if (!modalRef.value.validate()) {
-        loading.value = false;
+        isLoading.value = false;
         return;
     }
     try {
@@ -674,7 +674,7 @@ const handleDocumentSave = async () => {
         console.error(error);
         useToast().error('Failed to save document.');
     } finally {
-        loading.value = false;
+        isLoading.value = false;
         showUploadDocumentModal.value = false;
         closeModal();
     }
