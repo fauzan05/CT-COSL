@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\JobTrackerController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ToolstringController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WellstackController;
 use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\CheckDocumentAccess;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +70,10 @@ Route::middleware([AuthMiddleware::class])->group(function () {
         // Job Tracker Export PDF
         Route::get('/job-tracker-form/export-pdf/{formId}', [JobTrackerController::class, 'exportJobTrackerPdf'])->name('exportJobTrackerPdf');
     });
+
+    Route::get('/documents/{filename}', [DocumentController::class, 'show'])
+            ->middleware([CheckDocumentAccess::class])
+            ->where('filename', '.*');
     
     // Thread management
     Route::post('/api/threads', [ThreadController::class, 'storeThread'])->name('storeThread');
@@ -307,6 +313,14 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::post('/api/job-tracker-master/nitrogen-personnels', [JobTrackerController::class, 'storeNitrogenPersonnel'])->name('storeNitrogenPersonnel');
     Route::put('/api/job-tracker-master/nitrogen-personnels/{id}', [JobTrackerController::class, 'updateNitrogenPersonnel'])->name('updateNitrogenPersonnel');
     Route::delete('/api/job-tracker-master/nitrogen-personnels/{id}', [JobTrackerController::class, 'deleteNitrogenPersonnel'])->name('deleteNitrogenPersonnel');
+
+    // Documents
+    Route::get('/api/documents', [DocumentController::class, 'getDocuments'])->name('getDocuments');
+    Route::get('/api/documents/{id}', [DocumentController::class, 'getDocument'])->name('getDocument');
+    Route::post('/api/documents', [DocumentController::class, 'storeDocument'])->name('storeDocument');
+    Route::put('/api/documents/{id}', [DocumentController::class, 'updateDocument'])->name('updateDocument');
+    Route::delete('/api/documents', [DocumentController::class, 'deleteDocument'])->name('deleteDocument');
+    
 });
 
 // Storage files routes - HARUS SEBELUM catch-all route

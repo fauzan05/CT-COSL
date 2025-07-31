@@ -8,6 +8,7 @@ import Wellstack from "../components/dashboard/WellstackType.vue";
 import Users from "../components/dashboard/Users.vue";
 import JobTracker from "../components/dashboard/JobTracker.vue";
 import JobTrackerForm from "../components/dashboard/JobTracker/JobTrackerForm.vue";
+import Nitrogen from "../components/dashboard/Nitrogen.vue";
 
 const routes = [
     {
@@ -54,6 +55,10 @@ const routes = [
             }
         ]
     },
+    {
+        path: "/nitrogen",
+        component: Nitrogen,
+    }
 ];
 
 export default createRouter({
