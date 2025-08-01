@@ -40,7 +40,7 @@
                                             <img :src="itemImage" alt="Type"
                                                 class="w-full h-full rounded-lg object-contain" />
                                             <!-- Overlay tombol "Change Image" -->
-                                            <div class="absolute bottom-4 left-1/2 -translate-x-1/2">
+                                            <div v-if="currentUserStore.user.is_admin" class="absolute bottom-4 left-1/2 -translate-x-1/2">
                                                 <label
                                                     class="cursor-pointer inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 text-sm shadow">
                                                     Change Image
@@ -73,7 +73,7 @@
                                         </div>
                                     </div>
                                     <!-- Image Required Note -->
-                                    <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                    <div v-if="currentUserStore.user.is_admin" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                                         <span class="text-red-500">*</span> Image is required
                                     </div>
                                 </div>
@@ -84,11 +84,13 @@
                                         <div class="mb-4">
                                             <label for="name"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Name <span class="text-red-500">*</span>
+                                                Name <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
                                             </label>
                                             <input type="text" id="name" v-model="itemForm.name"
                                                 class="w-full px-3 dark:text-white py-2 border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                required>
+                                                required
+                                                :disabled="!currentUserStore.user.is_admin"
+                                                >
                                         </div>
                                         <!-- Description -->
                                         <div class="mb-4">
@@ -96,18 +98,22 @@
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
                                                 Description
                                             </label>
-                                            <textarea id="description" v-model="itemForm.description" rows="4"
-                                                class="w-full px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                            <textarea :disabled="!currentUserStore.user.is_admin"
+                                            id="description" v-model="itemForm.description" rows="4"
+                                                class="w-full px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                            </textarea>
                                         </div>
                                         <!-- Serial Number -->
                                         <div class="mb-4">
                                             <label for="serialNumber"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Serial Number <span class="text-red-500">*</span>
+                                                Serial Number <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
                                             </label>
                                             <input type="text" id="serialNumber" v-model="itemForm.serialNumber"
                                                 class="w-full px-3 dark:text-white py-2 border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                required>
+                                                required
+                                                :disabled="!currentUserStore.user.is_admin"
+                                                >
                                         </div>
                                         <!-- Owner -->
                                         <div class="mb-4">
@@ -116,7 +122,9 @@
                                                 Owner
                                             </label>
                                             <input type="text" id="owner" v-model="itemForm.owner"
-                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-full px-3 dark:text-white py-2 border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                :disabled="!currentUserStore.user.is_admin"
+                                                >
                                         </div>
                                     </div>
                                     <!-- Dimensions Card -->
@@ -129,13 +137,15 @@
                                             <div class="flex space-x-2">
                                                 <input type="text" :value="itemForm.height.value"
                                                     @input="handleDecimalInput($event, itemForm.height)"
-                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                                    :disabled="!currentUserStore.user.is_admin"
+                                                    >
                                                 <Listbox v-model="itemForm.height.unit">
                                                     <div class="relative w-32">
-                                                        <ListboxButton
+                                                        <ListboxButton :disabled="!currentUserStore.user.is_admin"
                                                             class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.height.unit }}
-                                                            <span
+                                                            <span v-if="currentUserStore.user.is_admin"
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                 <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
                                                                     aria-hidden="true" />
@@ -161,13 +171,15 @@
                                             <div class="flex space-x-2">
                                                 <input type="text" :value="itemForm.weight.value"
                                                     @input="handleDecimalInput($event, itemForm.weight)"
-                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                                    class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                                    :disabled="!currentUserStore.user.is_admin"
+                                                    >
                                                 <Listbox v-model="itemForm.weight.unit">
                                                     <div class="relative w-32">
-                                                        <ListboxButton
+                                                        <ListboxButton :disabled="!currentUserStore.user.is_admin"
                                                             class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.weight.unit }}
-                                                            <span
+                                                            <span v-if="currentUserStore.user.is_admin"
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                 <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
                                                                     aria-hidden="true" />
@@ -194,13 +206,14 @@
                                             <div class="flex space-x-2">
                                                 <input type="text" :value="itemForm.pressureRating.value"
                                                     @input="handleDecimalInput($event, itemForm.pressureRating)"
+                                                    :disabled="!currentUserStore.user.is_admin"
                                                     class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                                 <Listbox v-model="itemForm.pressureRating.unit">
                                                     <div class="relative w-32">
-                                                        <ListboxButton
+                                                        <ListboxButton :disabled="!currentUserStore.user.is_admin"
                                                             class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.pressureRating.unit }}
-                                                            <span
+                                                            <span v-if="currentUserStore.user.is_admin"
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                 <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
                                                                     aria-hidden="true" />
@@ -227,13 +240,14 @@
                                             <div class="flex space-x-2">
                                                 <input type="text" :value="itemForm.shearRamDistFromBottom.value"
                                                     @input="handleDecimalInput($event, itemForm.shearRamDistFromBottom)"
+                                                    :disabled="!currentUserStore.user.is_admin"
                                                     class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-700 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                                 <Listbox v-model="itemForm.shearRamDistFromBottom.unit">
                                                     <div class="relative w-32">
-                                                        <ListboxButton
+                                                        <ListboxButton :disabled="!currentUserStore.user.is_admin"
                                                             class="relative w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-slate-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                                             {{ itemForm.shearRamDistFromBottom.unit }}
-                                                            <span
+                                                            <span v-if="currentUserStore.user.is_admin"
                                                                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                 <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
                                                                     aria-hidden="true" />
@@ -253,7 +267,7 @@
                                         </div>
                                     </div>
 
-                                    <div>
+                                    <div v-if="currentUserStore.user.is_admin">
                                         <!-- Action Buttons -->
                                         <div class="mt-6 flex justify-center space-x-3">
                                             <button type="button"
@@ -463,7 +477,7 @@
                     <p class="text-gray-600 dark:text-gray-400">Manage your items and organize your inventory</p>
                 </template>
             </div>
-            <button @click="openModal(null)"
+            <button v-if="currentUserStore.user.is_admin" @click="openModal(null)"
                 class="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -1031,7 +1045,7 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="flex items-center space-x-2">
+                        <div v-if="currentUserStore.user.is_admin" class="flex items-center space-x-2">
                             <button @click="openModal(item)"
                                 class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800">
                                 <span class="flex items-center justify-center space-x-1">
@@ -1059,6 +1073,16 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                 </svg>
+                            </button>
+                        </div>
+                        <div v-else class="flex items-center space-x-2">
+                            <!-- button show -->
+                            <button @click="openModal(item)"
+                                class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800">
+                                <span class="flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                    <span>Show</span>
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -1115,11 +1139,13 @@ import {
 
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/vue/20/solid';
 import Pagination from '@/components/Pagination.vue';
+import { useCurrentUserStore } from '@/stores/CurrentUser';
 
 // ========== INITIAL SETUP ==========
 const toast = useToast();
 const route = useRoute();
 const baseUrl = import.meta.env.VITE_API_URL;
+const currentUserStore = useCurrentUserStore();
 
 // ========== STATE ==========
 const wellstackTypeId = ref(route.params.wellstackTypeId);
@@ -1212,7 +1238,7 @@ function openModal(selectedItem = null) {
         itemForm.value.shearRamDistFromBottom.unit = selectedItem.shear_ram_dist_from_bottom_unit || 'ft';
         itemForm.value.owner = selectedItem.owner || '';
         itemImage.value = baseUrl + selectedItem.image_url || null;
-        titleModal.value = 'Edit Item';
+        titleModal.value = currentUserStore.user.is_admin ? 'Edit Item ' + selectedItem.name : 'Show Item ' + selectedItem.name;
         titleModalButton.value = 'Update Item';
         isCreateNewItem.value = false;
     } else {
@@ -1494,7 +1520,10 @@ watch(
 );
 
 // ========== LIFECYCLE ==========
-onMounted(() => {
+onMounted(async () => {
+    if (!currentUserStore.user) {
+        await currentUserStore.fetchUser();
+    }
 });
 
 onUnmounted(() => { });

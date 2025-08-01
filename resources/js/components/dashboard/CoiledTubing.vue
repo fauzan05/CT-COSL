@@ -6,7 +6,11 @@
     <DocumentUploadModal v-model:document-form="documentForm" :is-document-modal-open="showUploadDocumentModal"
         :is-creating="isCreate" :loading="isLoading" :loading-documents="isLoadingDocs"
         @close="showUploadDocumentModal = false" @submit="handleDocumentSave" @delete="handleDocumentDelete"
-        @download="handleDocumentDownload" ref="modalRef">
+        @download="handleDocumentDownload" ref="modalRef"
+        :is-admin="currentUserStore.user.is_admin"
+        :download-access="currentUserStore.user.download_access"
+        :current-user="currentUserStore.user"
+        >
     </DocumentUploadModal>
 
     <!-- Delete Confirmation Modal -->
@@ -93,7 +97,7 @@
                     <p class="text-gray-600 dark:text-gray-400 mt-1">Manage your coiled tubing document inventory and
                         specifications</p>
                 </div>
-                <button @click="openDocumentModal(null)"
+                <button v-if="currentUserStore.user.is_admin" @click="openDocumentModal(null)"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg flex items-center space-x-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">

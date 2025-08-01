@@ -36,12 +36,15 @@
                                     <!-- Document Name -->
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                                            Document Name <span class="text-red-500">*</span>
+                                            Document Name <span v-if="isAdmin" class="text-red-500">*</span>
                                         </label>
                                         <input type="text" v-model="documentForm.name"
                                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            :class="{ 'border-red-500': errors.name }" required
-                                            placeholder="Enter document name">
+                                            :class="{ 'border-red-500': errors.name }"
+                                            placeholder="Enter document name"
+                                            :disabled="loading || !isAdmin"
+                                            required
+                                            >
                                         <p v-if="errors.name" class="mt-1 text-sm text-red-600 dark:text-red-400">{{
                                             errors.name }}</p>
                                     </div>
@@ -54,13 +57,15 @@
                                         <textarea v-model="documentForm.description" rows="3"
                                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                                             :class="{ 'border-red-500': errors.description }"
-                                            placeholder="Enter document description (optional)"></textarea>
+                                            placeholder="Enter document description (optional)"
+                                            :disabled="loading || !isAdmin"
+                                            ></textarea>
                                         <p v-if="errors.description" class="mt-1 text-sm text-red-600 dark:text-red-400">{{
                                             errors.description }}</p>
                                     </div>
 
                                     <!-- File Upload -->
-                                    <div>
+                                    <div v-if="isAdmin">
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                                             Upload Documents <span class="text-red-500">*</span>
                                             <span class="text-sm text-gray-500 dark:text-gray-400 font-normal">(Max 10
@@ -138,13 +143,16 @@
                                                         Updated At</th>
                                                     <th scope="col"
                                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                        Updated By</th>
+                                                    <th v-if="isAdmin || downloadAccess" scope="col"
+                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                                         Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody v-if="loadingDocuments"
                                                 class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                                 <tr v-for="n in 3" :key="n">
-                                                    <td v-for="col in 4" :key="col" class="px-6 py-4">
+                                                    <td v-for="col in 5" :key="col" class="px-6 py-4">
                                                         <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
                                                             :class="col === 1 ? 'w-8' : col === 2 || col === 3 ? 'w-32' : 'w-24'">
                                                         </div>
@@ -159,21 +167,19 @@
                                                         + 1 }}</td>
                                                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
                                                         <div class="flex items-center space-x-2">
-                                                            <svg class="w-4 h-4 text-gray-400" fill="currentColor"
-                                                                viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
+                                                            <i class="fa-solid fa-file-lines"></i>
                                                             <span>{{ document.filename || document.name }}</span>
                                                         </div>
                                                     </td>
                                                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">{{
                                                         document.updated_at ? formatDate(document.updated_at) :
                                                         'Waiting for upload' }}</td>
-                                                    <td class="px-6 py-4 text-sm">
+                                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
+                                                        {{ document.updated_by ? document.updated_by_name : props.currentUser.fullname }}
+                                                    </td>
+                                                    <td v-if="isAdmin || downloadAccess" class="px-6 py-4 text-sm">
                                                         <div class="flex items-center space-x-2">
-                                                            <button @click="downloadDocument(document)" type="button"
+                                                            <button v-if="document.updated_at" @click="downloadDocument(document)" type="button"
                                                                 class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg transition-all duration-200 group">
                                                                 <svg class="w-4 h-4 mr-1.5" fill="none"
                                                                     stroke="currentColor" viewBox="0 0 24 24">
@@ -184,7 +190,9 @@
                                                                 <span class="text-sm font-medium">Download</span>
                                                             </button>
                                                             <button @click="deleteDocument(index)" type="button"
-                                                                class="inline-flex items-center px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
+                                                                class="inline-flex items-center px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group"
+                                                                v-if="isAdmin"
+                                                                >
                                                                 <svg class="w-4 h-4 mr-1.5" fill="none"
                                                                     stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -202,7 +210,7 @@
                                 </div>
 
                                 <!-- Footer Actions -->
-                                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <div v-if="isAdmin" class="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <button type="button"
                                         class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                                         @click="closeModal">
@@ -273,7 +281,19 @@ const props = defineProps({
             description: '',
             documents: []
         })
-    }
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
+    downloadAccess: {
+        type: Boolean,
+        default: true
+    },
+    currentUser: {
+        type: Object,
+        default: () => ({})
+    },
 })
 
 // Emits
@@ -297,7 +317,7 @@ const errors = reactive({
 
 // Computed properties
 const titleModal = computed(() => {
-    return props.isCreating ? 'Upload New Document' : 'Manage Documents'
+    return props.isCreating ? 'Upload New Document' : ( props.isAdmin ? 'Manage Documents' : 'View Documents' )
 })
 
 const titleModalButton = computed(() => {

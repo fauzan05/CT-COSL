@@ -326,7 +326,7 @@
                     <h1 class="text-2xl font-bold text-gray-800 dark:text-white">User Management</h1>
                     <p class="text-gray-600 dark:text-gray-400 mt-1">Manage your user and set previlleges</p>
                 </div>
-                <button @click="openUserModal(null)"
+                <button v-if="currentUserStore.user.is_admin" @click="openUserModal(null)"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg flex items-center space-x-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -570,7 +570,7 @@
                     <table class="min-w-full">
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
-                                <th v-for="header in ['No', 'Profile Photo', 'Full Name', 'Username', 'Email', 'Download Access', 'Updated At', 'Updated By', 'Action']"
+                                <th v-for="header in tableHeaders"
                                     :key="header"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ header }}
@@ -593,7 +593,7 @@
                     <table class="min-w-full">
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
-                                <th v-for="header in ['No', 'Profile Photo', 'Full Name', 'Username', 'Email', 'Download Access', 'Updated At', 'Updated By', 'Action']"
+                                <th v-for="header in tableHeaders"
                                     :key="header"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ header }}
@@ -620,7 +620,7 @@
                                     {{ user.email }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                    <Switch v-model="user.download_access"
+                                    <Switch v-model="user.download_access" :disabled="!currentUserStore.user.is_admin"
                                         @update:modelValue="handleDownloadToggle(user, $event)" :class="[
                                             user.download_access == 1 ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700',
                                             'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
@@ -638,14 +638,11 @@
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {{ user.updated_by_name }}
                                 </td>
-                                <td class="px-6 py-4 text-sm">
+                                <td v-if="currentUserStore.user.is_admin" class="px-6 py-4 text-sm flex gap-2">
                                     <!-- Edit -->
                                     <button @click="openUserModal(user)"
-                                        class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
-                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                        class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
+                                        <i class="fa-solid fa-pen-to-square"></i>
                                         Edit
                                     </button>
 
@@ -798,7 +795,6 @@ const isLoading = ref(false);
 const isUserModalOpen = ref(false);
 const titleModal = ref('Add User');
 const titleModalButton = ref('Save User');
-const loading = ref(false);
 const isDeleteModalOpen = ref(false);
 const isDeleting = ref(false);
 const showMobileFilters = ref(false);
@@ -812,7 +808,13 @@ const emailStatusMessage = ref('');
 let usernameCheckTimeout = null;
 let emailCheckTimeout = null;
 const isPasswordValid = ref(false)
-
+const tableHeaders = computed(() => {
+    const base = ['No', 'Profile Photo', 'Full Name', 'Username', 'Email', 'Download Access', 'Updated At', 'Updated By']
+    if (currentUserStore.user.is_admin) {
+        base.push('Action')
+    }
+    return base
+})
 const sortByItems = ref([
     { name: 'Full Name', value: 'fullname' },
     { name: 'Username', value: 'username' },

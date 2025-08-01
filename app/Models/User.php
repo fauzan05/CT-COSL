@@ -30,6 +30,7 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'download_access',
+        'modification_job_tracker_master_access',
         'profile_image',
         'created_at',
         'updated_at',

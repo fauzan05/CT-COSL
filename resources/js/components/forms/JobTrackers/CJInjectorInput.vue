@@ -14,7 +14,7 @@
                     </svg>
                     Reset
                 </button>
-                <button @click="showAddOption = true" type="button"
+                <button v-if="props.hasAccessEditMaster" @click="showAddOption = true" type="button"
                     class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -22,7 +22,7 @@
                     </svg>
                     Add Option
                 </button>
-                <button @click="showManageOptions = !showManageOptions" type="button"
+                <button v-if="props.hasAccessEditMaster" @click="showManageOptions = !showManageOptions" type="button"
                     class="px-3 py-1 text-xs bg-purple-500 hover:bg-purple-600 text-white rounded-md transition-colors flex items-center gap-1">
                     <i class="fa-solid fa-sliders"></i>
                     Manage Options
@@ -112,6 +112,10 @@ const props = defineProps({
     modelValue: {
         type: String,
         default: ''
+    },
+    hasAccessEditMaster: {
+        type: Boolean,
+        default: false
     }
 })
 const baseUrl = import.meta.env.VITE_API_URL

@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -434,6 +435,7 @@ class ToolstringController extends Controller
                     ->orWhere('well', 'like', "%{$search}%");
             });
         }
+        $query->where('created_by', $request->user()->id); // Assuming the user is authenticated
         // Optional sorting
         $sortBy = $request->input('sort_by', 'date');
         $direction = $request->input('direction', 'desc');
@@ -589,6 +591,7 @@ class ToolstringController extends Controller
 
         // Retrieve reporting history details by template ID
         $details = ToolstringReportingHistoryDetailModel::where('toolstring_reporting_history_id', $templateId)
+            ->where('updated_by', Auth::id()) // Assuming the user is authenticated
             ->with(['reportingHistory', 'item', 'dimension'])
             ->orderBy('position', 'asc')
             ->get();

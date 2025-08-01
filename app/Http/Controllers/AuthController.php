@@ -53,6 +53,7 @@ class AuthController extends Controller
             'email' => $user->email,
             'is_admin' => $user->is_admin,
             'download_access' => $user->download_access,
+            'modification_job_tracker_master_access' => $user->modification_job_tracker_master_access,
             'profile_image' => $user->profile_image,
         ]);
     }

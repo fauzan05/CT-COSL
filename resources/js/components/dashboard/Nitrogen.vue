@@ -5,8 +5,12 @@
     <!-- modal create/update document -->
     <DocumentUploadModal v-model:document-form="documentForm" :is-document-modal-open="showUploadDocumentModal"
         :is-creating="isCreate" :loading="isLoading" :loading-documents="isLoadingDocs"
-        @close="showUploadDocumentModal = false" @submit="handleDocumentSave" @delete="handleDocumentDelete"
-        @download="handleDocumentDownload" ref="modalRef">
+        @close="showUploadDocumentModal = false" @submit="handleDocumentSave"
+        @download="handleDocumentDownload" ref="modalRef"
+        :is-admin="currentUserStore.user.is_admin"
+        :download-access="currentUserStore.user.download_access"
+        :current-user="currentUserStore.user"
+        >
     </DocumentUploadModal>
 
     <!-- Delete Confirmation Modal -->
@@ -93,7 +97,7 @@
                     <p class="text-gray-600 dark:text-gray-400 mt-1">Manage your nitrogen document inventory and
                         specifications</p>
                 </div>
-                <button @click="openDocumentModal(null)"
+                <button v-if="currentUserStore.user.is_admin" @click="openDocumentModal(null)"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg flex items-center space-x-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -388,14 +392,11 @@
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {{ document.updated_by_name }}
                                 </td>
-                                <td class="px-6 py-4 text-sm flex">
+                                <td v-if="currentUserStore.user.is_admin" class="px-6 py-4 text-sm flex">
                                     <!-- Edit -->
                                     <button @click="openDocumentModal(document)"
-                                        class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
-                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                        class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
+                                        <i class="fa-solid fa-pen-to-square"></i>
                                         Edit
                                     </button>
 
@@ -408,6 +409,13 @@
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                         <span class="text-sm font-medium">Delete</span>
+                                    </button>
+                                </td>
+                                <td v-else class="px-6 py-4 text-sm flex">
+                                    <button @click="openDocumentModal(document)"
+                                        class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
+                                        <i class="fa-solid fa-eye"></i>
+                                        Show
                                     </button>
                                 </td>
                             </tr>

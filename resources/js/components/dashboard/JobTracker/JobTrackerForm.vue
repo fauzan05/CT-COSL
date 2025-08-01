@@ -36,9 +36,9 @@
                     General Information
                 </h3>
                 <!-- Job Description -->
-                <JobDescriptionInput v-model="jobTracker.job_descriptions" />
-                <CustomerInput v-model="jobTracker.customer" />
-                <COSLBaseInput v-model="jobTracker.cosl_base" />
+                <JobDescriptionInput v-model="jobTracker.job_descriptions" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <CustomerInput v-model="jobTracker.customer" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <COSLBaseInput v-model="jobTracker.cosl_base" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Well Name -->
                     <div>
@@ -106,13 +106,13 @@
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
                     Well Information
                 </h3>
-                <FieldLocationInput v-model="jobTracker.field_location" />
-                <FieldTypeInput v-model="jobTracker.field_type" />
-                <WellStatusInput v-model="jobTracker.well_status" />
-                <WellTypeInput v-model="jobTracker.well_type" />
-                <WellheadXOverInput v-model="jobTracker.wellhead_x_over" />
-                <CasingLinerSizeInput v-model="jobTracker.casing_liner_size" />
-                <CompletionSizeInput v-model="jobTracker.completion_size" />
+                <FieldLocationInput v-model="jobTracker.field_location" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <FieldTypeInput v-model="jobTracker.field_type" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <WellStatusInput v-model="jobTracker.well_status" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <WellTypeInput v-model="jobTracker.well_type" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <WellheadXOverInput v-model="jobTracker.wellhead_x_over" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <CasingLinerSizeInput v-model="jobTracker.casing_liner_size" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <CompletionSizeInput v-model="jobTracker.completion_size" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     <!-- Max Deviation -->
                     <div>
@@ -182,23 +182,23 @@
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
                     Equipment and Tools
                 </h3>
-                <NozzleTypeInput v-model="jobTracker.nozzle_type" />
-                <MaxBHAODInput v-model="jobTracker.max_bha_od" />
+                <NozzleTypeInput v-model="jobTracker.nozzle_type" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <MaxBHAODInput v-model="jobTracker.max_bha_od" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
                 <MaxDepthInput class="mb-5" v-model="jobTracker.max_depths" />
-                <ControlCabinInput v-model="jobTracker.control_cabin" />
-                <PowerPackInput v-model="jobTracker.power_pack" />
-                <PowerReelInput v-model="jobTracker.power_reel" />
-                <CJInjectorInput v-model="jobTracker.cj_injector" />
-                <BOPInput v-model="jobTracker.bop" />
-                <CTSizeInput v-model="jobTracker.ct_size" />
-                <CTGradeInput v-model="jobTracker.ct_grade" />
-                <WTInput v-model="jobTracker.wt" />
-                <CTStringInput v-model="jobTracker.ct_string" />
-                <N2ConverterInput v-model="jobTracker.n2_converter" />
-                <N2TankInput v-model="jobTracker.n2_tanks" />
-                <ContainerInput v-model="jobTracker.containers" />
-                <InjectorGoosneckInput v-model="jobTracker.injector_goosnecks" />
-                <MiscellaneousToolInput v-model="jobTracker.miscellaneous_tools" />
+                <ControlCabinInput v-model="jobTracker.control_cabin" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <PowerPackInput v-model="jobTracker.power_pack" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <PowerReelInput v-model="jobTracker.power_reel" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <CJInjectorInput v-model="jobTracker.cj_injector" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <BOPInput v-model="jobTracker.bop" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <CTSizeInput v-model="jobTracker.ct_size" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <CTGradeInput v-model="jobTracker.ct_grade" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <WTInput v-model="jobTracker.wt" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <CTStringInput v-model="jobTracker.ct_string" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <N2ConverterInput v-model="jobTracker.n2_converter" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <N2TankInput v-model="jobTracker.n2_tanks" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <ContainerInput v-model="jobTracker.containers" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <InjectorGoosneckInput v-model="jobTracker.injector_goosnecks" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <MiscellaneousToolInput v-model="jobTracker.miscellaneous_tools" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
             </div>
 
             <!-- Personnel Section -->
@@ -207,10 +207,10 @@
                     class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
                     Personnel
                 </h3>
-                <CTSupervisorInput v-model="jobTracker.ct_supervisor" />
-                <CTPersonnelInput class="mb-5" v-model="jobTracker.ct_personnels" />
-                <NitrogenSupervisorInput v-model="jobTracker.nitrogen_supervisor" />
-                <NitrogenPersonnelInput class="mb-5" v-model="jobTracker.nitrogen_personnels" />
+                <CTSupervisorInput v-model="jobTracker.ct_supervisor" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <CTPersonnelInput class="mb-5" v-model="jobTracker.ct_personnels" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <NitrogenSupervisorInput v-model="jobTracker.nitrogen_supervisor" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
+                <NitrogenPersonnelInput class="mb-5" v-model="jobTracker.nitrogen_personnels" :has-access-edit-master="currentUserStore.user.modification_job_tracker_master_access" />
                 <!-- Pump Supervisor -->
                 <div class="mb-5">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -605,12 +605,15 @@ import NitrogenPersonnelInput from "../../forms/JobTrackers/NitrogenPersonnelInp
 import PumpPersonnelInput from "../../forms/JobTrackers/PumpPersonnelInput.vue";
 import AcidTypeInput from "../../forms/JobTrackers/AcidTypeInput.vue";
 import AcidVolumeInput from "../../forms/JobTrackers/AcidVolumeInput.vue";
+import { useCurrentUserStore } from '@/stores/CurrentUser';
 
 const route = useRoute();
 // Form state
 const isSubmitting = ref(false);
 const isEdit = computed(() => !!route.params.id);
 const baseUrl = import.meta.env.VITE_API_URL
+const currentUserStore = useCurrentUserStore();
+
 // toast
 const toast = useToast();
 
@@ -848,13 +851,17 @@ const loadJobTracker = async (id) => {
 };
 
 watch(
-  () => route.params.id,
-  async (newId) => {
-    if (isEdit.value && newId) {
-      await loadJobTracker(newId);
-    }
-  },
-  { immediate: true } // agar langsung jalan saat pertama kali mount juga
+    () => route.params.id,
+    async (newId) => {
+        if (isEdit.value && newId) {
+            await loadJobTracker(newId);
+        }
+
+        if (!currentUserStore.user) {
+            await currentUserStore.fetchUser();
+        }
+    },
+    { immediate: true } // agar langsung jalan saat pertama kali mount juga
 );
 
 </script>
