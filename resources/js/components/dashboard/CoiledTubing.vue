@@ -89,8 +89,8 @@
         <div class="mb-8 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Nitrogen Document Management</h1>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1">Manage your nitrogen document inventory and
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Coiled Tubing Document Management</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1">Manage your coiled tubing document inventory and
                         specifications</p>
                 </div>
                 <button @click="openDocumentModal(null)"
@@ -618,7 +618,7 @@ const confirmDeleteModal = (document) => {
 async function fetchDocuments(page = 1) {
     try {
         isLoading.value = true;
-        const response = await axios.get(`${baseUrl}/api/documents?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}&menu=nitrogen`, {
+        const response = await axios.get(`${baseUrl}/api/documents?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}&menu=coiled_tubing`, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -651,7 +651,7 @@ const handleDocumentSave = async () => {
         const formData = new FormData();
         formData.append('name', documentForm.value.name);
         formData.append('description', documentForm.value.description);
-        formData.append('menu', 'nitrogen');
+        formData.append('menu', 'coiled_tubing');
         documentForm.value.documents.forEach(file => {
             if (file.is_current) {
                 formData.append('documents[]', JSON.stringify(file));

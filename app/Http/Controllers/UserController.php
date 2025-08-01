@@ -37,9 +37,9 @@ class UserController extends Controller
                 'email' => $user->email,
                 'download_access' => $user->download_access,
                 'profile_image' => $user->getProfileImageUrl(),
-                'created_at' => $user->created_at->toDateTimeString(),
+                'created_at' => $user->created_at,
                 'created_by_name' => $user->createdBy ? $user->createdBy->fullname : null,
-                'updated_at' => $user->updated_at->toDateTimeString(),
+                'updated_at' => $user->updated_at,
                 'updated_by_name' => $user->updatedBy ? $user->updatedBy->fullname : null,
             ];
         });
@@ -223,5 +223,29 @@ class UserController extends Controller
         });
 
         return $response;
+    }
+
+    public function deleteUser(Request $request)
+    {
+        // Find the user by ID
+        $ids = $request->input('ids', []);
+        if (empty($ids)) {
+            return response()->json(['message' => 'No user IDs provided'], 400);
+        }
+        $users = User::whereIn('id', $ids)->get();
+        if ($users->isEmpty()) {
+            return response()->json(['message' => 'No users found for the provided IDs'], 404);
+        }
+        foreach ($users as $user) {
+            // Check if the authenticated user is allowed to delete this user
+            if (!$request->user()->is_admin && $user->id !== $request->user()->id) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            // Delete the user
+            $user->delete();
+        }
+
+        return response()->json(['message' => 'User deleted successfully']);
     }
 }

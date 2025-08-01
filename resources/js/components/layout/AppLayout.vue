@@ -416,9 +416,9 @@ const sidebarItems = computed(() => [
     },
     { name: 'Job Tracker', path: '/job-tracker', icon: 'fa-chart-line' },
     { name: 'Nitrogen', path: '/nitrogen', icon: 'fa-flask' },
-    // { name: 'Coiled Tubing', path: '/coiled-tubing', icon: 'fa-circle' },
+    { name: 'Coiled Tubing', path: '/coiled-tubing', icon: 'fa-circle' },
     { name: 'Reporting', path: '/reporting', icon: 'fa-file-lines' },
-    // { name: 'Users', path: '/users', icon: 'fa-user' },
+    { name: 'Users', path: '/users', icon: 'fa-user' },
     // { name: 'Settings', path: '/setting', icon: 'fa-gear' },
 ]);
 

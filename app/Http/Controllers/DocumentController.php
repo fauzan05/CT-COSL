@@ -28,6 +28,10 @@ class DocumentController extends Controller
 
         $sortBy = $request->input('sort_by', 'created_at');
         $sortDirection = $request->input('sort_direction', 'desc');
+        $menu = $request->input('menu', null);
+        if ($menu) {
+            $query->where('menu', $menu);
+        }
         $documents = $query->orderBy($sortBy, $sortDirection)
             ->paginate($perPage);
 
