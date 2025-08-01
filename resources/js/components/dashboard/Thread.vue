@@ -35,7 +35,7 @@
 
                             <form @submit.prevent="saveThread" class="space-y-6">
                                 <!-- Input Section -->
-                                <div
+                                <div v-if="currentUserStore.user.is_admin"
                                     class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
@@ -103,7 +103,7 @@
                                                     <th scope="col"
                                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                                         Updated By</th>
-                                                    <th scope="col"
+                                                    <th v-if="currentUserStore.user.is_admin" scope="col"
                                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                                         Action</th>
                                                 </tr>
@@ -136,7 +136,7 @@
                                                             class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 animate-pulse">
                                                         </div>
                                                     </td>
-                                                    <td class="px-6 py-4">
+                                                    <td class="px-6 py-4" v-if="currentUserStore.user.is_admin">
                                                         <div
                                                             class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20 animate-pulse">
                                                         </div>
@@ -180,7 +180,7 @@
                                                         threadSize.updated_by_name }}</td>
 
                                                     <!-- Action -->
-                                                    <td class="px-6 py-4 text-sm">
+                                                    <td v-if="currentUserStore.user.is_admin" class="px-6 py-4 text-sm">
                                                         <div class="flex items-center space-x-2">
                                                             <template v-if="editingRowIndex === index">
                                                                 <!-- Save Button -->
@@ -230,7 +230,7 @@
                                 </div>
 
                                 <!-- Footer Actions -->
-                                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <div v-if="currentUserStore.user.is_admin"  class="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <button type="button"
                                         class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                                         @click="closeModal">
@@ -341,7 +341,7 @@
                     <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Thread Management</h1>
                     <p class="text-gray-600 dark:text-gray-400 mt-1">Manage your thread inventory and specifications</p>
                 </div>
-                <button @click="openThreadModal(null)"
+                <button v-if="currentUserStore.user.is_admin" @click="openThreadModal(null)"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg flex items-center space-x-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -633,19 +633,17 @@
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {{ thread.updated_by_name }}
                                 </td>
-                                <td class="px-6 py-4 text-sm">
+                                <td class="px-6 py-4 text-sm flex items-center content-center">
                                     <!-- Edit -->
                                     <button @click="openThreadModal(thread)"
-                                        class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
-                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                        Edit
+                                        class="inline-flex items-center px-3 py-1.5 gap-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
+                                        <i v-if="currentUserStore.user.is_admin" class="fa-solid fa-pen-to-square"></i>
+                                        <i v-else class="fa-solid fa-eye"></i>
+                                        {{ currentUserStore.user.is_admin ? 'Edit' : 'Show' }}
                                     </button>
 
                                     <!-- Delete -->
-                                    <button @click="confirmDeleteModal(thread)"
+                                    <button v-if="currentUserStore.user.is_admin"  @click="confirmDeleteModal(thread)"
                                         class="inline-flex items-center ms-2 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
                                         <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
@@ -844,7 +842,7 @@ function resetForm() {
 const openThreadModal = async (thread) => {
     if (thread) {
         isThreadModalOpen.value = true;
-        titleModal.value = 'Edit Thread';
+        titleModal.value = currentUserStore.user.is_admin ? 'Edit Thread ' + thread.type : 'Show Thread ' + thread.type;
         titleModalButton.value = 'Update Thread';
         selectedThread.value = thread;
         threadForm.value.type = thread.type;

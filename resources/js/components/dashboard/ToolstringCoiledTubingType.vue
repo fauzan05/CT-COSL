@@ -40,7 +40,7 @@
                                             <img :src="itemImage" alt="Type"
                                                 class="w-full h-full rounded-lg object-contain" />
                                             <!-- Overlay tombol "Change Image" -->
-                                            <div class="absolute bottom-4 left-1/2 -translate-x-1/2">
+                                            <div v-if="currentUserStore.user.is_admin" class="absolute bottom-4 left-1/2 -translate-x-1/2">
                                                 <label
                                                     class="cursor-pointer inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 text-sm shadow">
                                                     Change Image
@@ -73,7 +73,7 @@
                                         </div>
                                     </div>
                                     <!-- Image Required Note -->
-                                    <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                    <div v-if="currentUserStore.user.is_admin" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                                         <span class="text-red-500">*</span> Image is required
                                     </div>
                                     <!-- Thread Card -->
@@ -91,7 +91,7 @@
                                                         class="w-full border border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                         :displayValue="(item) => item?.type || ''"
                                                         @input="queryThreadType = $event.target.value"
-                                                        placeholder="Search Type..." />
+                                                        :placeholder="currentUserStore.user.is_admin ? 'Search Type...' : 'No Type Selected'" :disabled="!currentUserStore.user.is_admin" />
                                                     <ComboboxOptions v-if="filteredThreadTypes.length > 0"
                                                         class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-1ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                                                         <ComboboxOption v-for="(type, index) in filteredThreadTypes"
@@ -115,7 +115,9 @@
                                                         class="w-full border border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                         :displayValue="(item) => item ? `${item.top_connection} - ${item.bottom_connection}` : ''"
                                                         @input="queryThreadSize = $event.target.value"
-                                                        placeholder="Search Type Size..." />
+                                                        :placeholder="currentUserStore.user.is_admin ? 'Search Type Size...' : 'No Size Selected'" 
+                                                        :disabled="!currentUserStore.user.is_admin"
+                                                        />
                                                     <ComboboxOptions v-if="filteredThreadSizes.length > 0"
                                                         class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                                                         <ComboboxOption v-for="(size, index) in filteredThreadSizes"
@@ -137,28 +139,32 @@
                                         <div class="mb-4">
                                             <label for="name"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Name <span class="text-red-500">*</span>
+                                                Name <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
                                             </label>
                                             <input type="text" id="name" v-model="itemForm.name"
                                                 class="w-full px-3 dark:text-white py-2 border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                required>
+                                                required
+                                                :disabled="!currentUserStore.user.is_admin"
+                                                >
                                         </div>
                                         <!-- Description -->
                                         <div class="mb-4">
                                             <label for="description"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Description <span class="text-red-500">*</span>
+                                                Description <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
                                             </label>
                                             <textarea id="description" v-model="itemForm.description" rows="4"
                                                 class="w-full px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                required></textarea>
+                                                required
+                                                :disabled="!currentUserStore.user.is_admin"
+                                                ></textarea>
                                         </div>
                                         <!-- Dynamic Dimensions Sets with Add/Remove functionality -->
                                         <div class="mb-6">
                                             <div class="flex items-center justify-between mb-4">
                                                 <h3 class="text-sm font-medium text-gray-700 dark:text-white">Dimensions
                                                 </h3>
-                                                <button @click="addDimensionSet" type="button"
+                                                <button v-if="currentUserStore.user.is_admin" @click="addDimensionSet" type="button"
                                                     class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
                                                     <PlusIcon class="h-4 w-4 mr-1" />
                                                     Add Dimension Set
@@ -175,7 +181,7 @@
                                                         <h4 class="text-sm font-semibold text-gray-700 dark:text-white">
                                                             Dimension Set {{ setIndex + 1 }}
                                                         </h4>
-                                                        <button v-if="itemForm.dimensionSets.length > 1"
+                                                        <button v-if="itemForm.dimensionSets.length > 1 && currentUserStore.user.is_admin"
                                                             @click="removeDimensionSet(setIndex)" type="button"
                                                             class="text-gray-400 hover:text-red-500 transition-colors duration-200"
                                                             :title="'Remove dimension set'">
@@ -187,21 +193,23 @@
                                                     <div class="mb-4">
                                                         <label :for="`outer_diameter_${setIndex}`"
                                                             class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                            Outer Diameter <span class="text-red-500">*</span>
+                                                            Outer Diameter <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
                                                         </label>
                                                         <div class="flex space-x-2">
                                                             <input :id="`outer_diameter_${setIndex}`" type="text"
                                                                 :value="dimensionSet.outer_diameter.value"
                                                                 class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                                 @input="handleDecimalInput($event, setIndex, 'outer_diameter')"
-                                                                placeholder="Enter outer diameter" required>
+                                                                :placeholder="currentUserStore.user.is_admin ? 'Enter outer diameter' : 'No outer diameter'" 
+                                                                :disabled="!currentUserStore.user.is_admin"
+                                                                required>
                                                             <Listbox v-model="dimensionSet.outer_diameter.unit" as="div"
                                                                 class="relative">
-                                                                <ListboxButton
+                                                                <ListboxButton :disabled="!currentUserStore.user.is_admin"
                                                                     class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                                                     <span class="block truncate dark:text-white">{{
                                                                         dimensionSet.outer_diameter.unit }}</span>
-                                                                    <span
+                                                                    <span v-if="currentUserStore.user.is_admin"
                                                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
                                                                             aria-hidden="true" />
@@ -242,21 +250,25 @@
                                                     <div class="mb-4">
                                                         <label :for="`inner_diameter_${setIndex}`"
                                                             class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                            Inner Diameter <span class="text-red-500">*</span>
+                                                            Inner Diameter <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
                                                         </label>
                                                         <div class="flex space-x-2">
                                                             <input :id="`inner_diameter_${setIndex}`" type="text"
                                                                 :value="dimensionSet.inner_diameter.value"
                                                                 class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                                 @input="handleDecimalInput($event, setIndex, 'inner_diameter')"
-                                                                placeholder="Enter inner diameter" required>
+                                                                :placeholder="currentUserStore.user.is_admin ? 'Enter inner diameter' : 'No inner diameter'" 
+                                                                :disabled="!currentUserStore.user.is_admin"
+                                                                required>
                                                             <Listbox v-model="dimensionSet.inner_diameter.unit" as="div"
-                                                                class="relative">
+                                                                class="relative"
+                                                                :disabled="!currentUserStore.user.is_admin"
+                                                                >
                                                                 <ListboxButton
                                                                     class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                                                     <span class="block truncate dark:text-white">{{
                                                                         dimensionSet.inner_diameter.unit }}</span>
-                                                                    <span
+                                                                    <span v-if="currentUserStore.user.is_admin"
                                                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
                                                                             aria-hidden="true" />
@@ -304,14 +316,16 @@
                                                                 :value="dimensionSet.length.value"
                                                                 class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                                 @input="handleDecimalInput($event, setIndex, 'length')"
-                                                                placeholder="Enter length">
+                                                                :placeholder="currentUserStore.user.is_admin ? 'Enter length' : 'No length'"
+                                                                :disabled="currentUserStore.user.is_admin ? '' : 'disabled'"
+                                                                >
                                                             <Listbox v-model="dimensionSet.length.unit" as="div"
                                                                 class="relative">
-                                                                <ListboxButton
+                                                                <ListboxButton :disabled="!currentUserStore.user.is_admin"
                                                                     class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                                                     <span class="block truncate dark:text-white">{{
                                                                         dimensionSet.length.unit }}</span>
-                                                                    <span
+                                                                    <span v-if="currentUserStore.user.is_admin"
                                                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                         <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
                                                                             aria-hidden="true" />
@@ -360,7 +374,7 @@
                                     </div>
 
                                     <!-- Action Buttons -->
-                                    <div class="mt-6 flex justify-center space-x-3">
+                                    <div v-if="currentUserStore.user.is_admin" class="mt-6 flex justify-center space-x-3">
                                         <button type="button"
                                             class="inline-flex justify-center cursor-pointer rounded-md border dark:text-white/75 border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
                                             @click="closeModal">
@@ -568,7 +582,7 @@
                     <p class="text-gray-600 dark:text-gray-400">Manage your items and organize your inventory</p>
                 </template>
             </div>
-            <button @click="openModal(null)"
+            <button v-if="currentUserStore.user.is_admin" @click="openModal(null)"
                 class="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -1135,15 +1149,11 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="flex items-center space-x-2">
+                        <div v-if="currentUserStore.user.is_admin" class="flex items-center space-x-2">
                             <button @click="openModal(item)"
                                 class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800">
                                 <span class="flex items-center justify-center space-x-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                        </path>
-                                    </svg>
+                                    <i class="fa-solid fa-pen-to-square"></i>
                                     <span>Edit</span>
                                 </span>
                             </button>
@@ -1164,6 +1174,16 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                 </svg>
+                            </button>
+                        </div>
+                        <div v-else class="flex items-center space-x-2">
+                            <!-- button show -->
+                            <button @click="openModal(item)"
+                                class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800">
+                                <span class="flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                    <span>Show</span>
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -1224,10 +1244,12 @@ import {
 
 import { ChevronUpDownIcon, CheckIcon, PlusIcon, XMarkIcon } from '@heroicons/vue/20/solid';
 import Pagination from '@/components/Pagination.vue';
+import { useCurrentUserStore } from '@/stores/CurrentUser';
 
 // ========== INITIAL SETUP ==========
 const toast = useToast();
 const route = useRoute();
+const currentUserStore = useCurrentUserStore();
 const baseUrl = import.meta.env.VITE_API_URL;
 
 // ========== STATE ==========
@@ -1331,7 +1353,7 @@ function openModal(selectedItem = null) {
         itemForm.value.image = selectedItem.image || null;
         itemImage.value = baseUrl + selectedItem.image_url || null;
         console.log(itemImage.value)
-        titleModal.value = 'Edit Item';
+        titleModal.value = currentUserStore.user.is_admin ? 'Edit Item ' + selectedItem.name : 'Show Item ' + selectedItem.name;
         titleModalButton.value = 'Update Item';
         isCreateNewItem.value = false;
         selectedThreadType.value = selectedItem.thread || null;
@@ -1700,7 +1722,10 @@ watch(
 );
 
 // ========== LIFECYCLE ==========
-onMounted(() => {
+onMounted(async () => {
+    if (!currentUserStore.user) {
+        await currentUserStore.fetchUser();
+    }
 });
 
 onUnmounted(() => {
