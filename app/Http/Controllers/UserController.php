@@ -36,6 +36,7 @@ class UserController extends Controller
                 'username' => $user->username,
                 'email' => $user->email,
                 'download_access' => $user->download_access,
+                'modification_job_tracker_master_access' => $user->modification_job_tracker_master_access,
                 'profile_image' => $user->getProfileImageUrl(),
                 'created_at' => $user->created_at,
                 'created_by_name' => $user->createdBy ? $user->createdBy->fullname : null,
@@ -98,6 +99,7 @@ class UserController extends Controller
                 'password' => 'required|string|min:8',
                 'fullname' => 'required|string|max:255',
                 'download_access' => 'boolean',
+                'modification_job_tracker_master_access' => 'boolean',
             ]);
 
             // Create a new user
@@ -108,6 +110,7 @@ class UserController extends Controller
             $user->fullname = $validated['fullname'];
             $user->is_admin = false;
             $user->download_access = $validated['download_access'] ?? false;
+            $user->modification_job_tracker_master_access = $validated['modification_job_tracker_master_access'] ?? false;
             $user->profile_image = null;
             $user->created_at = now();
             $user->created_by = $request->user()->id; // Assuming the user is authenticated
@@ -162,6 +165,33 @@ class UserController extends Controller
         return response()->json(['message' => 'Download access updated successfully']);
     }
 
+    public function updateModificationJobTrackerMasterPermission(Request $request, $id)
+    {
+        // Find the user by ID
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Check if the authenticated user is allowed to update this user's modification job tracker master access
+        if (!$request->user()->is_admin) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Validate the request
+        $validated = $request->validate([
+            'modification_job_tracker_master_access' => 'required|boolean',
+        ]);
+
+        // Update the user's modification job tracker master access
+        $user->modification_job_tracker_master_access = $validated['modification_job_tracker_master_access'];
+        $user->updated_at = now();
+        $user->updated_by = $request->user()->id; // Assuming the user is authenticated
+        $user->save();
+
+        return response()->json(['message' => 'Modification job tracker master access updated successfully']);
+    }
+
     public function updateUser(Request $request, $id)
     {
         $response = DB::transaction(function () use ($request, $id) {
@@ -178,6 +208,7 @@ class UserController extends Controller
                 'email' => 'required|email|unique:users,email,' . $user->id,
                 'fullname' => 'required|string|max:255',
                 'download_access' => 'boolean',
+                'modification_job_tracker_master_access' => 'boolean',
             ]);
             
             $old_email = $user->email;
@@ -199,6 +230,7 @@ class UserController extends Controller
                 $user->password = bcrypt($request->input('password'));
             }
             $user->download_access = $validated['download_access'] ?? false;
+            $user->modification_job_tracker_master_access = $validated['modification_job_tracker_master_access'] ?? false;
             $user->updated_at = now();
             $user->updated_by = $request->user()->id; // Assuming the user is authenticated
             $user->save();

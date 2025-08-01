@@ -359,8 +359,8 @@
                         </thead>
                         <tbody>
                             <tr v-for="i in 5" :key="i" class="animate-pulse">
-                                <td v-for="(width, index) in ['w-8', 'w-25', 'w-16', 'w-16', 'w-16', 'w-16', 'w-24', 'w-28', 'w-12']" :key="index"
-                                    class="px-6 py-4">
+                                <td v-for="(width, index) in ['w-8', 'w-25', 'w-16', 'w-16', 'w-16', 'w-16', 'w-24', 'w-28', 'w-12']"
+                                    :key="index" class="px-6 py-4">
                                     <div :class="['h-4 bg-gray-200 dark:bg-gray-700 rounded', width]"></div>
                                 </td>
                             </tr>
@@ -401,22 +401,18 @@
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {{ jobTracker.job_days || '-' }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ formatDate(jobTracker.updated_at) }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ jobTracker.updated_by_name }}
                                 </td>
                                 <td class="px-6 py-4 text-sm">
                                     <div class="flex items-center gap-2">
                                         <!-- Edit -->
                                         <button @click="editForm(jobTracker)"
-                                            class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
-                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
+                                            class="inline-flex gap-2 items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
+                                            <i class="fa-solid fa-pen-to-square"></i>
                                             Edit
                                         </button>
 
@@ -433,10 +429,11 @@
 
                                         <!-- Export PDF -->
                                         <button @click="exportPDF(jobTracker)"
-                                            class="inline-flex items-center px-3 py-1.5 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-md hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors duration-150">
+                                            class="inline-flex whitespace-nowrap items-center px-3 py-1.5 bg-rose-100 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300 rounded-md hover:bg-rose-200 dark:hover:bg-rose-900/40 transition-colors duration-150">
                                             <i class="fas fa-file-pdf mr-1.5"></i>
                                             Export PDF
                                         </button>
+
                                     </div>
                                 </td>
                             </tr>

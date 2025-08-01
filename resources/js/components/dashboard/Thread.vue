@@ -174,9 +174,9 @@
                                                         </template>
                                                     </td>
 
-                                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">{{
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">{{
                                                         formatDate(threadSize.updated_at) }}</td>
-                                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">{{
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">{{
                                                         threadSize.updated_by_name }}</td>
 
                                                     <!-- Action -->
@@ -627,10 +627,10 @@
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {{ thread.total_sizes }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ formatDate(thread.updated_at) }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ thread.updated_by_name }}
                                 </td>
                                 <td class="px-6 py-4 text-sm flex items-center content-center">

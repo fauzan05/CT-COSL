@@ -205,6 +205,27 @@
                                                 Access</span>
                                         </label>
                                     </div>
+
+                                    <!-- Modification Job Tracker Master Access -->
+                                    <div class="flex items-center mt-7">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" v-model="userForm.modification_job_tracker_master_access"
+                                                id="download_access" class="sr-only peer">
+                                            <div
+                                                class="relative w-5 h-5 border border-gray-300 rounded transition-all dark:border-gray-600 peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                                <!-- Checkmark icon -->
+                                                <svg class="absolute w-3.5 h-3.5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 stroke-white"
+                                                    :class="userForm.modification_job_tracker_master_access ? 'opacity-100' : 'opacity-0'"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                        d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                            <span
+                                                class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-200">Modification
+                                                Job Tracker Master Access</span>
+                                        </label>
+                                    </div>
                                     <!-- Info to user if created an user, it will be send an authentication via email -->
                                     <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">
                                         <p>
@@ -570,8 +591,7 @@
                     <table class="min-w-full">
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
-                                <th v-for="header in tableHeaders"
-                                    :key="header"
+                                <th v-for="header in tableHeaders" :key="header"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ header }}
                                 </th>
@@ -593,8 +613,7 @@
                     <table class="min-w-full">
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
-                                <th v-for="header in tableHeaders"
-                                    :key="header"
+                                <th v-for="header in tableHeaders" :key="header"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ header }}
                                 </th>
@@ -610,7 +629,7 @@
                                     ? `<img src='${user.profile_photo}' alt='Profile Photo' class='w-10 h-10 rounded-full'>`
                                     : svg_profile_blank">
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ user.fullname }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
@@ -633,9 +652,22 @@
                                     </Switch>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                    <Switch v-model="user.modification_job_tracker_master_access" :disabled="!currentUserStore.user.is_admin"
+                                        @update:modelValue="handleModificationJobTrackerMasterToggle(user, $event)" :class="[
+                                            user.modification_job_tracker_master_access == 1 ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700',
+                                            'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                                        ]">
+                                        <span class="sr-only">Enable modification job tracker master</span>
+                                        <span :class="[
+                                            user.modification_job_tracker_master_access == 1 ? 'translate-x-6' : 'translate-x-1',
+                                            'inline-block h-4 w-4 transform rounded-full bg-white transition-transform'
+                                        ]" />
+                                    </Switch>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ formatDate(user.updated_at) }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ user.updated_by_name }}
                                 </td>
                                 <td v-if="currentUserStore.user.is_admin" class="px-6 py-4 text-sm flex gap-2">
@@ -789,6 +821,7 @@ const userForm = reactive({
     password: '',
     download_access: false,
     is_update_password: false,
+    modification_job_tracker_master_access: false,
 });
 
 const isLoading = ref(false);
@@ -809,7 +842,7 @@ let usernameCheckTimeout = null;
 let emailCheckTimeout = null;
 const isPasswordValid = ref(false)
 const tableHeaders = computed(() => {
-    const base = ['No', 'Profile Photo', 'Full Name', 'Username', 'Email', 'Download Access', 'Updated At', 'Updated By']
+    const base = ['No', 'Profile Photo', 'Full Name', 'Username', 'Email', 'Download Access', 'Modification Job Tracker Master Access', 'Updated At', 'Updated By']
     if (currentUserStore.user.is_admin) {
         base.push('Action')
     }
@@ -823,7 +856,7 @@ const sortByItems = ref([
     { name: 'Updated By', value: 'updated_by_name' },
 ]);
 const selectedSortByFilter = ref(sortByItems.value[0]);
-const isDesc = ref(false);
+const isDesc = ref(true);
 
 const selectedUser = ref(null);
 const currentUserStore = useCurrentUserStore();
@@ -1235,6 +1268,25 @@ const handleDownloadToggle = async (user, newValue) => {
         // Tampilkan error
         toast.error('Failed to update download permission')
         console.error('Error updating download status:', error)
+    }
+}
+
+const handleModificationJobTrackerMasterToggle = async (user, newValue) => {
+    try {
+        // Disini anda bisa menambahkan API call untuk update status
+        await axios.post(`${baseUrl}/api/users/${user.id}/update-modification-job-tracker-master-permission`, {
+            modification_job_tracker_master_access: newValue
+        })
+
+        // Optional: Tampilkan notifikasi sukses
+        toast.success('Modification Job Tracker Master permission updated successfully')
+    } catch (error) {
+        // Jika gagal, kembalikan nilai ke state sebelumnya
+        user.modification_job_tracker_master_access = !newValue
+
+        // Tampilkan error
+        toast.error('Failed to update Modification Job Tracker Master permission')
+        console.error('Error updating modification job tracker master permission:', error)
     }
 }
 

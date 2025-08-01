@@ -1152,7 +1152,7 @@
                         <div v-if="currentUserStore.user.is_admin" class="flex items-center space-x-2">
                             <button @click="openModal(item)"
                                 class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800">
-                                <span class="flex items-center justify-center space-x-1">
+                                <span class="flex items-center gap-2 justify-center space-x-1">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <span>Edit</span>
                                 </span>
@@ -1180,7 +1180,7 @@
                             <!-- button show -->
                             <button @click="openModal(item)"
                                 class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800">
-                                <span class="flex items-center justify-center space-x-1">
+                                <span class="flex items-center gap-2 justify-center space-x-1">
                                     <i class="fa-solid fa-eye"></i>
                                     <span>Show</span>
                                 </span>

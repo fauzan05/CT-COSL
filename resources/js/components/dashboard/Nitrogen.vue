@@ -386,10 +386,10 @@
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {{ document.document_total }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ formatDate(document.updated_at) }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ document.updated_by_name }}
                                 </td>
                                 <td v-if="currentUserStore.user.is_admin" class="px-6 py-4 text-sm flex">
