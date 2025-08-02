@@ -10,6 +10,7 @@ import JobTracker from "../components/dashboard/JobTracker.vue";
 import JobTrackerForm from "../components/dashboard/JobTracker/JobTrackerForm.vue";
 import Nitrogen from "../components/dashboard/Nitrogen.vue";
 import CoiledTubing from "../components/dashboard/CoiledTubing.vue";
+import Profile from "../components/dashboard/Profile.vue";
 
 const routes = [
     {
@@ -63,6 +64,10 @@ const routes = [
     {
         path: "/coiled-tubing",
         component: CoiledTubing,
+    },
+    {
+        path: "/profile",
+        component: Profile,
     }
 ];
 

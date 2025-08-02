@@ -1352,7 +1352,6 @@ function openModal(selectedItem = null) {
         ];
         itemForm.value.image = selectedItem.image || null;
         itemImage.value = baseUrl + selectedItem.image_url || null;
-        console.log(itemImage.value)
         titleModal.value = currentUserStore.user.is_admin ? 'Edit Item ' + selectedItem.name : 'Show Item ' + selectedItem.name;
         titleModalButton.value = 'Update Item';
         isCreateNewItem.value = false;

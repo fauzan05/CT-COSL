@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -279,5 +280,31 @@ class UserController extends Controller
         }
 
         return response()->json(['message' => 'User deleted successfully']);
+    }
+
+    public function updateCurrentUser(Request $request)
+    {
+        $response = DB::transaction(function () use ($request) {
+            // Validate the request
+            $validated = $request->validate([
+                'fullname' => 'required|max:255,',
+                'profile_image' => 'sometimes|image|max:2048', // Optional profile image
+            ]);
+
+            $user = $request->user(); // Get the authenticated user
+            $user->fullname = $validated['fullname'];
+            if ($request->hasFile('profile_image')) {
+                $file = $request->file('profile_image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/assets/profile_images/', $filename);
+                $user->profile_image = $filename;
+            }
+
+            $user->updated_at = now();
+            $user->updated_by = $request->user()->id; // Assuming the user is authenticated
+            $user->save();           
+        });
+
+        return $response;
     }
 }

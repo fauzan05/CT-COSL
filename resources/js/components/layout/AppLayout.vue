@@ -57,8 +57,8 @@
                     <!-- Navigation -->
                     <nav class="space-y-2 flex-1 overflow-y-auto pb-20">
                         <div v-for="(item, index) in sidebarItems" :key="index">
-                            <RouterLink v-if="item.name !== 'Toolstring Coiled Tubing' && item.name !== 'Wellstack'" @click="isMobileSidebarOpen = false"
-                                :to="item.path" class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
+                            <RouterLink v-if="item.name !== 'Toolstring Coiled Tubing' && item.name !== 'Wellstack'"
+                                @click="isMobileSidebarOpen = false" :to="item.path" class="flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-medium group
     hover:bg-blue-500 hover:text-white
     dark:hover:bg-white/10 dark:hover:text-blue-500
     transition-colors duration-200" :class="isActive(item.path)
@@ -215,14 +215,14 @@
                                         read</button>
                                 </div>
                                 <div class="max-h-96 overflow-y-auto">
-                                    <ul v-if="notifications.length > 0" class="divide-y divide-gray-100 dark:divide-gray-700">
+                                    <ul v-if="notifications.length > 0"
+                                        class="divide-y divide-gray-100 dark:divide-gray-700">
                                         <li v-for="notification in notifications" :key="notification.id"
                                             class="px-4 py-3 flex items-start space-x-3">
                                             <div class="flex-shrink-0">
                                                 <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
                                             </div>
@@ -230,7 +230,7 @@
                                                 <p class="text-sm text-gray-800 dark:text-white">{{ notification.message }}
                                                 </p>
                                                 <p class="text-xs text-gray-500 dark:text-gray-400">{{ notification.time
-                                                    }}</p>
+                                                }}</p>
                                             </div>
                                         </li>
                                     </ul>
@@ -252,7 +252,10 @@
                             @mouseenter="openProfileDropdown" @mouseleave="isProfileDropdownOpen = false">
                             <button @click.stop="toggleProfileDropdown" class="relative">
                                 <div class="relative">
-                                    <svg width="100" height="100"
+                                    <img v-if="currentUserStore?.user?.profile_image"
+                                        :src="baseUrl + currentUserStore?.user?.profile_image"
+                                        class="w-8 h-8 rounded-full ring-2 ring-gray-200 group-hover:ring-orange-300 transition-all duration-200 object-cover">
+                                    <svg v-else width="100" height="100"
                                         class="w-8 h-8 rounded-full ring-2 ring-gray-200 group-hover:ring-orange-300 transition-all duration-200"
                                         viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <circle cx="50" cy="50" r="48" fill="#F3F4F6" stroke="#E5E7EB" stroke-width="4" />
@@ -270,7 +273,10 @@
                                 class="absolute -right-4 top-full w-50 md:w-50 bg-white dark:bg-slate-800 dark:border-gray-700 rounded-2xl shadow-xl border border-gray-100 z-50 transition-all duration-200">
                                 <div class="px-4 py-4 border-b border-gray-100">
                                     <div class="flex items-center space-x-3">
-                                        <svg width="100" height="100" class="h-8 w-8 rounded-full object-cover"
+                                        <img v-if="currentUserStore?.user?.profile_image"
+                                            :src="baseUrl + currentUserStore?.user?.profile_image"
+                                            class="h-8 w-8 rounded-full object-cover">
+                                        <svg v-else width="100" height="100" class="h-8 w-8 rounded-full object-cover"
                                             viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <circle cx="50" cy="50" r="48" fill="#F3F4F6" stroke="#E5E7EB"
                                                 stroke-width="4" />
@@ -288,20 +294,24 @@
                                     </div>
                                 </div>
                                 <div class="py-2">
-                                    <a href="#"
-                                        class="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white hover:bg-gray-50 hover:text-blue-600 transition-colors"><svg
-                                            class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <RouterLink to="/profile" @click="isProfileDropdownOpen = false"
+                                        class="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white hover:bg-gray-50 hover:text-blue-600 transition-colors">
+                                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>My Profile</a>
-                                    <a href="#"
+                                        </svg>
+                                        My Profile
+                                    </RouterLink>
+                                    <!-- <a href="#" v-if="currentUserStore?.user?.is_admin"
                                         class="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white hover:bg-gray-50 hover:text-blue-600 transition-colors"><svg
                                             class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>Settings</a>
+                                        </svg>
+                                        Settings
+                                    </a> -->
                                 </div>
                                 <div class="border-t border-gray-100"></div>
                                 <div class="py-2">

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -54,7 +55,7 @@ class AuthController extends Controller
             'is_admin' => $user->is_admin,
             'download_access' => $user->download_access,
             'modification_job_tracker_master_access' => $user->modification_job_tracker_master_access,
-            'profile_image' => $user->profile_image,
+            'profile_image' => $user->profile_image ? Storage::url('assets/profile_images/' . $user->profile_image) : null,
         ]);
     }
 
