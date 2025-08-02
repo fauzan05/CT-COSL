@@ -296,7 +296,7 @@ class UserController extends Controller
             if ($request->hasFile('profile_image')) {
                 $file = $request->file('profile_image');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $file->storeAs('public/assets/profile_images/', $filename);
+                $file->storeAs('public/assets/images/profile_images/', $filename);
                 $user->profile_image = $filename;
             }
 
@@ -306,5 +306,29 @@ class UserController extends Controller
         });
 
         return $response;
+    }
+
+    public function changeCurrentUserPassword(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = $request->user(); // Get the authenticated user
+
+        // Check if the current password is correct
+        if (!password_verify($validated['current_password'], $user->password)) {
+            return response()->json(['message' => 'Current password is incorrect'], 422);
+        }
+
+        // Update the user's password
+        $user->password = bcrypt($validated['new_password']);
+        $user->updated_at = now();
+        $user->updated_by = $request->user()->id; // Assuming the user is authenticated
+        $user->save();
+
+        return response()->json(['message' => 'Password changed successfully']);
     }
 }

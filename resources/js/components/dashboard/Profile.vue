@@ -27,7 +27,8 @@
                             </svg>
                         </div>
                     </div>
-                    <input ref="fileInputRef" type="file" accept="image/*" @change="handleProfileImageUpload" class="hidden">
+                    <input ref="fileInputRef" type="file" accept="image/*" @change="handleProfileImageUpload"
+                        class="hidden">
                     <div class="text-center md:text-left">
                         <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-2">{{ profileForm.fullname }}</h3>
                         <p class="text-gray-600 dark:text-gray-300 mb-4">{{ profileForm.email }}</p>
@@ -141,6 +142,22 @@
                                 </svg>
                             </button>
                         </div>
+                        <!-- Password Requirements Checklist -->
+                        <div class="mt-3 space-y-2">
+                            <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Password Requirements:
+                            </div>
+                            <div v-for="(check, index) in passwordChecks" :key="index"
+                                class="flex items-center space-x-2 text-sm"
+                                :class="check.passed ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-600'">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path v-if="check.passed" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="M5 13l4 4L19 7" />
+                                    <circle v-else cx="12" cy="12" r="10" stroke-width="2" />
+                                </svg>
+                                <span>{{ check.message }}</span>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -167,15 +184,19 @@
                                 </svg>
                             </button>
                         </div>
-                    </div>
-
-                    <!-- Password Validation Errors -->
-                    <div v-if="passwordValidation.length > 0" class="text-red-500 text-sm space-y-1">
-                        <div v-for="error in passwordValidation" :key="error">• {{ error }}</div>
+                        <!-- password not match error message -->
+                        <div v-if="passwordForm.newPassword && passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword"
+                            class="text-red-500 text-sm mt-1">
+                            Password confirmation does not match
+                            <svg class="inline-block w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="submit" :disabled="isLoading || passwordValidation.length > 0"
+                        <button type="submit" :disabled="isLoading || (passwordForm.newPassword !== passwordForm.confirmPassword || !isPasswordValid || passwordForm.currentPassword === '')"
                             class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2">
                             <svg v-if="isLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -302,34 +323,61 @@ const updateProfile = async () => {
     }
 }
 
+const isPasswordValid = computed(() => {
+    return passwordChecks.value.every(check => check.passed)
+})
+
 const updatePassword = async () => {
-    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
-        toast.error('All fields are required')
-        return
-    }
+    if (isPasswordValid.value && passwordForm.newPassword === passwordForm.confirmPassword) {
+        isLoading.value = true
+        try {
+            await axios.put(`${baseUrl}/api/users-profile-change-password`, {
+                current_password: passwordForm.currentPassword,
+                new_password: passwordForm.newPassword,
+                new_password_confirmation: passwordForm.confirmPassword
+            });
 
-    if (passwordValidation.value.length > 0) {
-        toast.error('Please fix the password validation errors')
-        return
-    }
-
-    isLoading.value = true
-    try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        // Reset form
-        passwordForm.currentPassword = ''
-        passwordForm.newPassword = ''
-        passwordForm.confirmPassword = ''
-
-        toast.success('Password updated successfully')
-    } catch (error) {
-        toast.error('Failed to update password')
-    } finally {
-        isLoading.value = false
+            toast.success('Password updated successfully')
+            // Reset form fields
+            passwordForm.currentPassword = '';
+            passwordForm.newPassword = '';
+            passwordForm.confirmPassword = '';
+        } catch (error) {
+            if (error.response && error.response.status === 422) {
+                toast.error('Current password is incorrect')
+            } else {
+                toast.error('Failed to update password')
+            }
+        } finally {
+            isLoading.value = false
+        }
+    } else {
+        toast.error('Please fix the errors before submitting')
     }
 }
+
+const passwordChecks = computed(() => [
+    {
+        message: 'Minimum 8 characters',
+        passed: passwordForm.newPassword.length >= 8
+    },
+    {
+        message: 'Contains uppercase letter',
+        passed: /[A-Z]/.test(passwordForm.newPassword)
+    },
+    {
+        message: 'Contains lowercase letter',
+        passed: /[a-z]/.test(passwordForm.newPassword)
+    },
+    {
+        message: 'Contains number',
+        passed: /[0-9]/.test(passwordForm.newPassword)
+    },
+    {
+        message: 'Contains special character',
+        passed: /[!@#$%^&*]/.test(passwordForm.newPassword)
+    }
+])
 
 onMounted(async () => {
     if (!currentUserStore.user) {
@@ -344,9 +392,13 @@ onMounted(async () => {
     profileForm.fullname = profile.fullname;
     profileForm.email = profile.email;
     profileForm.username = profile.username;
-    profileForm.profile_image = baseUrl + profile.profile_image;
+    if (profile.profile_image != '') {
+        profileForm.profile_image = baseUrl + profile.profile_image;
+    }
 });
 
 </script>
   
-<style scoped>/* Custom styles jika diperlukan */</style>
+<style scoped>
+/* Custom styles jika diperlukan */
+</style>

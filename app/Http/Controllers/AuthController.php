@@ -55,7 +55,7 @@ class AuthController extends Controller
             'is_admin' => $user->is_admin,
             'download_access' => $user->download_access,
             'modification_job_tracker_master_access' => $user->modification_job_tracker_master_access,
-            'profile_image' => $user->profile_image ? Storage::url('assets/profile_images/' . $user->profile_image) : null,
+            'profile_image' => $user->profile_image ? Storage::url('assets/images/profile_images/' . $user->profile_image) : '',
         ]);
     }
 

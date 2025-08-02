@@ -50,6 +50,7 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::put('/api/users/{id}', [UserController::class, 'updateUser'])->name('updateUser');
     Route::delete('/api/users', [UserController::class, 'deleteUser'])->name('deleteUser');
     Route::put('/api/users-profile', [UserController::class, 'updateCurrentUser'])->name('updateCurrentUser');
+    Route::put('/api/users-profile-change-password', [UserController::class, 'changeCurrentUserPassword'])->name('changeCurrentUserPassword');
 
     // Toolstring reporting history
     Route::post('/api/toolstring-reporting-histories', [ToolstringController::class, 'storeReportingHistory'])->name('storeReportingHistory');

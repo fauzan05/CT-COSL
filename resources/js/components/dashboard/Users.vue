@@ -625,9 +625,17 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ (pagination.current_page - 1) * perPage + index + 1 }}
                                 </td>
-                                <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white" v-html="user.profile_photo
-                                    ? `<img src='${user.profile_photo}' alt='Profile Photo' class='w-10 h-10 rounded-full'>`
-                                    : svg_profile_blank">
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                                    <img v-if="user.profile_image != ''" :src="user.profile_image"
+                                        class='w-10 h-10 rounded-full object-cover'>
+                                    <svg v-else width="100" height="100" class="h-10 w-10 rounded-full object-cover"
+                                        viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="50" cy="50" r="48" fill="#F3F4F6" stroke="#E5E7EB" stroke-width="4" />
+                                        <circle cx="50" cy="38" r="14" fill="#D1D5DB" />
+                                        <path
+                                            d="M24 78C24 65.2975 35.2975 56 48 56H52C64.7025 56 76 65.2975 76 78V80H24V78Z"
+                                            fill="#D1D5DB" />
+                                    </svg>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ user.fullname }}
@@ -652,7 +660,8 @@
                                     </Switch>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                    <Switch v-model="user.modification_job_tracker_master_access" :disabled="!currentUserStore.user.is_admin"
+                                    <Switch v-model="user.modification_job_tracker_master_access"
+                                        :disabled="!currentUserStore.user.is_admin"
                                         @update:modelValue="handleModificationJobTrackerMasterToggle(user, $event)" :class="[
                                             user.modification_job_tracker_master_access == 1 ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700',
                                             'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
@@ -932,6 +941,12 @@ async function fetchUsers(page = 1) {
         isLoading.value = true;
         const response = await axios.get(`${baseUrl}/api/users?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}`);
         listUsers.value = response.data.data;
+        listUsers.value.map(user => {
+            console.log("profilenya: ", user.profile_image)
+            if (user.profile_image != '') {
+                user.profile_image = baseUrl + user.profile_image;
+            }
+        });
         pagination.value = {
             current_page: response.data.current_page,
             last_page: response.data.last_page,

@@ -74,7 +74,7 @@ class User extends Authenticatable
 
     public function getProfileImageUrl()
     {
-        return $this->profile_image ? Storage::url('assets/images/profile_photos/' . $this->profile_image) : '';
+        return $this->profile_image ? Storage::url('assets/images/profile_images/' . $this->profile_image) : '';
     }
 
     // send email
