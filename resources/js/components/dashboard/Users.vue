@@ -245,7 +245,7 @@
                                     <button type="submit"
                                         class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
                                         :disabled="createUserloading">
-                                        <span v-if="!createUserloading">Create User</span>
+                                        <span v-if="!createUserloading">{{ titleModalButton }}</span>
                                         <span v-else class="flex items-center">
                                             <svg class="animate-spin -ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24">
                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -918,12 +918,14 @@ const openUserModal = async (user) => {
         userForm.id = user.id;
         userForm.fullname = user.fullname;
         userForm.email = user.email;
-        userForm.download_access = user.download_access === 1;
+        userForm.download_access = user.download_access == 1;
+        userForm.modification_job_tracker_master_access = user.modification_job_tracker_master_access == 1;
         userForm.password = ''; // Reset password field
         userForm.is_update_password = false;
     } else {
         isUserModalOpen.value = true;
         titleModal.value = 'Add User';
+        titleModalButton.value = 'Create New User';
         selectedUser.value = null;
         userForm.is_update_password = true
     }
