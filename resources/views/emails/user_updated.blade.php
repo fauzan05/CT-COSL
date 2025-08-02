@@ -1,4 +1,3 @@
-{{-- resources/views/emails/user-updated.blade.php --}}
 <!DOCTYPE html>
 <html>
 

@@ -22,6 +22,8 @@ Route::get('/login', function () {
 })->name('auth')->middleware(RedirectIfAuthenticated::class);
 Route::post('/api/login', [AuthController::class, 'postLogin'])->name('login');
 Route::get('/api/current-user', [AuthController::class, 'currentUser'])->name('currentUser');
+Route::post('/api/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgotPassword');
+Route::post('/api/reset-password', [AuthController::class, 'resetPassword'])->name('resetPassword');
 
 // API routes that need auth
 Route::middleware([AuthMiddleware::class])->group(function () {
@@ -360,6 +362,29 @@ Route::get('/storage/{path}', function ($path) {
 
     return response()->file($fullPath);
 })->where('path', '.*');
+
+Route::get('/password-reset', function () {
+    // validate if token is valid
+    $token = request()->query('token');
+    $email = request()->query('email');
+    if (!$token || !$email) {
+        return view('auth');
+    }
+
+    // create object request
+    $request = new \Illuminate\Http\Request();
+    $request->merge(['token' => $token, 'email' => $email]);
+
+    // Check if the token is valid
+    $isValid = app(AuthController::class)->validatePasswordResetToken($request);
+    if ($isValid) {
+        // if valid, show the password reset form
+        return view('auth');
+    }
+
+    // if not valid, redirect to login page
+    return view('auth');
+})->name('password.reset');
 
 // Catch-all for frontend SPA (protected) - HARUS DI AKHIR
 Route::get('/{any}', function () {

@@ -200,11 +200,11 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 17h5l-1.4-1.4a2 2 0 01-.6-1.42V11a6 6 0 00-4-5.66V5a2 2 0 10-4 0v.34A6 6 0 006 11v3.18c0 .53-.2 1.05-.6 1.42L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
-                                <span class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
+                                <!-- <span class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
                                     <span
                                         class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-                                </span>
+                                </span> -->
                             </button>
                             <!-- Dropdown -->
                             <div v-show="isNotificationDropdownOpen"

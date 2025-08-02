@@ -255,19 +255,6 @@ const isLoading = ref(false)
 // Template refs
 const fileInputRef = ref(null)
 
-// Computed for password validation
-const passwordValidation = computed(() => {
-    const errors = []
-    if (passwordForm.newPassword && passwordForm.newPassword.length < 8) {
-        errors.push('Password must be at least 8 characters')
-    }
-    if (passwordForm.newPassword && passwordForm.confirmPassword &&
-        passwordForm.newPassword !== passwordForm.confirmPassword) {
-        errors.push('Password confirmation does not match')
-    }
-    return errors
-})
-
 const handleProfileImageUpload = (event) => {
     const file = event.target.files[0]
     if (file) {

@@ -98,10 +98,10 @@
                                     </button>
                                 </div>
                                 <div class="flex justify-end mt-2">
-                                    <a href="#"
+                                    <RouterLink to="/forgot-password"
                                         class="text-sm text-white hover:text-white/50 transition-colors duration-300">
                                         Forgot password?
-                                    </a>
+                                    </RouterLink>
                                 </div>
                             </div>
                             <!-- Login Button -->

@@ -250,6 +250,7 @@ class UserController extends Controller
                 );
             } catch (\Throwable $e) {
                 Log::error('Email failed: ' . $e->getMessage());
+                return response()->json(['message' => 'User updated successfully, but email notification failed.'], 200);
             }
 
             return response()->json(['message' => 'User updated successfully']);

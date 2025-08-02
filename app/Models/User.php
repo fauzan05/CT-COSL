@@ -130,4 +130,28 @@ class User extends Authenticatable
             $attachment_paths
         ));
     }
+
+    public function sendResetPasswordNotification(
+        $reset_link,
+        $view = 'emails.reset_password',
+        $subject = 'Reset Password'
+    ) {
+        $logoPath = 'assets/images/company/company-logo.png';
+        $logoBase64 = ImageHelper::getImageAsBase64($logoPath);
+
+        $data = [
+            'fullname' => $this->fullname,
+            'username' => $this->username,
+            'email' => $this->email,
+            'reset_link' => $reset_link,
+            'logoBase64' => $logoBase64,
+        ];
+
+        Mail::to($this->email)->send(new UserMail(
+            $data,
+            $view,
+            $subject,
+            [], // No attachments for reset password
+        ));
+    }
 }

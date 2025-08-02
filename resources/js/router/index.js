@@ -11,6 +11,8 @@ import JobTrackerForm from "../components/dashboard/JobTracker/JobTrackerForm.vu
 import Nitrogen from "../components/dashboard/Nitrogen.vue";
 import CoiledTubing from "../components/dashboard/CoiledTubing.vue";
 import Profile from "../components/dashboard/Profile.vue";
+import ForgotPassword from "../components/auth/ForgotPassword.vue";
+import ResetPassword from "../components/auth/ResetPassword.vue";
 
 const routes = [
     {
@@ -68,6 +70,14 @@ const routes = [
     {
         path: "/profile",
         component: Profile,
+    },
+    {
+        path: "/forgot-password",
+        component: ForgotPassword,
+    },
+    {
+        path: "/password-reset",
+        component: ResetPassword,
     }
 ];
 
