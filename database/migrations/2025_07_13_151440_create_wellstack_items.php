@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wellstack_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('wellstack_type_id')
+            $table->uuid('id')->primary();
+            $table->uuid('wellstack_type_id')
                 ->constrained('wellstack_types')
                 ->onDelete('cascade');
             $table->string('name');
@@ -30,9 +30,9 @@ return new class extends Migration
             $table->string('shear_ram_dist_from_bottom_unit')->default('ft');
             $table->string('image');
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->uuid('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }

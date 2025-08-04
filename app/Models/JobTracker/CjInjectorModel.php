@@ -2,12 +2,13 @@
 
 namespace App\Models\JobTracker;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CJInjectorModel extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasUuids;
     protected $table = 'cj_injectors';
     public $timestamps = false;
     protected $fillable = [

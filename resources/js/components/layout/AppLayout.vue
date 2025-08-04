@@ -335,7 +335,7 @@
                     <div class="mx-auto py-4 px-4 sm:px-6 lg:px-8">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2 text-gray-500 text-sm">
-                                <span>Admin Dashboard Version 0.6.0 <small>(Beta)</small></span>
+                                <span>Admin Dashboard Version 0.9.0 <small>(Beta)</small></span>
                             </div>
                         </div>
                     </div>

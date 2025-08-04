@@ -2,12 +2,13 @@
 
 namespace App\Models\JobTracker;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobTrackerInjectorGoosneckModel extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasUuids;
     protected $table = 'job_tracker_injector_goosnecks';
     public $timestamps = false;
     protected $fillable = [

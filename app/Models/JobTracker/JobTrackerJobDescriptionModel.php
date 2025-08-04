@@ -2,12 +2,13 @@
 
 namespace App\Models\JobTracker;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobTrackerJobDescriptionModel extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasUuids;
     protected $table = 'job_tracker_job_descriptions';
     public $timestamps = false;
     protected $fillable = [

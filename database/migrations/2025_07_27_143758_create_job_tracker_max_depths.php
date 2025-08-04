@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('job_tracker_max_depths', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('job_tracker_id')
+            $table->uuid('id')->primary();
+            $table->uuid('job_tracker_id')
                 ->constrained('job_trackers')
                 ->onDelete('cascade');
             $table->decimal('max_depth', 8, 2);
             $table->string('max_depth_unit', 10); // Default unit is meters
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->uuid('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }

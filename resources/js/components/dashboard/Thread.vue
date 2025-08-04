@@ -837,6 +837,7 @@ function resetForm() {
     listThreadSizes.value = [];
     editingSizeIndex.value = null;
     editingRowIndex.value = null;
+    selectedThread.value = null;
 }
 
 const openThreadModal = async (thread) => {
@@ -848,6 +849,7 @@ const openThreadModal = async (thread) => {
         threadForm.value.type = thread.type;
         fetchThreadSizes(thread.id);
     } else {
+        resetForm();
         isThreadModalOpen.value = true;
         titleModal.value = 'Add Thread';
     }

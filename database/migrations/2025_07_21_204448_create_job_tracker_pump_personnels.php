@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('job_tracker_pump_personnels', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('job_tracker_id')
+            $table->uuid('id')->primary();
+            $table->uuid('job_tracker_id')
                 ->constrained('job_trackers')
                 ->onDelete('cascade');
             $table->string('pump_personnel_name');
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->uuid('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }

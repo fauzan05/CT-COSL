@@ -12,25 +12,26 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wellstack_reporting_history_details', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('wellstack_reporting_history_id')
+            $table->uuid('id')->primary();
+            
+            $table->uuid('wellstack_reporting_history_id')
                 ->constrained('wellstack_reporting_histories')
                 ->onDelete('cascade')
                 ->name('fk_wrhd_history_id'); // Custom constraint name
-            $table->foreignId('wellstack_type_id')
+            $table->uuid('wellstack_type_id')
                 ->constrained('wellstack_types')
                 ->onDelete('cascade')
                 ->name('fk_wrhd_type_id'); // Custom constraint name
-            $table->foreignId('wellstack_item_id')
+            $table->uuid('wellstack_item_id')
                 ->constrained('wellstack_items')
                 ->onDelete('cascade')
                 ->name('fk_wrhd_item_id'); // Custom constraint name
 
             $table->integer('position')->nullable();
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->uuid('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }

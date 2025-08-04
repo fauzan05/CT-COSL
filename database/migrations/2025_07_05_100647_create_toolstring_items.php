@@ -12,23 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('toolstring_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('toolstring_type_id')
+            $table->uuid('id')->primary();
+            $table->uuid('toolstring_type_id')
                 ->constrained('toolstring_types')
-                ->onDelete('cascade');
-            $table->foreignId('thread_id')
+                ->onDelete('cascade'); // Foreign key to toolstring_types table
+            $table->uuid('thread_id')
                 ->nullable()
-                ->constrained('threads');
-            $table->foreignId('thread_size_id')
+                ->constrained('threads'); // Foreign key to threads table
+            $table->uuid('thread_size_id')
                 ->nullable()
-                ->constrained('thread_sizes');
+                ->constrained('thread_sizes'); // Foreign key to thread_sizes table
             $table->string('name');
             $table->text('description');
             $table->string('image');
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->uuid('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }

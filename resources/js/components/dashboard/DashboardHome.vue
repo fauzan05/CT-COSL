@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-3xl font-bold text-white">75%</div>
+                            <div class="text-3xl font-bold text-white">90%</div>
                             <div class="text-orange-200 text-sm">Complete</div>
                         </div>
                     </div>
@@ -41,15 +41,15 @@
                     <div class="mt-4">
                         <div class="flex justify-between text-sm text-orange-100 mb-2">
                             <span>Development Progress</span>
-                            <span>75% Complete</span>
+                            <span>90% Complete</span>
                         </div>
                         <div class="w-full bg-white/20 rounded-full h-3">
                             <div class="bg-gradient-to-r from-yellow-400 to-orange-300 h-3 rounded-full transition-all duration-1000 ease-out" 
-                                 style="width: 40%"></div>
+                                 style="width: 90%"></div>
                         </div>
                         <div class="flex justify-between text-xs text-orange-200 mt-2">
                             <span>Started</span>
-                            <span class="text-yellow-300">Current Phase: Nitrogen Uploaded Document Master</span>
+                            <span class="text-yellow-300">Current Phase: Migration to UUID</span>
                             <span>Target Completion</span>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
             <!-- Welcome Section -->
             <div class="mb-8 bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-xl">
                 <h1 class="text-3xl font-bold text-white mb-2">
-                    Welcome back, {{ currentUserStore?.user?.fullname || 'Developer' }}!
+                    Welcome back to CT COSL!
                 </h1>
                 <p class="text-blue-100 text-lg">Oil & Gas Operations Dashboard - Preview Version</p>
                 <div class="mt-3 inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-500/30 text-blue-100 border border-blue-300/30">
@@ -112,6 +112,14 @@
                             <span class="mr-2 text-green-400">✅</span> 
                             <span>Nitrogen</span>
                         </li>
+                        <li class="flex items-center">
+                            <span class="mr-2 text-green-400">✅</span> 
+                            <span>Coiled Tubing</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2 text-green-400">✅</span> 
+                            <span>Profile Setting</span>
+                        </li>
                     </ul>
                 </div>
 
@@ -126,17 +134,10 @@
                         <h3 class="text-xl font-bold text-orange-100">In Progress</h3>
                     </div>
                     <ul class="space-y-3 text-sm text-orange-200">
+                        <!-- text no progress lists -->
                         <li class="flex items-center">
-                            <span class="mr-2 text-orange-400 animate-pulse">🔄</span> 
-                            <span>Coiled Tubing</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="mr-2 text-orange-400 animate-pulse">🔄</span> 
-                            <span>User Management (delete user)</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="mr-2 text-orange-400 animate-pulse">🔄</span> 
-                            <span>Settings Dashboard & Settings User Profile</span>
+                            <span class="mr-2 text-orange-400">🔄</span> 
+                            <span>Migration to UUID</span>
                         </li>
                     </ul>
                 </div>
@@ -189,7 +190,7 @@
                     <svg class="w-4 h-4 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
                     </svg>
-                    Version 0.6.0 Beta - Last Updated: July 2025
+                    Version 0.9.0 Beta - Last Updated: July 2025
                 </div>
             </div>
         </div>

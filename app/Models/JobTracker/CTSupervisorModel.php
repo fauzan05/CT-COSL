@@ -2,12 +2,13 @@
 
 namespace App\Models\JobTracker;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CTSupervisorModel extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasUuids;
     protected $table = 'ct_supervisors';
     protected $fillable = [
         'ct_supervisor_name',

@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('thread_sizes', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('thread_id')
+            $table->uuid('id')->primary();
+            $table->uuid('thread_id')
                 ->constrained('threads')
-                ->onDelete('cascade');
+                ->onDelete('cascade'); // Foreign key to threads table
             $table->string('top_connection')->nullable();
             $table->string('bottom_connection')->nullable();
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->uuid('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }

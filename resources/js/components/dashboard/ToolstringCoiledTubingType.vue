@@ -74,7 +74,7 @@
                                     </div>
                                     <!-- Image Required Note -->
                                     <div v-if="currentUserStore.user.is_admin" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                        <span class="text-red-500">*</span> Image is required
+                                        <span class="text-red-500">*</span> Image is required ( {{ itemForm.image }} )
                                     </div>
                                     <!-- Thread Card -->
                                     <div
@@ -317,7 +317,7 @@
                                                                 class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                                 @input="handleDecimalInput($event, setIndex, 'length')"
                                                                 :placeholder="currentUserStore.user.is_admin ? 'Enter length' : 'No length'"
-                                                                :disabled="currentUserStore.user.is_admin ? '' : 'disabled'"
+                                                                :disabled="!currentUserStore.user.is_admin"
                                                                 >
                                                             <Listbox v-model="dimensionSet.length.unit" as="div"
                                                                 class="relative">

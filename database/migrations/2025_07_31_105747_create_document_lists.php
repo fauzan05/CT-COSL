@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('document_lists', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('document_id')
+            $table->uuid('id')->primary();
+            $table->uuid('document_id')
                 ->constrained('documents')
                 ->onDelete('cascade');
             $table->text('filename');
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->uuid('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }

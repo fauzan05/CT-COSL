@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {   
         Schema::create('job_trackers', function (Blueprint $table) {
-            $table->id();
-            
+            $table->uuid('id')->primary();
             // General Information
             $table->string('well_name')->nullable();
             $table->string('company_man')->nullable();
@@ -91,9 +90,9 @@ return new class extends Migration
 
             // Timestamps and audit fields
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->uuid('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }

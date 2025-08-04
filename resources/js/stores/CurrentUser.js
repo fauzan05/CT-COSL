@@ -23,6 +23,7 @@ export const useCurrentUserStore = defineStore("currentUser", {
             try {
                 const response = await axios.get(baseUrl + "/api/current-user");
                 this.user = response.data;
+                this.user.is_admin = Boolean(this.user.is_admin); // Ensure is_admin is a boolean
                 return response.data;
             } catch (err) {
                 this.error =

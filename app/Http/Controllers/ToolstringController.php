@@ -237,6 +237,7 @@ class ToolstringController extends Controller
 
                 foreach ($dimensionSets as $dimension) {
                     $dimensionsData[] = [
+                        'id' => Str::uuid(), // Generate a new UUID for the dimension
                         'toolstring_item_id'    => $item->id,
                         'outer_diameter'        => $dimension->outer_diameter->value ?? null,
                         'outer_diameter_unit'   => $dimension->outer_diameter->unit ?? null,

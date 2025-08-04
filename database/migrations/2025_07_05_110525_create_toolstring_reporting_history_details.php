@@ -12,33 +12,33 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('toolstring_reporting_history_details', function (Blueprint $table) {
-            $table->id();
-
+            $table->uuid('id')->primary();
             // Berikan nama constraint yang lebih pendek
-            $table->foreignId('toolstring_reporting_history_id')
+            $table->uuid('toolstring_reporting_history_id')
                 ->constrained('toolstring_reporting_histories')
                 ->onDelete('cascade')
                 ->name('fk_trhd_history_id'); // Custom constraint name
 
-            $table->foreignId('toolstring_type_id')
+            $table->uuid('toolstring_type_id')
                 ->constrained('toolstring_types')
                 ->onDelete('cascade')
                 ->name('fk_trhd_type_id'); // Custom constraint name
 
-            $table->foreignId('toolstring_item_id')
+            $table->uuid('toolstring_item_id')
                 ->constrained('toolstring_items')
                 ->onDelete('cascade')
                 ->name('fk_trhd_item_id'); // Custom constraint name
 
-            $table->foreignId('toolstring_item_dimension_id')
+            $table->uuid('toolstring_item_dimension_id')
                 ->constrained('toolstring_item_dimensions')
                 ->onDelete('cascade')
                 ->name('fk_trhd_dimension_id'); // Custom constraint name
+                
             $table->integer('position')->nullable();
             $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->uuid('created_by')->nullable();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }
