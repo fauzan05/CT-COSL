@@ -309,9 +309,9 @@ class WellstackController extends Controller
                 'owner' => $item->owner,
                 'shear_ram_dist_from_bottom' => $item->shear_ram_dist_from_bottom,
                 'shear_ram_dist_from_bottom_unit' => $item->shear_ram_dist_from_bottom_unit,
-                'created_by_name' => $item->createdByUser?->fullname,
+                'created_by_name' => $item->createdByUser ? $item->createdByUser->fullname : null,
                 'status' => is_null($item->deleted_at) ? 'active' : 'inactive',
-                'updated_by_name' => $item->updatedByUser?->fullname,
+                'updated_by_name' => $item->updatedByUser ? $item->updatedByUser->fullname : null,
                 'created_at' => $item->created_at,
                 'updated_at' => $item->updated_at,
             ];

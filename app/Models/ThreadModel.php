@@ -28,4 +28,14 @@ class ThreadModel extends Model
     {
         return $this->hasMany(ThreadSizeModel::class, 'thread_id');
     }
+
+    public function updatedByUser()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function createdByUser()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

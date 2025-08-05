@@ -97,7 +97,7 @@ class ThreadController extends Controller
                 'type' => $thread->type,
                 'created_at' => $thread->created_at,
                 'updated_at' => $thread->updated_at,
-                'updated_by_name' => $thread->updated_by ? User::find($thread->updated_by)->fullname : null,
+                'updated_by_name' => $thread->updatedByUser ? $thread->updatedByUser->fullname : null,
                 'total_sizes' => $thread->sizes->count(),
                 'sizes' => $thread->sizes->map(function ($size) {
                     return [
@@ -135,7 +135,7 @@ class ThreadController extends Controller
         return response()->json(['thread' => $thread], 200);
     }
 
-    public function deleteThread(Request $request) 
+    public function deleteThread(Request $request)
     {
         $ids  = $request->input('ids', []);
 
@@ -181,7 +181,7 @@ class ThreadController extends Controller
                 'type' => $thread->type,
                 'created_at' => $thread->created_at,
                 'updated_at' => $thread->updated_at,
-                'updated_by_name' => $thread->updated_by ? User::find($thread->updated_by)->fullname : null,
+                'updated_by_name' => $thread->updatedByUser ? $thread->updatedByUser->fullname : null,
                 'total_sizes' => $thread->sizes->count(),
                 'sizes' => $thread->sizes->map(function ($size) {
                     return [
@@ -209,7 +209,7 @@ class ThreadController extends Controller
                     'bottom_connection' => $size->bottom_connection,
                     'updated_at' => $size->updated_at,
                     'updated_by' => $size->updated_by,
-                    'updated_by_name' => $size->updated_by ? User::find($size->updated_by)->fullname : null,
+                    'updated_by_name' => $size->updatedByUser ? $size->updatedByUser->fullname : null,
                 ];
             }),
         ], 200);
