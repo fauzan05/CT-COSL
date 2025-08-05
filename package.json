@@ -24,6 +24,7 @@
     "dependencies": {
         "@headlessui/vue": "^1.7.23",
         "@heroicons/vue": "^2.2.0",
+        "@tato30/vue-pdf": "^1.11.4",
         "highcharts": "^12.3.0",
         "highcharts-vue": "^2.0.1",
         "html2pdf.js": "^0.10.3",
