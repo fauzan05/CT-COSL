@@ -1289,7 +1289,7 @@
 
 <script setup>
 /* --------------------------------- IMPORTS --------------------------------- */
-import { ref, watch, onMounted, computed } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import draggable from 'vuedraggable';
@@ -1302,7 +1302,7 @@ import {
 } from '@headlessui/vue';
 
 import {
-    ChevronUpDownIcon, CheckIcon, PlusIcon, ClipboardDocumentIcon
+    ChevronUpDownIcon, CheckIcon, PlusIcon
 } from '@heroicons/vue/20/solid';
 
 /* ------------------------------ ROUTE & STATE ------------------------------ */

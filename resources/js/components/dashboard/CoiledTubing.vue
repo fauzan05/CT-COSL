@@ -6,11 +6,8 @@
     <DocumentUploadModal v-model:document-form="documentForm" :is-document-modal-open="showUploadDocumentModal"
         :is-creating="isCreate" :loading="isLoading" :loading-documents="isLoadingDocs"
         @close="showUploadDocumentModal = false" @submit="handleDocumentSave" @delete="handleDocumentDelete"
-        @download="handleDocumentDownload" ref="modalRef"
-        :is-admin="currentUserStore.user.is_admin"
-        :download-access="currentUserStore.user.download_access"
-        :current-user="currentUserStore.user"
-        >
+        @download="handleDocumentDownload" ref="modalRef" :is-admin="currentUserStore.user.is_admin"
+        :download-access="currentUserStore.user.download_access" :current-user="currentUserStore.user">
     </DocumentUploadModal>
 
     <!-- Delete Confirmation Modal -->
@@ -416,98 +413,8 @@
                     </table>
                 </div>
 
-                <!-- Improved Pagination with Per-Page Selector -->
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mt-6 space-y-3 md:space-y-0 px-4">
-                    <!-- Per Page Selector -->
-                    <div class="flex items-center space-x-2">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
-                        <Listbox v-model="perPage" @update:modelValue="changePerPage">
-                            <div class="relative">
-                                <ListboxButton
-                                    class="relative w-20 cursor-default rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 py-1.5 pl-3 pr-8 text-left text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    {{ perPage }}
-                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                    </span>
-                                </ListboxButton>
-
-                                <ListboxOptions
-                                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-sm shadow-lg ring-opacity-5 focus:outline-none z-50">
-
-                                    <ListboxOption v-for="option in perPageOptions" :key="option" :value="option"
-                                        v-slot="{ active, selected }">
-
-                                        <li :class="[
-                                            'cursor-default select-none relative py-2 pl-3 pr-9',
-                                            active ? 'bg-blue-50 dark:bg-blue-900/40' : '',
-                                            selected ? 'font-semibold text-blue-600 dark:text-blue-300' : 'text-gray-900 dark:text-gray-200'
-                                        ]">
-                                            {{ option }}
-                                            <span v-if="selected"
-                                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 dark:text-blue-300">
-                                                ✓
-                                            </span>
-                                        </li>
-
-                                    </ListboxOption>
-                                </ListboxOptions>
-                            </div>
-                        </Listbox>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">entries</span>
-                    </div>
-
-                    <!-- Pagination Controls -->
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">
-                            Showing page {{ pagination.current_page }} of {{ pagination.last_page }}
-                        </span>
-
-                        <div class="flex items-center space-x-1">
-                            <!-- First Page -->
-                            <button @click="goToPage(1)"
-                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="pagination.current_page === 1">
-                                <ChevronDoubleLeftIcon class="h-4 w-4" />
-                            </button>
-
-                            <!-- Previous -->
-                            <button @click="goToPage(pagination.current_page - 1)"
-                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="pagination.current_page === 1">
-                                <ChevronLeftIcon class="h-4 w-4" />
-                            </button>
-
-                            <!-- Page Numbers -->
-                            <div class="flex space-x-1">
-                                <template v-for="pageNumber in displayedPages" :key="pageNumber">
-                                    <button v-if="pageNumber !== '...'" @click="goToPage(pageNumber)" :class="[
-                                        'px-3 py-1 rounded-md text-sm font-medium',
-                                        pagination.current_page === pageNumber
-                                            ? 'bg-blue-500 text-white'
-                                            : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                                    ]">
-                                        {{ pageNumber }}
-                                    </button>
-                                    <span v-else class="px-2 py-1 text-gray-500">...</span>
-                                </template>
-                            </div>
-
-                            <!-- Next -->
-                            <button @click="goToPage(pagination.current_page + 1)"
-                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="pagination.current_page === pagination.last_page">
-                                <ChevronRightIcon class="h-4 w-4" />
-                            </button>
-
-                            <!-- Last Page -->
-                            <button @click="goToPage(pagination.last_page)"
-                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="pagination.current_page === pagination.last_page">
-                                <ChevronDoubleRightIcon class="h-4 w-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <Pagination :pagination="paginationData" :per-page="currentPerPage" :per-page-options="perPageOptions"
+                    :max-displayed-pages="5" @page-changed="handlePageChange" @per-page-changed="handlePerPageChange" />
             </div>
         </div>
     </div>
@@ -515,7 +422,7 @@
   
 <script setup>
 /* ------------------------------- IMPORTS ------------------------------- */
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch, reactive } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useCurrentUserStore } from '@/stores/CurrentUser';
 import {
@@ -524,10 +431,10 @@ import {
     Switch, SwitchGroup, SwitchLabel,
 } from '@headlessui/vue';
 import {
-    ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
-    ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CheckIcon
+    ChevronUpDownIcon, CheckIcon
 } from '@heroicons/vue/20/solid';
 import DocumentUploadModal from '@/components/modals/DocumentUploadModal.vue';
+import Pagination from '@/components/PaginationV1.vue';
 
 /* ----------------------------- STATE & STORES ----------------------------- */
 const baseUrl = import.meta.env.VITE_API_URL;
@@ -544,12 +451,16 @@ const selectedFiles = ref([])
 
 const showUploadDocumentModal = ref(false);
 const isLoading = ref(false);
-const loading = ref(false);
 const isDeleteModalOpen = ref(false);
 const isDeleting = ref(false);
 const showMobileFilters = ref(false);
 const isLoadingDocs = ref(false);
-
+const paginationData = reactive({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0
+})
 const sortByItems = ref([
     { name: 'Updated At', value: 'updated_at' },
     { name: 'Updated By', value: 'updated_by_name' },
@@ -561,7 +472,7 @@ const isDesc = ref(true);
 const selectedDocument = ref(null);
 const currentUserStore = useCurrentUserStore();
 
-const perPageOptions = [10, 25, 100];
+const perPageOptions = [10, 25, 50, 100];
 const perPage = ref(perPageOptions[0]);
 const search = ref('');
 const isCreate = ref(false);
@@ -625,16 +536,26 @@ async function fetchDocuments(page = 1) {
             },
         });
         listDocuments.value = response.data.data;
-        pagination.value = {
-            current_page: response.data.current_page,
-            last_page: response.data.last_page,
-        };
+        paginationData.current_page = response.data.current_page;
+        paginationData.last_page = response.data.last_page;
     } catch (error) {
         console.error(error);
     } finally {
         isLoading.value = false;
     }
 }
+
+const handlePerPageChange = async (newPerPage) => {
+    perPage.value = newPerPage;
+    paginationData.current_page = 1; // Reset to first page
+    await fetchDocuments(1);
+}
+
+const handlePageChange = async (page) => {
+    if (page < 1 || page > paginationData.last_page) return;
+    paginationData.current_page = page;
+    await fetchDocuments(page);
+};
 
 const handleDocumentDownload = (document) => {
     // redirect blank to download document
@@ -708,37 +629,6 @@ function handleDeleteDocument() {
             isDeleting.value = false;
         });
 }
-
-function goToPage(page) {
-    if (page < 1 || page > pagination.value.last_page) return;
-    fetchDocuments(page);
-}
-
-function changePerPage(newPerPage) {
-    perPage.value = newPerPage;
-    pagination.value.current_page = 1;
-    fetchDocuments(1);
-}
-
-const displayedPages = computed(() => {
-    if (!pagination.value?.current_page || !pagination.value?.last_page) {
-        return [];
-    }
-    const current = pagination.value.current_page;
-    const last = pagination.value.last_page;
-    const delta = 2;
-    const range = [];
-
-    for (let i = 1; i <= last; i++) {
-        if (i === 1 || i === last || (i >= current - delta && i <= current + delta)) {
-            range.push(i);
-        } else if (range[range.length - 1] !== '...') {
-            range.push('...');
-        }
-    }
-
-    return range;
-});
 
 /* ------------------------------ FILTERS ------------------------------ */
 watch([selectedSortByFilter, perPage, search, isDesc], () => {
