@@ -40,7 +40,8 @@
                                             <img :src="itemImage" alt="Type"
                                                 class="w-full h-full rounded-lg object-contain" />
                                             <!-- Overlay tombol "Change Image" -->
-                                            <div v-if="currentUserStore.user.is_admin" class="absolute bottom-4 left-1/2 -translate-x-1/2">
+                                            <div v-if="currentUserStore.user.is_admin"
+                                                class="absolute bottom-4 left-1/2 -translate-x-1/2">
                                                 <label
                                                     class="cursor-pointer inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 text-sm shadow">
                                                     Change Image
@@ -73,13 +74,20 @@
                                         </div>
                                     </div>
                                     <!-- Image Required Note -->
-                                    <div v-if="currentUserStore.user.is_admin" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                        <span class="text-red-500">*</span> Image is required ( {{ itemForm.image }} )
+                                    <div v-if="currentUserStore.user.is_admin"
+                                        class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                        <span class="text-red-500">*</span> Image is required
                                     </div>
                                     <!-- Thread Card -->
                                     <div
                                         class="my-6 border rounded-lg bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600 p-4">
-                                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Thread</h3>
+                                        <div class="flex justify-between items-center">
+                                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Thread</h3>
+                                            <button @click="resetThreadSelection" type="button"
+                                                class="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-1">
+                                                Reset
+                                            </button>
+                                        </div>
 
                                         <!-- Type Combobox -->
                                         <div class="mb-4">
@@ -91,11 +99,17 @@
                                                         class="w-full border border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                         :displayValue="(item) => item?.type || ''"
                                                         @input="queryThreadType = $event.target.value"
-                                                        :placeholder="currentUserStore.user.is_admin ? 'Search Type...' : 'No Type Selected'" :disabled="!currentUserStore.user.is_admin" />
-                                                    <ComboboxOptions v-if="filteredThreadTypes.length > 0"
+                                                        :placeholder="currentUserStore.user.is_admin ? 'Search Type...' : 'No Type Selected'"
+                                                        :disabled="!currentUserStore.user.is_admin" />
+                                                    <ComboboxButton
+                                                        class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                            aria-hidden="true" />
+                                                    </ComboboxButton>
+                                                    <ComboboxOptions v-if="threadTypes.length > 0"
                                                         class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-1ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                                                        <ComboboxOption v-for="(type, index) in filteredThreadTypes"
-                                                            :key="index" :value="type"
+                                                        <ComboboxOption v-for="(type, index) in threadTypes" :key="index"
+                                                            :value="type"
                                                             class="cursor-pointer select-none relative py-2 pl-3 pr-9 text-gray-900 dark:text-white hover:bg-blue-600 hover:text-white">
                                                             {{ type.type }}
                                                         </ComboboxOption>
@@ -105,7 +119,7 @@
                                         </div>
 
                                         <!-- Type Size Combobox -->
-                                        <div>
+                                        <div v-if="selectedThreadType">
                                             <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">
                                                 Type Size (Top - Bottom Connection)
                                             </label>
@@ -115,13 +129,17 @@
                                                         class="w-full border border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                         :displayValue="(item) => item ? `${item.top_connection} - ${item.bottom_connection}` : ''"
                                                         @input="queryThreadSize = $event.target.value"
-                                                        :placeholder="currentUserStore.user.is_admin ? 'Search Type Size...' : 'No Size Selected'" 
-                                                        :disabled="!currentUserStore.user.is_admin"
-                                                        />
-                                                    <ComboboxOptions v-if="filteredThreadSizes.length > 0"
+                                                        :placeholder="currentUserStore.user.is_admin ? 'Search Type Size...' : 'No Size Selected'"
+                                                        :disabled="!currentUserStore.user.is_admin" />
+                                                    <ComboboxButton
+                                                        class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                            aria-hidden="true" />
+                                                    </ComboboxButton>
+                                                    <ComboboxOptions v-if="threadSizes.length > 0"
                                                         class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                                                        <ComboboxOption v-for="(size, index) in filteredThreadSizes"
-                                                            :key="index" :value="size"
+                                                        <ComboboxOption v-for="(size, index) in threadSizes" :key="index"
+                                                            :value="size"
                                                             class="cursor-pointer select-none relative py-2 pl-3 pr-9 text-gray-900 dark:text-white hover:bg-blue-600 hover:text-white">
                                                             {{ size.top_connection }} - {{ size.bottom_connection }}
                                                         </ComboboxOption>
@@ -139,32 +157,31 @@
                                         <div class="mb-4">
                                             <label for="name"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Name <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
+                                                Name <span v-if="currentUserStore.user.is_admin"
+                                                    class="text-red-500">*</span>
                                             </label>
                                             <input type="text" id="name" v-model="itemForm.name"
                                                 class="w-full px-3 dark:text-white py-2 border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                required
-                                                :disabled="!currentUserStore.user.is_admin"
-                                                >
+                                                required :disabled="!currentUserStore.user.is_admin">
                                         </div>
                                         <!-- Description -->
                                         <div class="mb-4">
                                             <label for="description"
                                                 class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                Description <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
+                                                Description <span v-if="currentUserStore.user.is_admin"
+                                                    class="text-red-500">*</span>
                                             </label>
                                             <textarea id="description" v-model="itemForm.description" rows="4"
                                                 class="w-full px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-slate-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                required
-                                                :disabled="!currentUserStore.user.is_admin"
-                                                ></textarea>
+                                                required :disabled="!currentUserStore.user.is_admin"></textarea>
                                         </div>
                                         <!-- Dynamic Dimensions Sets with Add/Remove functionality -->
                                         <div class="mb-6">
                                             <div class="flex items-center justify-between mb-4">
                                                 <h3 class="text-sm font-medium text-gray-700 dark:text-white">Dimensions
                                                 </h3>
-                                                <button v-if="currentUserStore.user.is_admin" @click="addDimensionSet" type="button"
+                                                <button v-if="currentUserStore.user.is_admin" @click="addDimensionSet"
+                                                    type="button"
                                                     class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
                                                     <PlusIcon class="h-4 w-4 mr-1" />
                                                     Add Dimension Set
@@ -181,7 +198,8 @@
                                                         <h4 class="text-sm font-semibold text-gray-700 dark:text-white">
                                                             Dimension Set {{ setIndex + 1 }}
                                                         </h4>
-                                                        <button v-if="itemForm.dimensionSets.length > 1 && currentUserStore.user.is_admin"
+                                                        <button
+                                                            v-if="itemForm.dimensionSets.length > 1 && currentUserStore.user.is_admin"
                                                             @click="removeDimensionSet(setIndex)" type="button"
                                                             class="text-gray-400 hover:text-red-500 transition-colors duration-200"
                                                             :title="'Remove dimension set'">
@@ -193,16 +211,16 @@
                                                     <div class="mb-4">
                                                         <label :for="`outer_diameter_${setIndex}`"
                                                             class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                            Outer Diameter <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
+                                                            Outer Diameter <span v-if="currentUserStore.user.is_admin"
+                                                                class="text-red-500">*</span>
                                                         </label>
                                                         <div class="flex space-x-2">
                                                             <input :id="`outer_diameter_${setIndex}`" type="text"
                                                                 :value="dimensionSet.outer_diameter.value"
                                                                 class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                                 @input="handleDecimalInput($event, setIndex, 'outer_diameter')"
-                                                                :placeholder="currentUserStore.user.is_admin ? 'Enter outer diameter' : 'No outer diameter'" 
-                                                                :disabled="!currentUserStore.user.is_admin"
-                                                                required>
+                                                                :placeholder="currentUserStore.user.is_admin ? 'Enter outer diameter' : 'No outer diameter'"
+                                                                :disabled="!currentUserStore.user.is_admin" required>
                                                             <Listbox v-model="dimensionSet.outer_diameter.unit" as="div"
                                                                 class="relative">
                                                                 <ListboxButton :disabled="!currentUserStore.user.is_admin"
@@ -250,20 +268,19 @@
                                                     <div class="mb-4">
                                                         <label :for="`inner_diameter_${setIndex}`"
                                                             class="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-                                                            Inner Diameter <span v-if="currentUserStore.user.is_admin" class="text-red-500">*</span>
+                                                            Inner Diameter <span v-if="currentUserStore.user.is_admin"
+                                                                class="text-red-500">*</span>
                                                         </label>
                                                         <div class="flex space-x-2">
                                                             <input :id="`inner_diameter_${setIndex}`" type="text"
                                                                 :value="dimensionSet.inner_diameter.value"
                                                                 class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                                 @input="handleDecimalInput($event, setIndex, 'inner_diameter')"
-                                                                :placeholder="currentUserStore.user.is_admin ? 'Enter inner diameter' : 'No inner diameter'" 
-                                                                :disabled="!currentUserStore.user.is_admin"
-                                                                required>
+                                                                :placeholder="currentUserStore.user.is_admin ? 'Enter inner diameter' : 'No inner diameter'"
+                                                                :disabled="!currentUserStore.user.is_admin" required>
                                                             <Listbox v-model="dimensionSet.inner_diameter.unit" as="div"
                                                                 class="relative"
-                                                                :disabled="!currentUserStore.user.is_admin"
-                                                                >
+                                                                :disabled="!currentUserStore.user.is_admin">
                                                                 <ListboxButton
                                                                     class="relative w-24 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-2 pl-3 pr-10 text-left border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                                                     <span class="block truncate dark:text-white">{{
@@ -317,8 +334,7 @@
                                                                 class="flex-1 px-3 py-2 dark:text-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                                                 @input="handleDecimalInput($event, setIndex, 'length')"
                                                                 :placeholder="currentUserStore.user.is_admin ? 'Enter length' : 'No length'"
-                                                                :disabled="!currentUserStore.user.is_admin"
-                                                                >
+                                                                :disabled="!currentUserStore.user.is_admin">
                                                             <Listbox v-model="dimensionSet.length.unit" as="div"
                                                                 class="relative">
                                                                 <ListboxButton :disabled="!currentUserStore.user.is_admin"
@@ -866,10 +882,10 @@
                             <!-- Sort Direction Toggle -->
                             <SwitchGroup as="div" class="flex items-center space-x-2">
                                 <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc</SwitchLabel>
-                                <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                <Switch v-model="sortDirection" :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                     class="relative inline-flex items-center h-6 w-11 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                     <span class="sr-only">Toggle sort direction</span>
-                                    <span aria-hidden="true" :class="isDesc ? 'translate-x-5' : 'translate-x-0'"
+                                    <span aria-hidden="true" :class="sortDirection ? 'translate-x-5' : 'translate-x-0'"
                                         class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                 </Switch>
                                 <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc</SwitchLabel>
@@ -1018,10 +1034,12 @@
                                     <SwitchGroup as="div" class="flex items-center space-x-2">
                                         <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc
                                         </SwitchLabel>
-                                        <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                        <Switch v-model="sortDirection"
+                                            :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                             class="relative inline-flex items-center h-5 w-9 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                             <span class="sr-only">Toggle sort direction</span>
-                                            <span aria-hidden="true" :class="isDesc ? 'translate-x-4' : 'translate-x-0'"
+                                            <span aria-hidden="true"
+                                                :class="sortDirection ? 'translate-x-4' : 'translate-x-0'"
                                                 class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                         </Switch>
                                         <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc
@@ -1217,8 +1235,9 @@
             :from="items.from" :to="items.to" :total="items.total" @prev="previousPage" @next="nextPage" />
     </div>
 </template>
+
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import axios from 'axios';
@@ -1239,7 +1258,8 @@ import {
     Combobox,
     ComboboxInput,
     ComboboxOptions,
-    ComboboxOption
+    ComboboxOption,
+    ComboboxButton
 } from '@headlessui/vue';
 
 import { ChevronUpDownIcon, CheckIcon, PlusIcon, XMarkIcon } from '@heroicons/vue/20/solid';
@@ -1270,7 +1290,7 @@ const items = ref([]);
 const itemsToDelete = ref([]);
 const selectedCategories = ref([]);
 const search = ref('');
-const isDesc = ref(true);
+const sortDirection = ref(true);
 const currentPage = ref(1);
 const totalPages = ref(1);
 
@@ -1285,8 +1305,8 @@ const queryThreadSize = ref('')
 
 // ========== FILTER OPTIONS ==========
 const sortByItems = [
-    { name: 'Created Date', value: 'created_at' },
-    { name: 'Updated Date', value: 'updated_at' },
+    { name: 'Updated At', value: 'updated_at' },
+    { name: 'Updated By', value: 'updated_by' },
     { name: 'Name', value: 'name' },
 ];
 
@@ -1328,10 +1348,10 @@ const itemForm = ref({
 });
 
 const threadTypes = ref([])
+const threadSizes = ref([])
 const showDesc = ref({})
 
 // ========== COMPUTED ==========
-const direction = computed(() => (isDesc.value ? 'desc' : 'asc'));
 const totalActiveItems = ref(0);
 const totalInactiveItems = ref(0);
 
@@ -1357,6 +1377,7 @@ function openModal(selectedItem = null) {
         isCreateNewItem.value = false;
         selectedThreadType.value = selectedItem.thread || null;
         selectedThreadSize.value = selectedItem.thread_size || null;
+        console.log(selectedThreadSize.value)
     } else {
         titleModal.value = 'Create New Item';
         titleModalButton.value = 'Create Item';
@@ -1470,7 +1491,7 @@ const fetchAllItems = async (page = 1) => {
                 search: search.value,
                 status: selectedStatusFilter.value.value,
                 sort_by: selectedSortByFilter.value.value,
-                direction: direction.value,
+                sort_direction: sortDirection.value ? 'desc' : 'asc',
             },
         });
 
@@ -1503,12 +1524,12 @@ const saveItem = async () => {
         formData.append('name', itemForm.value.name);
         formData.append('description', itemForm.value.description);
         formData.append('dimension_sets', JSON.stringify(getDimensionSetsData()));
-        if (selectedThreadType.value) {
-            formData.append('thread_type_id', selectedThreadType.value.id);
-        }
-        if (selectedThreadSize.value) {
-            formData.append('thread_size_id', selectedThreadSize.value.id);
-        }
+        // if (selectedThreadType.value != null) {
+        formData.append('thread_id', selectedThreadType.value?.id || null);
+        // }
+        // if (selectedThreadSize.value != null) {
+        formData.append('thread_size_id', selectedThreadSize.value?.id || null);
+        // }
 
         if (itemForm.value.id == 0 && !uploadedItemImageFile.value) {
             toast.error('Please upload an image file.');
@@ -1546,7 +1567,7 @@ const saveItem = async () => {
         closeModal();
     } catch (error) {
         console.error('Error creating item:', error);
-        toast.error('Failed to create item. Please try again.');
+        toast.error(`Failed to ${isCreateNewItem.value ? 'create' : 'update'} item. Please try again.`);
     } finally {
         loading.value = false;
     }
@@ -1676,38 +1697,82 @@ function getDimensionSetsData() {
 // ========== FUNCTIONS: THREADS ==========
 const fetchAllThread = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/threads/no-paginate`);
+        const response = await axios.get(`${baseUrl}/api/threads/no-paginate?search=${queryThreadType.value}&limit=10`);
         threadTypes.value = response.data;
     } catch (error) {
         console.error('Error fetching thread types and sizes:', error);
     }
 };
 
-const filteredThreadTypes = computed(() =>
-    queryThreadType.value === ''
-        ? threadTypes.value
-        : threadTypes.value.filter((item) =>
-            item.type.toLowerCase().includes(queryThreadType.value.toLowerCase())
-        )
-)
+const fetchAllThreadSizeById = async (threadTypeId) => {
+    try {
+        const response = await axios.get(`${baseUrl}/api/threads/${threadTypeId}/sizes?search=${queryThreadSize.value}&limit=10`);
+        threadSizes.value = response.data.data;
+    } catch (error) {
+        console.error('Error fetching thread sizes:', error);
+        return [];
+    }
+};
 
-const filteredThreadSizes = computed(() => {
-    if (!selectedThreadType.value || !selectedThreadType.value.sizes) return []
-    return queryThreadSize.value === ''
-        ? selectedThreadType.value.sizes
-        : selectedThreadType.value.sizes.filter(size =>
-            (size.top_connection ?? '').toLowerCase().includes(queryThreadSize.value.toLowerCase()) ||
-            (size.bottom_connection ?? '').toLowerCase().includes(queryThreadSize.value.toLowerCase())
-        )
-})
+// const filteredThreadTypes = computed(() =>
+//     queryThreadType.value === ''
+//         ? threadTypes.value
+//         : threadTypes.value.filter((item) =>
+//             item.type.toLowerCase().includes(queryThreadType.value.toLowerCase())
+//         )
+// )
+
+// const filteredThreadSizes = computed(() => {
+//     if (!selectedThreadType.value || !selectedThreadType.value.sizes) return []
+//     return queryThreadSize.value === ''
+//         ? selectedThreadType.value.sizes
+//         : selectedThreadType.value.sizes.filter(size =>
+//             (size.top_connection ?? '').toLowerCase().includes(queryThreadSize.value.toLowerCase()) ||
+//             (size.bottom_connection ?? '').toLowerCase().includes(queryThreadSize.value.toLowerCase())
+//         )
+// })
+
+const resetThreadSelection = () => {
+    selectedThreadType.value = null;
+    selectedThreadSize.value = null;
+    queryThreadSize.value = '';
+};
 
 // ========== WATCHERS ==========
-watch([selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, search, isDesc], () => {
+watch([selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, search, sortDirection], () => {
     fetchAllItems(items.value.current_page || 1);
 });
 
 watch(selectedCategories, (newVal) => {
     showButtonDeleteSelectedItems.value = newVal.length > 0;
+});
+
+watch(queryThreadType, (newVal) => {
+    if (newVal === '') {
+        selectedThreadType.value = '';
+        queryThreadSize.value = '';
+    } else {
+        selectedThreadSize.value = null; // Reset selected size when type changes
+        fetchAllThread();
+    }
+});
+
+watch(selectedThreadType, (newVal) => {
+    if (newVal) {
+        queryThreadSize.value = '';
+        fetchAllThreadSizeById(newVal.id);
+    } else {
+        selectedThreadSize.value = null; // Reset size if no type is selected
+        threadSizes.value = [];
+    }
+})
+
+watch(queryThreadSize, (newVal) => {
+    if (newVal === '') {
+        selectedThreadSize.value = null;
+    } else if (selectedThreadType.value) {
+        fetchAllThreadSizeById(selectedThreadType.value.id)
+    }
 });
 
 watch(
@@ -1727,8 +1792,6 @@ onMounted(async () => {
     }
 });
 
-onUnmounted(() => {
-});
 </script>
 
 <style>

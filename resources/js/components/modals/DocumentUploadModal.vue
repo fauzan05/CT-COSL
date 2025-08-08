@@ -353,7 +353,7 @@ const clearErrors = () => {
 
 const validateFiles = (files) => {
     clearErrors()
-
+    console.log("Validating files:", files.length)
     if (!files || files.length === 0) {
         errors.documents = 'Please select at least one document to upload'
         return false
@@ -459,7 +459,7 @@ const validateForm = () => {
         isValid = false
     }
 
-    if (documentForm.documents.length === 0 && props.isCreating) {
+    if (documentForm.documents.length === 0) {
         errors.documents = 'Please select at least one document to upload'
         isValid = false
     }

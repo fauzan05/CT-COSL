@@ -6,7 +6,6 @@ use App\Models\WellstackItemModel;
 use App\Models\WellstackReportingHistoryDetailModel;
 use App\Models\WellstackReportingHistoryModel;
 use App\Models\WellstackTypeModel;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -238,11 +237,11 @@ class WellstackController extends Controller
 
         // Sorting
         $sortBy = $request->input('sort_by', 'created_at');
-        $direction = $request->input('direction', 'desc');
+        $sort_direction = $request->input('sort_direction', 'desc');
         $allowedSortColumns = ['id', 'name', 'created_at', 'updated_at'];
 
         if (in_array($sortBy, $allowedSortColumns)) {
-            $query->orderBy($sortBy, $direction);
+            $query->orderBy($sortBy, $sort_direction);
         } else {
             $query->orderBy('created_at', 'desc');
         }
@@ -360,8 +359,8 @@ class WellstackController extends Controller
         }
         // Optional sorting
         $sortBy = $request->input('sort_by', 'created_at');
-        $direction = $request->input('direction', 'desc');
-        $query->orderBy($sortBy, $direction);
+        $sort_direction = $request->input('sort_direction', 'desc');
+        $query->orderBy($sortBy, $sort_direction);
 
         // Paginate
         $histories = $query->paginate($perPage);
@@ -759,6 +758,34 @@ class WellstackController extends Controller
 
         // Render Blade view to HTML
         $html = view('pdf.wellstack-reporting', $data)->render();
+
+        $format = null;
+        $height = $request->get('height', 0);
+        $width = $request->get('width', 0);
+        $orientation = $request->get('orientation', 'P');
+        $size = $request->get('size', 'A4');
+        if ($size === 'Custom' && $height > 0 && $width > 0) {
+            $format = [$width, $height];
+        } else {
+            if ($size === 'F4') {
+                $format = [210, 330]; // F4 size in mm
+            } elseif ($size === 'F5') {
+                $format = [176, 250]; // F5 size in mm
+            } elseif ($size === 'Legal') {
+                $format = [216, 356]; // Legal size in mm
+            } elseif ($size === 'Letter') {
+                $format = [216, 279]; // Letter size in mm
+            } elseif ($size === 'A3') {
+                $format = [297, 420]; // A3 size in mm
+            } elseif ($size === 'A4') {
+                $format = [210, 297]; // A4 size in mm
+            } elseif ($size === 'A5') {
+                $format = [148, 210]; // A5 size in mm
+            } else {
+                $format = $size;
+            }
+        }
+
         // Konfigurasi mPDF
         $mpdfConfig = [
             'mode' => 'utf-8',
@@ -768,10 +795,10 @@ class WellstackController extends Controller
             'margin_bottom' => 15,
             'margin_header' => 5,
             'margin_footer' => 5,
-            'orientation' => 'P',
+            'orientation' => $orientation,
             'default_font_size' => 10,
             'default_font' => 'sans-serif',
-            'format' => [210, $heightPDF],
+            'format' => $format,
             'tempDir' => storage_path('app/temp'), // Laravel
             // atau 'tempDir' => public_path('temp'), // untuk direktori public
             'simpleTables' => false,

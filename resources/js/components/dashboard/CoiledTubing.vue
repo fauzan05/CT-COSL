@@ -1,13 +1,13 @@
 <template>
     <head>
-        <Title>Document</Title>
+        <Title>Coiled Tubing Documents</Title>
     </head>
     <!-- modal create/update document -->
     <DocumentUploadModal v-model:document-form="documentForm" :is-document-modal-open="showUploadDocumentModal"
         :is-creating="isCreate" :loading="isLoading" :loading-documents="isLoadingDocs"
-        @close="showUploadDocumentModal = false" @submit="handleDocumentSave" @delete="handleDocumentDelete"
-        @download="handleDocumentDownload" ref="modalRef" :is-admin="currentUserStore.user.is_admin"
-        :download-access="currentUserStore.user.download_access" :current-user="currentUserStore.user">
+        @close="showUploadDocumentModal = false" @submit="handleDocumentSave" @download="handleDocumentDownload"
+        ref="modalRef" :is-admin="currentUserStore.user.is_admin" :download-access="currentUserStore.user.download_access"
+        :current-user="currentUserStore.user">
     </DocumentUploadModal>
 
     <!-- Delete Confirmation Modal -->
@@ -150,7 +150,7 @@
 
                     <!-- Mobile: Grid for Refresh button -->
                     <div class="block sm:hidden">
-                        <button @click="fetchDocuments(pagination.current_page)" :disabled="isLoading"
+                        <button @click="fetchDocuments(paginationData.current_page)" :disabled="isLoading"
                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             <span v-if="!isLoading" class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -176,7 +176,7 @@
                     <!-- Desktop: Horizontal layout -->
                     <div class="hidden sm:flex sm:items-center sm:justify-between sm:space-x-4">
                         <!-- Refresh Button -->
-                        <button @click="fetchDocuments(pagination.current_page)" :disabled="isLoading"
+                        <button @click="fetchDocuments(paginationData.current_page)" :disabled="isLoading"
                             class="inline-flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             <span v-if="!isLoading" class="flex items-center gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -242,10 +242,10 @@
                             <!-- Sort Direction Toggle -->
                             <SwitchGroup as="div" class="flex items-center space-x-2">
                                 <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc</SwitchLabel>
-                                <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                <Switch v-model="sortDirection" :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                     class="relative inline-flex items-center h-6 w-11 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                     <span class="sr-only">Toggle sort direction</span>
-                                    <span aria-hidden="true" :class="isDesc ? 'translate-x-5' : 'translate-x-0'"
+                                    <span aria-hidden="true" :class="sortDirection ? 'translate-x-5' : 'translate-x-0'"
                                         class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                 </Switch>
                                 <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc</SwitchLabel>
@@ -307,10 +307,12 @@
                                     <SwitchGroup as="div" class="flex items-center space-x-2">
                                         <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc
                                         </SwitchLabel>
-                                        <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                        <Switch v-model="sortDirection"
+                                            :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                             class="relative inline-flex items-center h-5 w-9 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                             <span class="sr-only">Toggle sort direction</span>
-                                            <span aria-hidden="true" :class="isDesc ? 'translate-x-4' : 'translate-x-0'"
+                                            <span aria-hidden="true"
+                                                :class="sortDirection ? 'translate-x-4' : 'translate-x-0'"
                                                 class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                         </Switch>
                                         <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc
@@ -372,7 +374,7 @@
                             <tr v-for="(document, index) in listDocuments" :key="document.id"
                                 class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                    {{ (pagination.current_page - 1) * perPage + index + 1 }}
+                                    {{ (paginationData.current_page - 1) * perPage + index + 1 }}
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                                     {{ document.name }}
@@ -389,30 +391,38 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {{ document.updated_by_name }}
                                 </td>
-                                <td class="px-6 py-4 text-sm flex">
-                                    <!-- Edit -->
+                                <td v-if="currentUserStore.user.is_admin" class="px-6 py-4 text-sm align-middle">
+                                    <div class="flex items-center">
+                                        <!-- Edit Button -->
+                                        <button @click="openDocumentModal(document)"
+                                            class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            Edit
+                                        </button>
+
+                                        <!-- Delete Button -->
+                                        <button @click="confirmDeleteModal(document)"
+                                            class="inline-flex items-center ms-2 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
+                                            <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            <span class="text-sm font-medium">Delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td v-else class="px-6 py-4 text-sm flex">
                                     <button @click="openDocumentModal(document)"
                                         class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                        Edit
-                                    </button>
-
-                                    <!-- Delete -->
-                                    <button @click="confirmDeleteModal(document)"
-                                        class="inline-flex items-center ms-2 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg transition-all duration-200 group">
-                                        <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:scale-110" fill="none"
-                                            stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                        <span class="text-sm font-medium">Delete</span>
+                                        <i class="fa-solid fa-eye"></i>
+                                        Show
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
                 <Pagination :pagination="paginationData" :per-page="currentPerPage" :per-page-options="perPageOptions"
                     :max-displayed-pages="5" @page-changed="handlePageChange" @per-page-changed="handlePerPageChange" />
             </div>
@@ -440,7 +450,6 @@ import Pagination from '@/components/PaginationV1.vue';
 const baseUrl = import.meta.env.VITE_API_URL;
 
 const listDocuments = ref([]);
-const pagination = ref({ current_page: 1, last_page: 1 });
 const modalRef = ref(null)
 const documentForm = ref({
     name: '',
@@ -463,11 +472,13 @@ const paginationData = reactive({
 })
 const sortByItems = ref([
     { name: 'Updated At', value: 'updated_at' },
-    { name: 'Updated By', value: 'updated_by_name' },
+    { name: 'Updated By', value: 'updated_by' },
+    { name: 'Name', value: 'name' },
+    { name: 'Description', value: 'description' },
 ]);
 
 const selectedSortByFilter = ref(sortByItems.value[0]);
-const isDesc = ref(true);
+const sortDirection = ref(true);
 
 const selectedDocument = ref(null);
 const currentUserStore = useCurrentUserStore();
@@ -530,7 +541,7 @@ const confirmDeleteModal = (document) => {
 async function fetchDocuments(page = 1) {
     try {
         isLoading.value = true;
-        const response = await axios.get(`${baseUrl}/api/documents?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}&menu=coiled_tubing`, {
+        const response = await axios.get(`${baseUrl}/api/documents?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&sort_direction=${sortDirection.value ? 'desc' : 'asc'}&menu=coiled_tubing`, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -569,6 +580,7 @@ const handleDocumentSave = async () => {
         isLoading.value = false;
         return;
     }
+
     try {
         const formData = new FormData();
         formData.append('name', documentForm.value.name);
@@ -595,7 +607,7 @@ const handleDocumentSave = async () => {
             useToast().success('Document updated successfully!');
         }
 
-        fetchDocuments(pagination.value.current_page);
+        fetchDocuments(paginationData.current_page);
     } catch (error) {
         console.error(error);
         useToast().error('Failed to save document.');
@@ -617,7 +629,7 @@ function handleDeleteDocument() {
         .then(response => {
             if (response.status === 200) {
                 toast.success('Document deleted successfully!');
-                fetchDocuments(pagination.value.current_page);
+                fetchDocuments(paginationData.current_page);
                 closeModal();
             }
         })
@@ -631,8 +643,8 @@ function handleDeleteDocument() {
 }
 
 /* ------------------------------ FILTERS ------------------------------ */
-watch([selectedSortByFilter, perPage, search, isDesc], () => {
-    fetchDocuments(pagination.value.current_page || 1);
+watch([selectedSortByFilter, perPage, search, sortDirection], () => {
+    fetchDocuments(1);
 });
 
 /* ------------------------------ ON MOUNT ------------------------------ */

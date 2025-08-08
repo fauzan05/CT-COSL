@@ -83,10 +83,10 @@ class ThreadController extends Controller
         }
 
         $sortBy = $request->input('sort_by', 'created_at');
-        $sortOrder = $request->input('is_desc', 'desc') === 'true' ? 'desc' : 'asc';
+        $sortDirection = $request->input('sort_direction', 'desc');
 
         // Apply sorting
-        $query->orderBy($sortBy, $sortOrder);
+        $query->orderBy($sortBy, $sortDirection);
 
         // Paginate the results
         $threads = $query->paginate($perPage);
@@ -170,8 +170,13 @@ class ThreadController extends Controller
 
     public function getThreadsNoPaginate()
     {
+        $search = request()->input('search', '');
         $threads = ThreadModel::with('sizes')
+            ->when($search, function ($query, $search) {
+                return $query->where('type', 'like', '%' . $search . '%');
+            })
             ->orderBy('created_at', 'desc')
+            ->limit(10)
             ->get();
 
         // transform items in the collection
@@ -198,7 +203,16 @@ class ThreadController extends Controller
 
     public function getThreadSizesById(Request $request, $id)
     {
+        $search = $request->input('search', '');
+        $limit = $request->input('limit', '');
         $threadSizes = \App\Models\ThreadSizeModel::where('thread_id', $id)
+            ->when($search, function ($query, $search) {
+                return $query->where('top_connection', 'like', '%' . $search . '%')
+                    ->orWhere('bottom_connection', 'like', '%' . $search . '%');
+            })
+            ->when($limit, function ($query, $limit) {
+                return $query->limit($limit);
+            })
             ->get();
 
         return response()->json([

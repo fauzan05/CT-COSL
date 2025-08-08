@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -17,8 +16,7 @@ class UserController extends Controller
         $page = $request->input('page', 1);
         $search = $request->input('search', '');
         $sortBy = $request->input('sort_by', 'id');
-        $sortDirection = $request->input('is_desc', 'desc') === 'true' ? 'desc' : 'asc';
-
+        $sortDirection = $request->input('sort_direction', 'desc');
         $query = User::query();
         if ($search) {
             $query->where(function ($q) use ($search) {

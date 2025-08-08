@@ -16,23 +16,19 @@ return new class extends Migration
             // Berikan nama constraint yang lebih pendek
             $table->uuid('toolstring_reporting_history_id')
                 ->constrained('toolstring_reporting_histories')
-                ->onDelete('cascade')
-                ->name('fk_trhd_history_id'); // Custom constraint name
+                ->onDelete('cascade');
 
             $table->uuid('toolstring_type_id')
                 ->constrained('toolstring_types')
-                ->onDelete('cascade')
-                ->name('fk_trhd_type_id'); // Custom constraint name
+                ->onDelete('cascade');
 
             $table->uuid('toolstring_item_id')
                 ->constrained('toolstring_items')
-                ->onDelete('cascade')
-                ->name('fk_trhd_item_id'); // Custom constraint name
+                ->onDelete('cascade');
 
             $table->uuid('toolstring_item_dimension_id')
                 ->constrained('toolstring_item_dimensions')
-                ->onDelete('cascade')
-                ->name('fk_trhd_dimension_id'); // Custom constraint name
+                ->onDelete('cascade');
                 
             $table->integer('position')->nullable();
             $table->timestamp('created_at')->useCurrent();

@@ -1,6 +1,6 @@
 <template>
     <head>
-        <Title>Operations Dashboard - Development Stage</Title>
+        <Title>Dashboard</Title>
     </head>
     <div class="min-h-screen bg-gradient-to-br rounded-md from-slate-900 via-blue-900 to-slate-800 relative">
         <!-- Subtle Pattern Background -->

@@ -142,9 +142,9 @@ class ToolstringController extends Controller
 
         // Optional sorting
         $sortBy = $request->input('sort_by', 'created_at');
-        $direction = $request->input('direction', 'desc');
+        $sort_direction = $request->input('sort_direction', 'desc');
 
-        $query->orderBy($sortBy, $direction);
+        $query->orderBy($sortBy, $sort_direction);
 
         // Paginate
         $items = $query->paginate($perPage);
@@ -198,6 +198,14 @@ class ToolstringController extends Controller
     {
         DB::transaction(function () use ($request) {
             // Validate input
+            if ($request->thread_id === 'null') {
+                $request->merge(['thread_id' => null]);
+            }
+
+            if ($request->thread_size_id === 'null') {
+                $request->merge(['thread_size_id' => null]);
+            }
+            
             $validatedData = $request->validate([
                 'toolstring_type_id' => 'required|exists:toolstring_types,id',
                 'name' => 'required|string|max:255',
@@ -263,6 +271,14 @@ class ToolstringController extends Controller
     {
         DB::transaction(function () use ($request, $id) {
             // Validate input
+            if ($request->thread_id === 'null') {
+                $request->merge(['thread_id' => null]);
+            }
+
+            if ($request->thread_size_id === 'null') {
+                $request->merge(['thread_size_id' => null]);
+            }
+
             $validatedData = $request->validate([
                 'toolstring_type_id' => 'required|exists:toolstring_types,id',
                 'name' => 'required|string|max:255',
@@ -366,6 +382,8 @@ class ToolstringController extends Controller
             'search' => 'nullable|string|max:255',
         ]);
 
+        $limit = $request->input('limit', 10);
+
         // Retrieve items by type with optional search
         $query = ToolstringItemModel::where('toolstring_type_id', $request->input('toolstring_type_id'));
 
@@ -376,6 +394,10 @@ class ToolstringController extends Controller
                     ->orWhere('description', 'like', "%{$search}%");
             });
         }
+
+        $query->when($limit, function ($query, $limit) {
+            return $query->limit($limit);
+        });
 
         // Get the items
         $items = $query->get();
@@ -439,8 +461,8 @@ class ToolstringController extends Controller
         $query->where('created_by', $request->user()->id); // Assuming the user is authenticated
         // Optional sorting
         $sortBy = $request->input('sort_by', 'date');
-        $direction = $request->input('direction', 'desc');
-        $query->orderBy($sortBy, $direction);
+        $sort_direction = $request->input('sort_direction', 'desc');
+        $query->orderBy($sortBy, $sort_direction);
 
         // Paginate
         $histories = $query->paginate($perPage);
@@ -521,8 +543,13 @@ class ToolstringController extends Controller
         // Find the item by ID
         $item = ToolstringItemModel::findOrFail($itemId);
 
+        $limit = request()->input('limit', 10);
         // Get the dimensions for the item
-        $dimensions = ToolstringItemDimensionModel::where('toolstring_item_id', $item->id)->get();
+        $dimensions = ToolstringItemDimensionModel::where('toolstring_item_id', $item->id)
+                ->when($limit, function ($query, $limit) {
+                    return $query->limit($limit);
+                })
+                ->get();
 
         // Transform dimensions to include units
         $dimensionsArray = $dimensions->map(function ($dimension) {
@@ -736,7 +763,6 @@ class ToolstringController extends Controller
             ];
         });
 
-        $heightPDF = $request->query('height_pdf', 1500);
         $reportingHistory = ToolstringReportingHistoryModel::findOrFail($templateId);
         $formattedDate = \Carbon\Carbon::parse($reportingHistory->date)->format('j/n/Y');
         $logoBase64 = $this->imageToBase64FromPublic('assets/images/company/company-logo.png');
@@ -749,7 +775,36 @@ class ToolstringController extends Controller
             'lengthUnit' => $selected_length_unit_convertion,
             'company_logo' => $logoBase64,
         ];
+
         $html = view('pdf.toolstring-reporting', $data)->render();
+
+        $format = null;
+        $height = $request->get('height', 0);
+        $width = $request->get('width', 0);
+        $orientation = $request->get('orientation', 'P');
+        $size = $request->get('size', 'A4');
+        if ($size === 'Custom' && $height > 0 && $width > 0) {
+            $format = [$width, $height];
+        } else {
+            if ($size === 'F4') {
+                $format = [210, 330]; // F4 size in mm
+            } elseif ($size === 'F5') {
+                $format = [176, 250]; // F5 size in mm
+            } elseif ($size === 'Legal') {
+                $format = [216, 356]; // Legal size in mm
+            } elseif ($size === 'Letter') {
+                $format = [216, 279]; // Letter size in mm
+            } elseif ($size === 'A3') {
+                $format = [297, 420]; // A3 size in mm
+            } elseif ($size === 'A4') {
+                $format = [210, 297]; // A4 size in mm
+            } elseif ($size === 'A5') {
+                $format = [148, 210]; // A5 size in mm
+            } else {
+                $format = $size;
+            }
+        }
+
         $mpdfConfig = [
             'mode' => 'utf-8',
             'margin_left' => 10,
@@ -758,10 +813,10 @@ class ToolstringController extends Controller
             'margin_bottom' => 15,
             'margin_header' => 5,
             'margin_footer' => 5,
-            'orientation' => 'P',
+            'orientation' => $orientation, // 'P' for portrait, 'L' for landscape
             'default_font_size' => 10,
             'default_font' => 'sans-serif',
-            'format' => [210, $heightPDF],
+            'format' => $format,
             'tempDir' => storage_path('app/temp'), // Laravel
             // atau 'tempDir' => public_path('temp'), // untuk direktori public
             'simpleTables' => false,

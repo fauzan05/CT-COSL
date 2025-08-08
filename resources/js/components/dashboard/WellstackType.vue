@@ -761,10 +761,10 @@
                             <!-- Sort Direction Toggle -->
                             <SwitchGroup as="div" class="flex items-center space-x-2">
                                 <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc</SwitchLabel>
-                                <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                <Switch v-model="sortDirection" :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                     class="relative inline-flex items-center h-6 w-11 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                     <span class="sr-only">Toggle sort direction</span>
-                                    <span aria-hidden="true" :class="isDesc ? 'translate-x-5' : 'translate-x-0'"
+                                    <span aria-hidden="true" :class="sortDirection ? 'translate-x-5' : 'translate-x-0'"
                                         class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                 </Switch>
                                 <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc</SwitchLabel>
@@ -913,10 +913,10 @@
                                     <SwitchGroup as="div" class="flex items-center space-x-2">
                                         <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc
                                         </SwitchLabel>
-                                        <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                        <Switch v-model="sortDirection" :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                             class="relative inline-flex items-center h-5 w-9 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                             <span class="sr-only">Toggle sort direction</span>
-                                            <span aria-hidden="true" :class="isDesc ? 'translate-x-4' : 'translate-x-0'"
+                                            <span aria-hidden="true" :class="sortDirection ? 'translate-x-4' : 'translate-x-0'"
                                                 class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                         </Switch>
                                         <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc
@@ -1112,8 +1112,9 @@
             :from="items.from" :to="items.to" :total="items.total" @prev="previousPage" @next="nextPage" />
     </div>
 </template>
+
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import axios from 'axios';
@@ -1161,7 +1162,7 @@ const items = ref([]);
 const itemsToDelete = ref([]);
 const selectedCategories = ref([]);
 const search = ref('');
-const isDesc = ref(true);
+const sortDirection = ref(true);
 const currentPage = ref(1);
 const totalPages = ref(1);
 
@@ -1172,8 +1173,8 @@ const showDesc = ref({})
 
 // ========== FILTER OPTIONS ==========
 const sortByItems = [
-    { name: 'Created Date', value: 'created_at' },
-    { name: 'Updated Date', value: 'updated_at' },
+    { name: 'Updated At', value: 'updated_at' },
+    { name: 'Updated By', value: 'updated_by' },
     { name: 'Name', value: 'name' },
 ];
 
@@ -1212,7 +1213,6 @@ const itemForm = ref({
 });
 
 // ========== COMPUTED ==========
-const direction = computed(() => (isDesc.value ? 'desc' : 'asc'));
 const totalActiveItems = ref(0);
 const totalInactiveItems = ref(0);
 
@@ -1359,7 +1359,7 @@ const fetchAllItems = async (page = 1) => {
                 search: search.value,
                 status: selectedStatusFilter.value.value,
                 sort_by: selectedSortByFilter.value.value,
-                direction: direction.value,
+                sort_direction: sortDirection.value ? 'desc' : 'asc',
             },
         });
 
@@ -1497,7 +1497,7 @@ const toggleDescription = () => {
 }
 
 // ========== WATCHERS ==========
-watch([selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, search, isDesc], () => {
+watch([selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, search, sortDirection], () => {
     fetchAllItems(items.value.current_page || 1);
 }, { deep: true });
 
@@ -1522,7 +1522,6 @@ onMounted(async () => {
     }
 });
 
-onUnmounted(() => { });
 </script>
 
 <style>

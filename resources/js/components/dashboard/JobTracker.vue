@@ -162,7 +162,7 @@
 
                     <!-- Mobile: Grid for Refresh button -->
                     <div class="block sm:hidden">
-                        <button @click="fetchJobTrackers(pagination.current_page)" :disabled="isLoading"
+                        <button @click="fetchJobTrackers(paginationData.current_page)" :disabled="isLoading"
                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             <span v-if="!isLoading" class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -188,7 +188,7 @@
                     <!-- Desktop: Horizontal layout -->
                     <div class="hidden sm:flex sm:items-center sm:justify-between sm:space-x-4">
                         <!-- Refresh Button -->
-                        <button @click="fetchJobTrackers(pagination.current_page)" :disabled="isLoading"
+                        <button @click="fetchJobTrackers(paginationData.current_page)" :disabled="isLoading"
                             class="inline-flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             <span v-if="!isLoading" class="flex items-center gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -254,10 +254,10 @@
                             <!-- Sort Direction Toggle -->
                             <SwitchGroup as="div" class="flex items-center space-x-2">
                                 <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc</SwitchLabel>
-                                <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                <Switch v-model="sortDirection" :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                     class="relative inline-flex items-center h-6 w-11 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                     <span class="sr-only">Toggle sort direction</span>
-                                    <span aria-hidden="true" :class="isDesc ? 'translate-x-5' : 'translate-x-0'"
+                                    <span aria-hidden="true" :class="sortDirection ? 'translate-x-5' : 'translate-x-0'"
                                         class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                 </Switch>
                                 <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc</SwitchLabel>
@@ -319,10 +319,12 @@
                                     <SwitchGroup as="div" class="flex items-center space-x-2">
                                         <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc
                                         </SwitchLabel>
-                                        <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                        <Switch v-model="sortDirection"
+                                            :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                             class="relative inline-flex items-center h-5 w-9 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                             <span class="sr-only">Toggle sort direction</span>
-                                            <span aria-hidden="true" :class="isDesc ? 'translate-x-4' : 'translate-x-0'"
+                                            <span aria-hidden="true"
+                                                :class="sortDirection ? 'translate-x-4' : 'translate-x-0'"
                                                 class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                         </Switch>
                                         <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc
@@ -384,7 +386,7 @@
                             <tr v-for="(jobTracker, index) in listJobTrackers" :key="jobTracker.id"
                                 class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                    {{ (pagination.current_page - 1) * perPage + index + 1 }}
+                                    {{ (paginationData.current_page - 1) * perPage + index + 1 }}
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                                     {{ jobTracker.well_name || '-' }}
@@ -440,99 +442,8 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Improved Pagination with Per-Page Selector -->
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mt-6 space-y-3 md:space-y-0 px-4">
-                    <!-- Per Page Selector -->
-                    <div class="flex items-center space-x-2">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
-                        <Listbox v-model="perPage" @update:modelValue="changePerPage">
-                            <div class="relative">
-                                <ListboxButton
-                                    class="relative w-20 cursor-default rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 py-1.5 pl-3 pr-8 text-left text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    {{ perPage }}
-                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                    </span>
-                                </ListboxButton>
-
-                                <ListboxOptions
-                                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-sm shadow-lg ring-opacity-5 focus:outline-none z-50">
-
-                                    <ListboxOption v-for="option in perPageOptions" :key="option" :value="option"
-                                        v-slot="{ active, selected }">
-
-                                        <li :class="[
-                                            'cursor-default select-none relative py-2 pl-3 pr-9',
-                                            active ? 'bg-blue-50 dark:bg-blue-900/40' : '',
-                                            selected ? 'font-semibold text-blue-600 dark:text-blue-300' : 'text-gray-900 dark:text-gray-200'
-                                        ]">
-                                            {{ option }}
-                                            <span v-if="selected"
-                                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 dark:text-blue-300">
-                                                ✓
-                                            </span>
-                                        </li>
-
-                                    </ListboxOption>
-                                </ListboxOptions>
-                            </div>
-                        </Listbox>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">entries</span>
-                    </div>
-
-                    <!-- Pagination Controls -->
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">
-                            Showing page {{ pagination.current_page }} of {{ pagination.last_page }}
-                        </span>
-
-                        <div class="flex items-center space-x-1">
-                            <!-- First Page -->
-                            <button @click="goToPage(1)"
-                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="pagination.current_page === 1">
-                                <ChevronDoubleLeftIcon class="h-4 w-4" />
-                            </button>
-
-                            <!-- Previous -->
-                            <button @click="goToPage(pagination.current_page - 1)"
-                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="pagination.current_page === 1">
-                                <ChevronLeftIcon class="h-4 w-4" />
-                            </button>
-
-                            <!-- Page Numbers -->
-                            <div class="flex space-x-1">
-                                <template v-for="pageNumber in displayedPages" :key="pageNumber">
-                                    <button v-if="pageNumber !== '...'" @click="goToPage(pageNumber)" :class="[
-                                        'px-3 py-1 rounded-md text-sm font-medium',
-                                        pagination.current_page === pageNumber
-                                            ? 'bg-blue-500 text-white'
-                                            : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                                    ]">
-                                        {{ pageNumber }}
-                                    </button>
-                                    <span v-else class="px-2 py-1 text-gray-500">...</span>
-                                </template>
-                            </div>
-
-                            <!-- Next -->
-                            <button @click="goToPage(pagination.current_page + 1)"
-                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="pagination.current_page === pagination.last_page">
-                                <ChevronRightIcon class="h-4 w-4" />
-                            </button>
-
-                            <!-- Last Page -->
-                            <button @click="goToPage(pagination.last_page)"
-                                class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="pagination.current_page === pagination.last_page">
-                                <ChevronDoubleRightIcon class="h-4 w-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <Pagination :pagination="paginationData" :per-page="currentPerPage" :per-page-options="perPageOptions"
+                    :max-displayed-pages="5" @page-changed="handlePageChange" @per-page-changed="handlePerPageChange" />
             </div>
         </div>
     </div>
@@ -540,7 +451,7 @@
   
 <script setup>
 /* ------------------------------- IMPORTS ------------------------------- */
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch, reactive, computed } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
@@ -552,10 +463,10 @@ import {
     TransitionChild
 } from '@headlessui/vue';
 import {
-    ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon,
-    ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CheckIcon
+    ChevronUpDownIcon, CheckIcon
 } from '@heroicons/vue/20/solid';
 import PDFPaperSizeConfiguration from '@/components/modals/PDFPaperSizeConfiguration.vue';
+import Pagination from '@/components/PaginationV1.vue';
 
 /* ----------------------------- STATE & STORES ----------------------------- */
 const baseUrl = import.meta.env.VITE_API_URL;
@@ -565,7 +476,6 @@ const isCreate = computed(() => route.name === 'create-job-tracker');
 const isEdit = computed(() => route.name === 'edit-job-tracker');
 
 const listJobTrackers = ref([]);
-const pagination = ref({ current_page: 1, last_page: 1 });
 const showPaperModal = ref(false)
 const isLoading = ref(false);
 const isJobTrackerModalOpen = ref(false);
@@ -577,11 +487,23 @@ const showMobileFilters = ref(false);
 
 const sortByItems = ref([
     { name: 'Updated At', value: 'updated_at' },
-    { name: 'Updated By', value: 'updated_by_name' },
+    { name: 'Updated By', value: 'updated_by' },
+    { name: 'Well Name', value: 'well_name' },
+    { name: 'Company Man', value: 'company_man' },
+    { name: 'Job Start Date', value: 'job_start_date' },
+    { name: 'Job End Date', value: 'job_end_date' },
+    { name: 'Job Days', value: 'job_days' },
 ]);
 
+const paginationData = reactive({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0
+})
+
 const selectedSortByFilter = ref(sortByItems.value[0]);
-const isDesc = ref(true);
+const sortDirection = ref(true);
 
 const selectedJobTracker = ref(null);
 const currentUserStore = useCurrentUserStore();
@@ -647,16 +569,26 @@ const handleExportPDF = (paperConfig) => {
     window.open(url, '_blank');
 }
 
+const handlePerPageChange = async (newPerPage) => {
+    perPage.value = newPerPage;
+    paginationData.current_page = 1; // Reset to first page
+    await fetchJobTrackers(1);
+}
+
+const handlePageChange = async (page) => {
+    if (page < 1 || page > paginationData.last_page) return;
+    paginationData.current_page = page;
+    await fetchJobTrackers(page);
+};
+
 /* ----------------------------- API HANDLERS ----------------------------- */
 async function fetchJobTrackers(page = 1) {
     try {
         isLoading.value = true;
-        const response = await axios.get(`${baseUrl}/api/job-trackers?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&is_desc=${isDesc.value}`);
+        const response = await axios.get(`${baseUrl}/api/job-trackers?page=${page}&per_page=${perPage.value}&search=${search.value}&sort_by=${selectedSortByFilter.value.value}&sort_direction=${sortDirection.value ? 'desc' : 'asc'}`);
         listJobTrackers.value = response.data.data;
-        pagination.value = {
-            current_page: response.data.current_page,
-            last_page: response.data.last_page,
-        };
+        paginationData.current_page = response.data.current_page;
+        paginationData.last_page = response.data.last_page;
     } catch (error) {
         console.error(error);
     } finally {
@@ -675,7 +607,7 @@ function handleDeleteJobTracker() {
         .then(response => {
             if (response.status === 200) {
                 toast.success('JobTracker deleted successfully!');
-                fetchJobTrackers(pagination.value.current_page);
+                fetchJobTrackers(paginationData.current_page);
                 closeModal();
             }
         })
@@ -688,40 +620,9 @@ function handleDeleteJobTracker() {
         });
 }
 
-function goToPage(page) {
-    if (page < 1 || page > pagination.value.last_page) return;
-    fetchJobTrackers(page);
-}
-
-function changePerPage(newPerPage) {
-    perPage.value = newPerPage;
-    pagination.value.current_page = 1;
-    fetchJobTrackers(1);
-}
-
-const displayedPages = computed(() => {
-    if (!pagination.value?.current_page || !pagination.value?.last_page) {
-        return [];
-    }
-    const current = pagination.value.current_page;
-    const last = pagination.value.last_page;
-    const delta = 2;
-    const range = [];
-
-    for (let i = 1; i <= last; i++) {
-        if (i === 1 || i === last || (i >= current - delta && i <= current + delta)) {
-            range.push(i);
-        } else if (range[range.length - 1] !== '...') {
-            range.push('...');
-        }
-    }
-
-    return range;
-});
-
 /* ------------------------------ FILTERS ------------------------------ */
-watch([selectedSortByFilter, perPage, search, isDesc], () => {
-    fetchJobTrackers(pagination.value.current_page || 1);
+watch([selectedSortByFilter, perPage, search, sortDirection], () => {
+    fetchJobTrackers(1);
 });
 
 watch([isCreate, isEdit], () => {

@@ -228,11 +228,7 @@
                                         <button :disabled="updatePositionLoading" @click="handleUpdatePosition"
                                             class="inline-flex items-center justify-center h-10 px-4 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                                             <span v-if="!updatePositionLoading" class="flex items-center gap-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                                </svg>
+                                                <i class="fas fa-up-down"></i>
                                                 <span class="font-medium">Update Position</span>
                                             </span>
                                             <span v-else class="flex items-center gap-2">
@@ -247,8 +243,36 @@
                                             </span>
                                         </button>
 
+                                        <!-- Refresh Components Button -->
+                                        <button :disabled="refreshComponentsLoading" @click="fetchAllToolstringTypes"
+                                            class="inline-flex items-center justify-center h-10 px-4 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <span v-if="!refreshComponentsLoading" class="flex items-center gap-2">
+                                                <i class="fa-solid fa-arrows-rotate"></i>
+                                                <span class="font-medium">Refresh Components</span>
+                                            </span>
+                                            <span v-else class="flex items-center gap-2">
+                                                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4" />
+                                                    <path class="opacity-75" fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                </svg>
+                                                <span class="font-medium">Loading...</span>
+                                            </span>
+                                        </button>
+
+                                        <!-- Reset Selection Button -->
+                                        <button @click="resetSelectionComponent"
+                                            class="inline-flex items-center justify-center h-10 px-4 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <span class="flex items-center gap-2">
+                                                <i class="fa-solid fa-xmark"></i>
+                                                <span class="font-medium">Reset</span>
+                                            </span>
+                                        </button>
+
                                         <!-- Export PDF Button -->
-                                        <button :disabled="exportPDFLoading" @click="handleExportPDF"
+                                        <button :disabled="exportPDFLoading || !selectedPaperSize" @click="handleExportPDF"
                                             class="inline-flex items-center justify-center h-10 px-4 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                                             <span v-if="!exportPDFLoading" class="flex items-center gap-2">
                                                 <i class="fas fa-file-pdf mr-1.5"></i>
@@ -292,7 +316,6 @@
                                                             leave-from-class="opacity-100" leave-to-class="opacity-0">
                                                             <ComboboxOptions
                                                                 class="absolute mt-1 z-40 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-
                                                                 <div v-if="loading"
                                                                     class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
                                                                     Loading...
@@ -301,7 +324,6 @@
                                                                     class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
                                                                     Nothing found.
                                                                 </div>
-
                                                                 <ComboboxOption v-for="type in types" :key="type.id"
                                                                     :value="type" v-slot="{ selected, active }">
                                                                     <li
@@ -321,6 +343,7 @@
                                                     </div>
                                                 </Combobox>
                                             </div>
+
                                             <!-- Component Tools -->
                                             <div class="w-full sm:w-1/3 flex flex-col">
                                                 <label
@@ -345,7 +368,6 @@
                                                             leave-from-class="opacity-100" leave-to-class="opacity-0">
                                                             <ComboboxOptions
                                                                 class="absolute mt-1 z-40 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-
                                                                 <div v-if="loading"
                                                                     class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
                                                                     Loading...
@@ -354,7 +376,6 @@
                                                                     class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
                                                                     Nothing found.
                                                                 </div>
-
                                                                 <ComboboxOption v-for="item in items" :key="item.id"
                                                                     :value="item" v-slot="{ selected, active }">
                                                                     <li :class="[
@@ -378,15 +399,117 @@
                                                     </div>
                                                 </Combobox>
                                             </div>
-                                            <!-- Height PDF -->
-                                            <div class="w-full sm:w-48 flex flex-col">
-                                                <label class="text-sm font-medium text-gray-700 dark:text-white mb-1">Height
-                                                    PDF (mm)</label>
-                                                <input type="number" v-model="height_pdf"
-                                                    class="w-full sm:w-48 h-11 mt-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-800/50 text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none shadow-md"
-                                                    placeholder="Height PDF (mm)" />
+
+                                            <!-- Paper Size Selection -->
+                                            <div class="w-full sm:w-1/3 flex flex-col">
+                                                <label class="text-sm font-medium text-gray-700 dark:text-white mb-1">Paper
+                                                    Size</label>
+                                                <Combobox v-model="selectedPaperSize" class="w-full">
+                                                    <div class="relative mt-1">
+                                                        <div
+                                                            class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
+                                                            <ComboboxInput
+                                                                class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
+                                                                :displayValue="(size) => size?.name || 'Select Paper Size'"
+                                                                @change="queryPaperSizes = $event.target.value"
+                                                                placeholder="Select Paper Size..." />
+                                                            <ComboboxButton
+                                                                class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                <ChevronUpDownIcon class="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true" />
+                                                            </ComboboxButton>
+                                                        </div>
+                                                        <transition leave-active-class="transition duration-100 ease-in"
+                                                            leave-from-class="opacity-100" leave-to-class="opacity-0">
+                                                            <ComboboxOptions
+                                                                class="absolute mt-1 z-40 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                                                <div v-if="filteredPaperSizes.length === 0 && queryPaperSizes !== ''"
+                                                                    class="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
+                                                                    Nothing found.
+                                                                </div>
+                                                                <ComboboxOption v-for="size in filteredPaperSizes"
+                                                                    :key="size.value" :value="size"
+                                                                    v-slot="{ selected, active }">
+                                                                    <li
+                                                                        :class="['relative cursor-default select-none py-2 pl-10 pr-4', active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white']">
+                                                                        <span
+                                                                            :class="['block truncate', selected ? 'font-medium' : 'font-normal']">
+                                                                            {{ size.name }}
+                                                                        </span>
+                                                                        <span v-if="selected"
+                                                                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
+                                                                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                                                        </span>
+                                                                    </li>
+                                                                </ComboboxOption>
+                                                            </ComboboxOptions>
+                                                        </transition>
+                                                    </div>
+                                                </Combobox>
                                             </div>
                                         </div>
+
+                                        <!-- Paper Configuration Section -->
+                                        <div v-if="selectedPaperSize"
+                                            class="mt-4 p-4 bg-gray-50 dark:bg-gray-700/20 rounded-lg space-y-4">
+
+                                            <!-- Custom Size Inputs (only show if Custom is selected) -->
+                                            <div v-if="selectedPaperSize?.value === 'Custom'" class="space-y-3">
+                                                <p class="text-sm font-medium text-gray-700 dark:text-gray-200">Custom Paper
+                                                    Dimensions:</p>
+                                                <div class="grid grid-cols-2 gap-3">
+                                                    <div>
+                                                        <label for="customWidth"
+                                                            class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                            Width (mm)
+                                                        </label>
+                                                        <input id="customWidth" v-model.number="customSize.width"
+                                                            type="number" min="50" max="2000"
+                                                            class="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white text-sm"
+                                                            placeholder="210">
+                                                    </div>
+                                                    <div>
+                                                        <label for="customHeight"
+                                                            class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                            Height (mm)
+                                                        </label>
+                                                        <input id="customHeight" v-model.number="customSize.height"
+                                                            type="number" min="50" max="2000"
+                                                            class="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white text-sm"
+                                                            placeholder="297">
+                                                    </div>
+                                                </div>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                    Enter custom dimensions in millimeters (mm)
+                                                </p>
+                                            </div>
+
+                                            <!-- Orientation Selection -->
+                                            <div class="space-y-2">
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                                                    Orientation:
+                                                </label>
+                                                <div class="flex items-center space-x-4">
+                                                    <div class="flex items-center space-x-2">
+                                                        <input id="portrait" v-model="orientation" type="radio" value="P"
+                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-500">
+                                                        <label for="portrait"
+                                                            class="text-sm text-gray-700 dark:text-gray-200 cursor-pointer">
+                                                            Portrait
+                                                        </label>
+                                                    </div>
+                                                    <div class="flex items-center space-x-2">
+                                                        <input id="landscape" v-model="orientation" type="radio" value="L"
+                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-500">
+                                                        <label for="landscape"
+                                                            class="text-sm text-gray-700 dark:text-gray-200 cursor-pointer">
+                                                            Landscape
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="w-full">
                                             <!-- Component Dimension -->
                                             <div class="w-full flex flex-col">
@@ -435,11 +558,11 @@
                                                                         ]">
                                                                             OD: {{ dimension.outer_diameter.value }} {{
                                                                                 dimension.outer_diameter.unit }} - ID: {{
-        dimension.inner_diameter.value }} {{
-        dimension.inner_diameter.unit }} - Length: {{
-        dimension.length.value }} {{
-        dimension.length.unit
-    }}
+                                                                                dimension.inner_diameter.value }} {{
+                                                                                dimension.inner_diameter.unit }} - Length: {{
+                                                                                dimension.length.value }} {{
+                                                                                dimension.length.unit
+                                                                            }}
                                                                         </span>
                                                                         <span v-if="selected"
                                                                             class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
@@ -947,54 +1070,14 @@
                                     </Listbox>
                                 </div>
 
-                                <!-- Page Size Filter -->
-                                <div class="w-20">
-                                    <Listbox v-model="selectedPageSizeFilter">
-                                        <div class="relative">
-                                            <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm border border-gray-200 dark:border-slate-600">
-                                                <span class="block truncate text-gray-900 dark:text-white">{{
-                                                    selectedPageSizeFilter.name }}</span>
-                                                <span
-                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                    <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                                </span>
-                                            </ListboxButton>
-
-                                            <transition leave-active-class="transition duration-100 ease-in"
-                                                leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                                <ListboxOptions
-                                                    class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                                                    <ListboxOption v-slot="{ active, selected }"
-                                                        v-for="pageSizeItem in pageSizeItems" :key="pageSizeItem.name"
-                                                        :value="pageSizeItem" as="template">
-                                                        <li :class="[
-                                                            active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
-                                                            'relative cursor-default select-none py-2 pl-10 pr-4',
-                                                        ]">
-                                                            <span
-                                                                :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
-                                                                    pageSizeItem.name }}</span>
-                                                            <span v-if="selected"
-                                                                class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
-                                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                            </span>
-                                                        </li>
-                                                    </ListboxOption>
-                                                </ListboxOptions>
-                                            </transition>
-                                        </div>
-                                    </Listbox>
-                                </div>
-
                                 <!-- Sort Direction Toggle -->
                                 <SwitchGroup as="div" class="flex items-center space-x-2">
                                     <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc
                                     </SwitchLabel>
-                                    <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                    <Switch v-model="sortDirection" :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                         class="relative inline-flex items-center h-6 w-11 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                         <span class="sr-only">Toggle sort direction</span>
-                                        <span aria-hidden="true" :class="isDesc ? 'translate-x-5' : 'translate-x-0'"
+                                        <span aria-hidden="true" :class="sortDirection ? 'translate-x-5' : 'translate-x-0'"
                                             class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                     </Switch>
                                     <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">
@@ -1007,48 +1090,6 @@
                         <div class="grid grid-cols-1 gap-4 sm:hidden">
                             <!-- Row 1: Status and Sort By -->
                             <div class="grid grid-cols-2 gap-3">
-                                <!-- Status Filter -->
-                                <div>
-                                    <label
-                                        class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-                                    <Listbox v-model="selectedStatusFilter">
-                                        <div class="relative">
-                                            <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
-                                                <span class="block truncate text-gray-900 dark:text-white">{{
-                                                    selectedStatusFilter.name }}</span>
-                                                <span
-                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                    <ChevronUpDownIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
-                                                </span>
-                                            </ListboxButton>
-
-                                            <transition leave-active-class="transition duration-100 ease-in"
-                                                leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                                <ListboxOptions
-                                                    class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                                                    <ListboxOption v-slot="{ active, selected }"
-                                                        v-for="statusItem in statusItems" :key="statusItem.name"
-                                                        :value="statusItem" as="template">
-                                                        <li :class="[
-                                                            active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
-                                                            'relative cursor-default select-none py-2 pl-10 pr-4',
-                                                        ]">
-                                                            <span
-                                                                :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
-                                                                    statusItem.name }}</span>
-                                                            <span v-if="selected"
-                                                                class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
-                                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                            </span>
-                                                        </li>
-                                                    </ListboxOption>
-                                                </ListboxOptions>
-                                            </transition>
-                                        </div>
-                                    </Listbox>
-                                </div>
-
                                 <!-- Sort By Filter -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Sort
@@ -1090,52 +1131,6 @@
                                         </div>
                                     </Listbox>
                                 </div>
-                            </div>
-
-                            <!-- Row 2: Page Size and Sort Direction -->
-                            <div class="grid grid-cols-2 gap-3">
-                                <!-- Page Size Filter -->
-                                <div>
-                                    <label
-                                        class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Items</label>
-                                    <Listbox v-model="selectedPageSizeFilter">
-                                        <div class="relative">
-                                            <ListboxButton
-                                                class="relative w-full cursor-default rounded-lg bg-white dark:bg-slate-800/50 py-2.5 pl-3 pr-8 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 text-sm border border-gray-200 dark:border-slate-600">
-                                                <span class="block truncate text-gray-900 dark:text-white">{{
-                                                    selectedPageSizeFilter.name }}</span>
-                                                <span
-                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                    <ChevronUpDownIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
-                                                </span>
-                                            </ListboxButton>
-
-                                            <transition leave-active-class="transition duration-100 ease-in"
-                                                leave-from-class="opacity-100" leave-to-class="opacity-0">
-                                                <ListboxOptions
-                                                    class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                                                    <ListboxOption v-slot="{ active, selected }"
-                                                        v-for="pageSizeItem in pageSizeItems" :key="pageSizeItem.name"
-                                                        :value="pageSizeItem" as="template">
-                                                        <li :class="[
-                                                            active ? 'bg-blue-100 text-blue-900 dark:bg-gray-500 dark:text-white' : 'text-gray-900 dark:text-white',
-                                                            'relative cursor-default select-none py-2 pl-10 pr-4',
-                                                        ]">
-                                                            <span
-                                                                :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">{{
-                                                                    pageSizeItem.name }}</span>
-                                                            <span v-if="selected"
-                                                                class="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600 dark:text-white">
-                                                                <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                                                            </span>
-                                                        </li>
-                                                    </ListboxOption>
-                                                </ListboxOptions>
-                                            </transition>
-                                        </div>
-                                    </Listbox>
-                                </div>
-
                                 <!-- Sort Direction Toggle -->
                                 <div>
                                     <label
@@ -1145,10 +1140,12 @@
                                         <SwitchGroup as="div" class="flex items-center space-x-2">
                                             <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Asc
                                             </SwitchLabel>
-                                            <Switch v-model="isDesc" :class="isDesc ? 'bg-blue-600' : 'bg-gray-400'"
+                                            <Switch v-model="sortDirection"
+                                                :class="sortDirection ? 'bg-blue-600' : 'bg-gray-400'"
                                                 class="relative inline-flex items-center h-5 w-9 shrink-0 cursor-pointer rounded-full border border-gray-200 dark:border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                                                 <span class="sr-only">Toggle sort direction</span>
-                                                <span aria-hidden="true" :class="isDesc ? 'translate-x-4' : 'translate-x-0'"
+                                                <span aria-hidden="true"
+                                                    :class="sortDirection ? 'translate-x-4' : 'translate-x-0'"
                                                     class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
                                             </Switch>
                                             <SwitchLabel as="span" class="text-sm text-gray-700 dark:text-white">Desc
@@ -1235,7 +1232,8 @@
                             <tbody v-else class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="(template, index) in listTemplates" :key="template.id">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
-                                        {{ ++index }}</td>
+                                        {{ (paginationData.current_page - 1) * perPage + index + 1 }}
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         {{ template.name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
@@ -1281,6 +1279,8 @@
                             </tbody>
                         </table>
                     </div>
+                    <Pagination :pagination="paginationData" :per-page="currentPerPage" :per-page-options="perPageOptions"
+                        :max-displayed-pages="5" @page-changed="handlePageChange" @per-page-changed="handlePerPageChange" />
                 </div>
             </div>
         </div>
@@ -1289,7 +1289,7 @@
 
 <script setup>
 /* --------------------------------- IMPORTS --------------------------------- */
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, reactive, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import draggable from 'vuedraggable';
@@ -1304,6 +1304,7 @@ import {
 import {
     ChevronUpDownIcon, CheckIcon, PlusIcon
 } from '@heroicons/vue/20/solid';
+import Pagination from '@/components/PaginationV1.vue';
 
 /* ------------------------------ ROUTE & STATE ------------------------------ */
 const route = useRoute();
@@ -1320,34 +1321,64 @@ const isTemplateModalOpen = ref(false);
 const isReportingModalOpen = ref(false);
 const loading = ref(false);
 const showMobileFilters = ref(false);
-const isDesc = ref(true);
+const sortDirection = ref(true);
 const baseUrl = import.meta.env.VITE_API_URL;
+const paginationData = reactive({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0
+})
 
 /* ------------------------------ FILTER & SORT ------------------------------ */
 const search = ref('');
-const selectedStatusFilter = ref({ name: 'Active', value: 'active' });
-const selectedSortByFilter = ref({ name: 'Created Date', value: 'created_at' });
-const selectedPageSizeFilter = ref({ name: '10', value: 10 });
+const selectedSortByFilter = ref({ name: 'Created At', value: 'created_at' });
 
 /* ------------------------------ FILTER & SORT ITEMS ------------------------- */
 const sortByItems = [
     { name: 'Name', value: 'name' },
-    { name: 'Created Date', value: 'created_at' },
-    { name: 'Updated Date', value: 'updated_at' },
+    { name: 'Title', value: 'title' },
+    { name: 'Client', value: 'client' },
+    { name: 'Well', value: 'well' },
+    { name: 'Date', value: 'date' },
+    { name: 'Updated At', value: 'updated_at' },
+    { name: 'Updated By', value: 'updated_by' },
 ];
 
-const statusItems = [
-    { name: 'Active', value: 'active' },
-    { name: 'Inactive', value: 'inactive' },
-    { name: 'All', value: 'all' },
-];
+const perPageOptions = [10, 25, 50, 100];
+const perPage = ref(perPageOptions[0]);
+const refreshComponentsLoading = ref(false);
 
-const pageSizeItems = [
-    { name: '10', value: 10 },
-    { name: '25', value: 25 },
-    { name: '50', value: 50 },
-    { name: '100', value: 100 },
-];
+// Paper Size data
+const selectedPaperSize = ref(null)
+const queryPaperSizes = ref('')
+const paperSizes = ref([
+    { value: 'A4', name: 'A4 (210 × 297 mm)' },
+    { value: 'F4', name: 'F4 (210 × 330 mm)' },
+    { value: 'Letter', name: 'Letter (216 × 279 mm)' },
+    { value: 'Legal', name: 'Legal (216 × 356 mm)' },
+    { value: 'Custom', name: 'Custom Size' }
+])
+
+// Paper configuration data
+const customSize = ref({
+    width: 210,
+    height: 297
+})
+
+const orientation = ref('P')
+
+// Computed properties
+const filteredPaperSizes = computed(() => {
+    return queryPaperSizes.value === ''
+        ? paperSizes.value
+        : paperSizes.value.filter((size) =>
+            size.name
+                .toLowerCase()
+                .replace(/\s+/g, '')
+                .includes(queryPaperSizes.value.toLowerCase().replace(/\s+/g, ''))
+        )
+})
 
 // Data Units
 const units = ref(['selected convertion', 'inch', 'mm', 'cm'])
@@ -1380,7 +1411,6 @@ const resetForm = () => {
     };
 };
 
-
 /* --------------------------- DATA LIST & TABLE ----------------------------- */
 const listTemplates = ref([]);
 
@@ -1404,7 +1434,6 @@ const queryItemDimensions = ref('');
 const componentListLoading = ref(false);
 const AddComponentLoading = ref(false);
 const updatePositionLoading = ref(false);
-const height_pdf = ref(1500);
 
 const isDeleteModalOpen = ref(false);
 const selectedTemplate = ref(null)
@@ -1522,20 +1551,22 @@ const updatePositions = () => {
 }
 
 /* ------------------------------ API CALLS ---------------------------------- */
-const fetchAllTemplates = async () => {
+const fetchAllTemplates = async (page = 1) => {
     loading.value = true;
     isLoadingData.value = true;
     try {
         const response = await axios.get(baseUrl + '/api/toolstring-reporting-histories', {
             params: {
+                page: page,
+                per_page: perPage.value,
                 search: search.value,
-                status: selectedStatusFilter.value?.value,
-                sortBy: selectedSortByFilter.value?.value,
-                pageSize: selectedPageSizeFilter.value?.value,
-                direction: isDesc.value ? 'desc' : 'asc',
+                sort_by: selectedSortByFilter.value?.value,
+                sort_direction: sortDirection.value ? 'desc' : 'asc',
             }
         });
         listTemplates.value = response.data.data;
+        paginationData.current_page = response.data.current_page;
+        paginationData.last_page = response.data.last_page;
     } catch (error) {
         console.error('Error fetching data:', error);
     } finally {
@@ -1545,7 +1576,7 @@ const fetchAllTemplates = async () => {
 };
 
 const fetchAllToolstringTypes = async () => {
-    loading.value = true;
+    refreshComponentsLoading.value = true;
     try {
         const response = await axios.get(baseUrl + '/api/toolstring-types-search', {
             params: { search: queryTypes.value }
@@ -1558,14 +1589,14 @@ const fetchAllToolstringTypes = async () => {
     } catch (error) {
         console.error('Error fetching types:', error);
     } finally {
-        loading.value = false;
+        refreshComponentsLoading.value = false;
     }
 };
 
 const fetchAllToolstringItems = async (typeId) => {
     loading.value = true;
     try {
-        const response = await axios.get(baseUrl + '/api/toolstring-items-search', {
+        const response = await axios.get(baseUrl + '/api/toolstring-items-search?limit=10', {
             params: { toolstring_type_id: typeId }
         });
         items.value = response.data;
@@ -1583,7 +1614,7 @@ const fetchAllToolstringItems = async (typeId) => {
 const fetchAllComponentDimensions = async (itemId) => {
     loading.value = true;
     try {
-        const response = await axios.get(`${baseUrl}/api/toolstring-item-dimensions/${itemId}`);
+        const response = await axios.get(`${baseUrl}/api/toolstring-item-dimensions/${itemId}?limit=10`);
         itemDimensions.value = response.data;
     } catch (error) {
         console.error('Error fetching item dimensions:', error);
@@ -1600,11 +1631,11 @@ const fetchAllToolstringReportingDetails = async (templateId) => {
             component_id: detail.id,
             image: baseUrl + detail.image_url || 'default-image-url.jpg',
             description: detail.item_name,
-            od: `${ parseFloat(detail.dimension?.outer_diameter.value) } ${ detail.dimension?.outer_diameter.unit}` || 'N/A',
-            id: `${ parseFloat(detail.dimension?.inner_diameter.value) } ${detail.dimension?.inner_diameter.unit}` || 'N/A',
+            od: `${parseFloat(detail.dimension?.outer_diameter.value)} ${detail.dimension?.outer_diameter.unit}` || 'N/A',
+            id: `${parseFloat(detail.dimension?.inner_diameter.value)} ${detail.dimension?.inner_diameter.unit}` || 'N/A',
             top_connection: detail.thread_size?.top_connection || 'N/A',
             bottom_connection: detail.thread_size?.bottom_connection || 'N/A',
-            length: `${ parseFloat(detail.dimension?.length.value) } ${detail.dimension?.length.unit}` || 'N/A',
+            length: `${parseFloat(detail.dimension?.length.value)} ${detail.dimension?.length.unit}` || 'N/A',
             position: index + 1
         }));
     } catch (error) {
@@ -1613,6 +1644,12 @@ const fetchAllToolstringReportingDetails = async (templateId) => {
         loading.value = false;
     }
 };
+
+const resetSelectionComponent = () => {
+    selectedType.value = null;
+    selectedItem.value = null;
+    selectedItemDimension.value = null;
+}
 
 
 /* -------------------------- MODAL HANDLERS --------------------------------- */
@@ -1693,11 +1730,11 @@ const handleAddComponent = async () => {
         component_id: selectedItem.value.id,
         image: selectedItem.value.image_url || 'default-image-url.jpg',
         description: selectedItem.value.name,
-        od: `${ parseFloat(selectedItemDimension?.value.outer_diameter.value) } ${selectedItemDimension.value.outer_diameter.unit}` || 'N/A',
-        id: `${ parseFloat(selectedItemDimension?.value.inner_diameter.value) } ${selectedItemDimension.value.inner_diameter.unit}` || 'N/A',
+        od: `${parseFloat(selectedItemDimension?.value.outer_diameter.value)} ${selectedItemDimension.value.outer_diameter.unit}` || 'N/A',
+        id: `${parseFloat(selectedItemDimension?.value.inner_diameter.value)} ${selectedItemDimension.value.inner_diameter.unit}` || 'N/A',
         top_connection: selectedItemDimension.value.thread_size?.top_connection || 'N/A',
         bottom_connection: selectedItemDimension.value.thread_size?.bottom_connection || 'N/A',
-        length: `${ parseFloat(selectedItemDimension?.value.length.value) } ${selectedItemDimension.value.length.unit}` || 'N/A',
+        length: `${parseFloat(selectedItemDimension?.value.length.value)} ${selectedItemDimension.value.length.unit}` || 'N/A',
         position: componentList.value.length + 1
     };
 
@@ -1791,9 +1828,22 @@ const handleExportPDF = () => {
         useToast().error('Please select a valid unit conversion');
         return;
     }
-    const url = baseUrl + '/backend/toolstring-reporting-histories/export-pdf/' + templateToolstringForm.value.id + '?od_unit=' + selected_od_unit_convertion.value + '&id_unit=' + selected_id_unit_convertion.value + '&length_unit=' + selected_length_unit_convertion.value + '&height_pdf=' + height_pdf.value;
+
+    const url = baseUrl + '/backend/toolstring-reporting-histories/export-pdf/' + templateToolstringForm.value.id + '?od_unit=' + selected_od_unit_convertion.value + '&id_unit=' + selected_id_unit_convertion.value + '&length_unit=' + selected_length_unit_convertion.value + '&height=' + customSize.value.height + '&width=' + customSize.value.width + '&orientation=' + orientation.value + '&size=' + selectedPaperSize.value.value;
     window.open(url, '_blank');
 }
+
+const handlePerPageChange = async (newPerPage) => {
+    perPage.value = newPerPage;
+    paginationData.current_page = 1; // Reset to first page
+    await fetchAllTemplates(1);
+}
+
+const handlePageChange = async (page) => {
+    if (page < 1 || page > paginationData.last_page) return;
+    paginationData.current_page = page;
+    await fetchAllTemplates(page);
+};
 
 /* ------------------------------- WATCHERS ---------------------------------- */
 watch(queryTypes, (newQuery) => {
@@ -1828,7 +1878,7 @@ watch(queryItemDimensions, (newQuery) => {
         : itemDimensions.value.filter(dim => dimensionLabel(dim).toLowerCase().includes(newQuery.toLowerCase()));
 }, { immediate: true });
 
-watch([search, selectedStatusFilter, selectedSortByFilter, selectedPageSizeFilter, isDesc], () => {
+watch([search, selectedSortByFilter, sortDirection], () => {
     fetchAllTemplates();
 }, { deep: true });
 

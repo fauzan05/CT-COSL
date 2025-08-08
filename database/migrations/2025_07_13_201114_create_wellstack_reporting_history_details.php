@@ -16,16 +16,13 @@ return new class extends Migration
             
             $table->uuid('wellstack_reporting_history_id')
                 ->constrained('wellstack_reporting_histories')
-                ->onDelete('cascade')
-                ->name('fk_wrhd_history_id'); // Custom constraint name
+                ->onDelete('cascade');
             $table->uuid('wellstack_type_id')
                 ->constrained('wellstack_types')
-                ->onDelete('cascade')
-                ->name('fk_wrhd_type_id'); // Custom constraint name
+                ->onDelete('cascade');
             $table->uuid('wellstack_item_id')
                 ->constrained('wellstack_items')
-                ->onDelete('cascade')
-                ->name('fk_wrhd_item_id'); // Custom constraint name
+                ->onDelete('cascade');
 
             $table->integer('position')->nullable();
             $table->timestamp('created_at')->useCurrent();
