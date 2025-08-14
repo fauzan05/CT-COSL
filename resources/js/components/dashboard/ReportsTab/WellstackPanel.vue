@@ -535,7 +535,7 @@
                                                             class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
                                                             <ComboboxInput
                                                                 class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
-                                                                :displayValue="(size) => size?.name || 'Select Paper Size'"
+                                                                :displayValue="(size) => size?.name"
                                                                 @change="queryPaperSizes = $event.target.value"
                                                                 placeholder="Select Paper Size..." />
                                                             <ComboboxButton
@@ -639,7 +639,7 @@
                             <!-- Table Component -->
                             <div class="bg-white dark:bg-slate-800 rounded-xl my-5 shadow-md overflow-hidden">
                                 <!-- Table container with fixed height and scroll -->
-                                <div class="max-h-96 overflow-y-auto">
+                                <div class="max-h-96 min-h-40 overflow-y-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                         <!-- Sticky Header -->
                                         <thead class="bg-gray-50 dark:bg-gray-800 sticky top-0">
@@ -943,7 +943,7 @@
                                             <template #footer>
                                                 <tr v-if="componentList.length === 0">
                                                     <td colspan="10"
-                                                        class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                                        class="px-6 py-4 h-20 text-center text-gray-500 dark:text-gray-400">
                                                         No components found
                                                     </td>
                                                 </tr>
@@ -1574,26 +1574,26 @@ const sortDirection = ref(true);
 const isLoadingData = ref(false);
 const componentList = ref([]);
 const weightUnits = ref([
-    { name: 'Selected Convertion', value: 'selected_convertion' },
+    { name: 'Select Conversion', value: 'select_conversion' },
     { name: 'Pound', value: 'lbs' },
     { name: 'Kilogram', value: 'kg' },
 ]);
 
 const heightUnits = ref([
-    { name: 'Selected Convertion', value: 'selected_convertion' },
+    { name: 'Select Conversion', value: 'select_conversion' },
     { name: 'Inch', value: 'inch' },
     { name: 'Foot', value: 'ft' },
     { name: 'Meter', value: 'm' },
 ]);
 
 const pressureRatingUnits = ref([
-    { name: 'Selected Convertion', value: 'selected_convertion' },
+    { name: 'Select Conversion', value: 'select_conversion' },
     { name: 'Psi', value: 'psi' },
     { name: 'Bar', value: 'bar' },
 ]);
 
 const shearRamDistFromBottomUnits = ref([
-    { name: 'Selected Convertion', value: 'selected_convertion' },
+    { name: 'Select Conversion', value: 'select_conversion' },
     { name: 'Inch', value: 'inch' },
     { name: 'Foot', value: 'ft' },
     { name: 'Meter', value: 'm' },
@@ -1835,28 +1835,28 @@ const getConvertedComponent = (component) => {
     const pressureData = parseValueAndUnit(component.pressure_rating);
     const shearRamData = parseValueAndUnit(component.shear_ram_dist_from_bottom);
 
-    const convertedHeight = selected_heightUnit.value.value === 'selected_convertion'
+    const convertedHeight = selected_heightUnit.value.value === 'select_conversion'
         ? component.height + ' ' + (component.height_unit || heightData.unit)
         : formatValue(
             convertLengthUnit(heightData.value, component.height_unit || heightData.unit, selected_heightUnit.value.value),
             selected_heightUnit.value.value
         );
 
-    const convertedWeight = selected_weightUnit.value.value === 'selected_convertion'
+    const convertedWeight = selected_weightUnit.value.value === 'select_conversion'
         ? component.weight + ' ' + (component.weight_unit || weightData.unit)
         : formatValue(
             convertWeightUnit(weightData.value, component.weight_unit || weightData.unit, selected_weightUnit.value.value),
             selected_weightUnit.value.value
         );
 
-    const convertedPressure = selected_pressureRatingUnit.value.value === 'selected_convertion'
+    const convertedPressure = selected_pressureRatingUnit.value.value === 'select_conversion'
         ? component.pressure_rating + ' ' + (component.pressure_rating_unit || pressureData.unit)
         : formatValue(
             convertPressureUnit(pressureData.value, component.pressure_rating_unit || pressureData.unit, selected_pressureRatingUnit.value.value),
             selected_pressureRatingUnit.value.value
         );
 
-    const convertedShearRam = selected_shearRamDistFromBottomUnit.value.value === 'selected_convertion'
+    const convertedShearRam = selected_shearRamDistFromBottomUnit.value.value === 'select_conversion'
         ? component.shear_ram_dist_from_bottom + ' ' + (component.shear_ram_dist_from_bottom_unit || shearRamData.unit)
         : formatValue(
             convertLengthUnit(shearRamData.value, component.shear_ram_dist_from_bottom_unit || shearRamData.unit, selected_shearRamDistFromBottomUnit.value.value),
@@ -2029,10 +2029,10 @@ const handleDeleteTemplate = async () => {
 };
 
 const handleExportPDF = () => {
-    if (selected_weightUnit.value.value === 'selected_convertion' ||
-        selected_heightUnit.value.value === 'selected_convertion' ||
-        selected_pressureRatingUnit.value.value === 'selected_convertion' ||
-        selected_shearRamDistFromBottomUnit.value.value === 'selected_convertion') {
+    if (selected_weightUnit.value.value === 'select_conversion' ||
+        selected_heightUnit.value.value === 'select_conversion' ||
+        selected_pressureRatingUnit.value.value === 'select_conversion' ||
+        selected_shearRamDistFromBottomUnit.value.value === 'select_conversion') {
         useToast().error('Please select a valid unit for conversion');
         return;
     }

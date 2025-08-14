@@ -86,7 +86,12 @@ class ThreadController extends Controller
         $sortDirection = $request->input('sort_direction', 'desc');
 
         // Apply sorting
-        $query->orderBy($sortBy, $sortDirection);
+        if ($sortBy == 'total_size') {
+            $query->withCount('sizes')
+                ->orderBy('sizes_count', $sortDirection);
+        } else {
+            $query->orderBy($sortBy, $sortDirection);
+        }
 
         // Paginate the results
         $threads = $query->paginate($perPage);

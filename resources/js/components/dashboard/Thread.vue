@@ -717,9 +717,9 @@ const showMobileFilters = ref(false);
 
 const sortByItems = ref([
     { name: 'Updated At', value: 'updated_at' },
-    { name: 'Updated By', value: 'updated_by_name' },
+    { name: 'Updated By', value: 'updated_by' },
     { name: 'Type', value: 'type' },
-    { name: 'Total Size', value: 'type' },
+    { name: 'Total Size', value: 'total_size' },
 ]);
 
 const selectedSortByFilter = ref(sortByItems.value[0]);

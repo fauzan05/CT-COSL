@@ -410,7 +410,7 @@
                                                             class="relative w-full cursor-default overflow-hidden rounded-lg bg-white dark:bg-slate-800/50 text-left shadow-md border border-gray-300">
                                                             <ComboboxInput
                                                                 class="w-full h-11 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 dark:text-white bg-transparent focus:outline-none"
-                                                                :displayValue="(size) => size?.name || 'Select Paper Size'"
+                                                                :displayValue="(size) => size?.name"
                                                                 @change="queryPaperSizes = $event.target.value"
                                                                 placeholder="Select Paper Size..." />
                                                             <ComboboxButton
@@ -581,27 +581,27 @@
                             </div>
                             <!-- Table Component -->
                             <div class="bg-white dark:bg-slate-800 my-5 rounded-xl shadow-md overflow-hidden">
-                                <div class="max-h-96 overflow-y-auto">
+                                <div class="max-h-96 min-h-40 overflow-y-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                         <thead class="bg-gray-50 dark:bg-gray-800 sticky top-0">
                                             <tr>
                                                 <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
                                                     No
                                                 </th>
-                                                <th class="px-6 py-3 dark:text-gray-300">Image</th>
-                                                <th class="px-6 py-3 dark:text-gray-300">Description</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">Image</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">Description</th>
 
                                                 <!-- OD Column with Unit Dropdown -->
-                                                <th class="px-6 py-3 dark:text-gray-300">
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
                                                     <div class="flex items-center space-x-2">
                                                         <span>OD</span>
-                                                        <Listbox v-model="selected_od_unit_convertion">
+                                                        <Listbox v-model="selected_od_unit_conversion">
                                                             <div class="relative">
                                                                 <ListboxButton
                                                                     class="relative w-38 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
                                                                     <span class="block truncate">{{
-                                                                        selected_od_unit_convertion }}</span>
+                                                                        selected_od_unit_conversion }}</span>
                                                                     <span
                                                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
                                                                         <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
@@ -614,7 +614,7 @@
                                                                     leave-from-class="opacity-100"
                                                                     leave-to-class="opacity-0">
                                                                     <ListboxOptions
-                                                                        class="absolute z-10 mt-1 max-h-32 w-38 overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-xs shadow-lg ring-opacity-5 focus:outline-none">
+                                                                        class="absolute z-10 mt-1 w-38 overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-xs shadow-lg ring-opacity-5 focus:outline-none">
                                                                         <ListboxOption v-slot="{ active, selected }"
                                                                             v-for="unit in units" :key="unit" :value="unit"
                                                                             as="template">
@@ -641,15 +641,15 @@
                                                 </th>
 
                                                 <!-- ID Column with Unit Dropdown -->
-                                                <th class="px-6 py-3 dark:text-gray-300">
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
                                                     <div class="flex items-center space-x-2">
                                                         <span>ID</span>
-                                                        <Listbox v-model="selected_id_unit_convertion">
+                                                        <Listbox v-model="selected_id_unit_conversion">
                                                             <div class="relative">
                                                                 <ListboxButton
                                                                     class="relative w-38 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
                                                                     <span class="block truncate">{{
-                                                                        selected_id_unit_convertion }}</span>
+                                                                        selected_id_unit_conversion }}</span>
                                                                     <span
                                                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
                                                                         <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
@@ -688,19 +688,19 @@
                                                     </div>
                                                 </th>
 
-                                                <th class="px-6 py-3 dark:text-gray-300">Top Connection</th>
-                                                <th class="px-6 py-3 dark:text-gray-300">Bottom Connection</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">Top Connection</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">Bottom Connection</th>
 
                                                 <!-- Length Column with Unit Dropdown -->
-                                                <th class="px-6 py-3 dark:text-gray-300">
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">
                                                     <div class="flex items-center space-x-2">
                                                         <span>Length</span>
-                                                        <Listbox v-model="selected_length_unit_convertion">
+                                                        <Listbox v-model="selected_length_unit_conversion">
                                                             <div class="relative">
                                                                 <ListboxButton
                                                                     class="relative w-38 cursor-pointer rounded-md bg-white dark:bg-gray-700 py-1 px-2 text-left shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
                                                                     <span class="block truncate">{{
-                                                                        selected_length_unit_convertion }}</span>
+                                                                        selected_length_unit_conversion }}</span>
                                                                     <span
                                                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
                                                                         <ChevronUpDownIcon class="h-3 w-3 text-gray-400"
@@ -739,7 +739,7 @@
                                                     </div>
                                                 </th>
 
-                                                <th class="px-6 py-3 dark:text-gray-300">Actions</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">Actions</th>
                                             </tr>
                                         </thead>
 
@@ -814,7 +814,7 @@
                                             <template #footer>
                                                 <tr v-if="componentList.length === 0">
                                                     <td colspan="9"
-                                                        class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                                        class="px-6 py-4 h-20 text-center text-gray-500 dark:text-gray-400">
                                                         No components found
                                                     </td>
                                                 </tr>
@@ -1165,7 +1165,7 @@
                     <h4 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">List Template</h4>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead>
+                            <thead class="bg-gray-50 dark:bg-gray-700/50">
                                 <tr>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -1381,12 +1381,12 @@ const filteredPaperSizes = computed(() => {
 })
 
 // Data Units
-const units = ref(['selected convertion', 'inch', 'mm', 'cm'])
+const units = ref(['Select Conversion', 'inch', 'mm', 'cm'])
 
 // Selected unit states
-const selected_od_unit_convertion = ref(units.value[0]);
-const selected_id_unit_convertion = ref(units.value[0]);
-const selected_length_unit_convertion = ref(units.value[0]);
+const selected_od_unit_conversion = ref(units.value[0]);
+const selected_id_unit_conversion = ref(units.value[0]);
+const selected_length_unit_conversion = ref(units.value[0]);
 
 /* -------------------------- MODAL / FORM STATE ----------------------------- */
 const titleModal = ref('');
@@ -1515,25 +1515,25 @@ const getConvertedToolstringComponent = (component) => {
     const lengthData = parseValueAndUnit(component.length);
 
     // Convert values based on selected units
-    const convertedOd = selected_od_unit_convertion.value === 'selected convertion'
+    const convertedOd = selected_od_unit_conversion.value === 'Select Conversion'
         ? component.od
         : formatValue(
-            convertUnit(odData.value, odData.unit, selected_od_unit_convertion.value),
-            selected_od_unit_convertion.value
+            convertUnit(odData.value, odData.unit, selected_od_unit_conversion.value),
+            selected_od_unit_conversion.value
         );
 
-    const convertedId = selected_id_unit_convertion.value === 'selected convertion'
+    const convertedId = selected_id_unit_conversion.value === 'Select Conversion'
         ? component.id
         : formatValue(
-            convertUnit(idData.value, idData.unit, selected_id_unit_convertion.value),
-            selected_id_unit_convertion.value
+            convertUnit(idData.value, idData.unit, selected_id_unit_conversion.value),
+            selected_id_unit_conversion.value
         );
 
-    const convertedLength = selected_length_unit_convertion.value === 'selected convertion'
+    const convertedLength = selected_length_unit_conversion.value === 'Select Conversion'
         ? component.length
         : formatValue(
-            convertUnit(lengthData.value, lengthData.unit, selected_length_unit_convertion.value),
-            selected_length_unit_convertion.value
+            convertUnit(lengthData.value, lengthData.unit, selected_length_unit_conversion.value),
+            selected_length_unit_conversion.value
         );
 
     return {
@@ -1822,14 +1822,14 @@ const handleDeleteTemplate = async () => {
 
 /* ------------------------------- EXPORT PDF COMPONENT -------------------------- */
 const handleExportPDF = () => {
-    if (selected_od_unit_convertion.value === 'selected convertion' ||
-        selected_id_unit_convertion.value === 'selected convertion' ||
-        selected_length_unit_convertion.value === 'selected convertion') {
+    if (selected_od_unit_conversion.value === 'Select Conversion' ||
+        selected_id_unit_conversion.value === 'Select Conversion' ||
+        selected_length_unit_conversion.value === 'Select Conversion') {
         useToast().error('Please select a valid unit conversion');
         return;
     }
 
-    const url = baseUrl + '/backend/toolstring-reporting-histories/export-pdf/' + templateToolstringForm.value.id + '?od_unit=' + selected_od_unit_convertion.value + '&id_unit=' + selected_id_unit_convertion.value + '&length_unit=' + selected_length_unit_convertion.value + '&height=' + customSize.value.height + '&width=' + customSize.value.width + '&orientation=' + orientation.value + '&size=' + selectedPaperSize.value.value;
+    const url = baseUrl + '/backend/toolstring-reporting-histories/export-pdf/' + templateToolstringForm.value.id + '?od_unit=' + selected_od_unit_conversion.value + '&id_unit=' + selected_id_unit_conversion.value + '&length_unit=' + selected_length_unit_conversion.value + '&height=' + customSize.value.height + '&width=' + customSize.value.width + '&orientation=' + orientation.value + '&size=' + selectedPaperSize.value.value;
     window.open(url, '_blank');
 }
 
