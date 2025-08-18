@@ -1,7 +1,4 @@
 <template>
-    <head>
-        <Title>Reporting</Title>
-    </head>
     <div class="p-6 bg-gray-50 min-h-screen dark:bg-slate-900/50 dark:text-gray-100 rounded-xl">
         <div class="w-full px-4 py-6">
             <TabGroup>

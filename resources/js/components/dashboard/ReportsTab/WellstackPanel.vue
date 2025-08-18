@@ -1,4 +1,7 @@
 <template>
+    <head>
+        <Title>Reporting - Wellstack</Title>
+    </head>
     <!-- modal create/update template -->
     <TransitionRoot appear :show="isTemplateModalOpen" as="template">
         <Dialog as="div" @close="closeModal" class="relative z-50">
