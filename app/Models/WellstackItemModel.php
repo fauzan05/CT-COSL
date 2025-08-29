@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WellstackItemModel extends Model
 {
-    use SoftDeletes, HasUuids;
+    use SoftDeletes, HasUuids, HasFactory;
 
     protected $table = 'wellstack_items';
     public $timestamps = false;
@@ -19,7 +20,7 @@ class WellstackItemModel extends Model
         'serial_number',
         'image',
         'height',
-        'heigth_unit',
+        'height_unit',
         'weight',
         'weight_unit',
         'pressure_rating',
