@@ -5,7 +5,6 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## 📋 Table of Contents
-## 📋 Table of Contents
 - [Overview](#-overview)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
